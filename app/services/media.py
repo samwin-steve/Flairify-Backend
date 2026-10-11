@@ -98,7 +98,7 @@ def delete(owner, media_id):
     store().delete("media", owner, media_id)
 
 
-def crop(raw, box):
+def crop(raw, box, max_size=600):
     img = Image.open(io.BytesIO(raw))
     x, y, w, h = box["x"], box["y"], box["width"], box["height"]
     cropped = img.crop(
@@ -109,7 +109,7 @@ def crop(raw, box):
             max(int((y + h) * img.height), int(y * img.height) + 1),
         )
     )
-    cropped.thumbnail((600, 600))
+    cropped.thumbnail((max_size, max_size))
     out = io.BytesIO()
     cropped.save(out, "JPEG", quality=90)
     return out.getvalue()

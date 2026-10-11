@@ -26,7 +26,7 @@ from .models import (
     Store,
     now,
 )
-from .services import inventory, recommendations, jobs, media, photos, avatars
+from .services import inventory, recommendations, jobs, media, photos, avatars, try_on
 
 
 @asynccontextmanager
@@ -72,6 +72,8 @@ def config(credentials=Depends(bearer)):
         "photos_client_id": c.google_photos_client_id,
         "avatar": avatars.capabilities(),
         "demo_admin": c.app_mode == "demo" and c.enable_demo_admin,
+        "sample_try_on": c.allow_sample_try_on,
+        "generation_provider": "Google Vertex AI",
     }
 
 
@@ -230,16 +232,33 @@ async def upload(
     raw = await file.read(settings().max_upload_mb * 1024 * 1024 + 1)
     normalized, captured = media.normalize(raw)
     media_id = media.save(p.uid, normalized)
-    if kind != "wardrobe":
-        ref = ReferencePhoto(id=kind, kind=kind, media_id=media_id)
+    if kind == "portrait":
         old = store().get("references", p.uid, kind)
         if old:
-            media.delete(p.uid, old["media_id"])
+            delete_photo(kind, p)
+        ref = ReferencePhoto(id=kind, kind=kind, media_id=media_id)
         return store().put("references", p.uid, kind, ref.model_dump())
     source = PhotoSource(
         media_id=media_id, original_media_id=media.save_original(p.uid, raw), captured_at=captured
     )
-    return store().put("photos", p.uid, source.id, source.model_dump())
+    store().put("photos", p.uid, source.id, source.model_dump(mode="json"))
+    if kind == "full_body":
+        old = store().get("references", p.uid, kind)
+        if old and not old.get("source_photo_id"):
+            media.delete(p.uid, old["media_id"])
+        ref = ReferencePhoto(id=kind, kind=kind, media_id=media_id, source_photo_id=source.id)
+        store().put("references", p.uid, kind, ref.model_dump())
+        auto_analyze(p, source.id)
+        return ref.model_dump()
+    return source.model_dump(mode="json")
+
+
+def auto_analyze(p, photo_id):
+    profile = store().get("profiles", p.uid, "me") or {}
+    if settings().ai_ready and not p.demo and profile.get("consent", {}).get("ai_photo_processing"):
+        quota(p.uid, "analysis", 20)
+        return jobs.create(p.uid, "wardrobe", {"photo_ids": [photo_id]}, photo_id)
+    return None
 
 
 @app.get("/api/photos")
@@ -258,7 +277,9 @@ def select_person(key: str, data: Selection, p: Principal = Depends(principal)):
     if data.group_photo and data.person_box.width * data.person_box.height > 0.95:
         raise HTTPException(422, "Select the person in this group photo before processing")
     row.update(data.model_dump())
-    return store().put("photos", p.uid, key, row)
+    store().put("photos", p.uid, key, row)
+    auto_analyze(p, key)
+    return row
 
 
 @app.delete("/api/photos/{key}")
@@ -268,8 +289,19 @@ def delete_photo(key: str, p: Principal = Depends(principal)):
     if not row:
         row = require_record("references", p.uid, key)
         kind = "references"
+        if row.get("source_photo_id") and store().get("photos", p.uid, row["source_photo_id"]):
+            return delete_photo(row["source_photo_id"], p)
+    aliases = {key, "photo:" + key}
+    for ref in store().list("references", p.uid):
+        if ref.get("source_photo_id") == key:
+            aliases.add(ref["id"])
+            store().delete("references", p.uid, ref["id"])
     for job in store().list("jobs", p.uid):
-        if key in job["payload"].get("photo_ids", []) or job["payload"].get("reference_id") == key:
+        if (
+            key in job["payload"].get("photo_ids", [])
+            or job["payload"].get("reference_id") in aliases
+            or job["payload"].get("source_photo_id") == key
+        ):
             delete_job(job["id"], p)
     for item in store().list("wardrobe", p.uid):
         if item.get("source_photo_id") == key:
@@ -313,7 +345,20 @@ def start_import(data: ImportRequest, p: Principal = Depends(principal)):
         raise HTTPException(409, "Enable photo processing consent in Profile first")
     for key in data.photo_ids:
         require_record("photos", p.uid, key)
-    return jobs.create(p.uid, "wardrobe", data.model_dump(), ":".join(sorted(data.photo_ids)))
+    already = [
+        j for j in store().list("jobs", p.uid) if j["kind"] == "wardrobe" and j["status"] != "cancelled"
+    ]
+    covered = {key for j in already for key in j["payload"].get("photo_ids", [])}
+    missing = [key for key in data.photo_ids if key not in covered]
+    if not missing:
+        return jobs.public(
+            next(
+                j
+                for j in reversed(already)
+                if any(key in data.photo_ids for key in j["payload"].get("photo_ids", []))
+            )
+        )
+    return jobs.create(p.uid, "wardrobe", {"photo_ids": missing}, ":".join(sorted(missing)))
 
 
 @app.post("/api/onboarding/complete")
@@ -334,7 +379,14 @@ def complete(p: Principal = Depends(principal)):
 def catalog(
     q: str = "", category: str | None = None, budget: int = 1000000, p: Principal = Depends(principal)
 ):
-    return {"products": inventory.search(p.catalog_owner, q, budget, category)}
+    if not p.demo and settings().seed_sample_catalog:
+        inventory.seed_catalog(p.catalog_owner)
+    return {
+        "products": [
+            {**product, "try_on_supported": try_on.supports(product)}
+            for product in inventory.search(p.catalog_owner, q, budget, category)
+        ]
+    }
 
 
 @app.get("/api/stores")
@@ -431,9 +483,13 @@ def generate(kind: str, data: GenerationRequest, p: Principal = Depends(principa
     existing = store().get("jobs", p.uid, key)
     if existing:
         return jobs.public(existing)
+    payload = {**data.model_dump(), "catalog_owner": p.catalog_owner}
+    if kind == "try_on" and not p.demo:
+        try:
+            payload, _, _ = try_on.prepare(p.uid, payload)
+        except (try_on.CapabilityUnavailable, ValueError) as exc:
+            raise HTTPException(409, str(exc))
     quota(p.uid, "generation", settings().max_daily_generations)
-    if kind == "try_on":
-        require_record("outfits", p.uid, data.outfit_id)
     if kind == "video":
         source = require_record("jobs", p.uid, data.source_job_id)
         if (
@@ -442,7 +498,6 @@ def generate(kind: str, data: GenerationRequest, p: Principal = Depends(principa
             or not source.get("result", {}).get("accepted")
         ):
             raise HTTPException(409, "Accept a successful try-on preview first")
-    payload = {**data.model_dump(), "catalog_owner": p.catalog_owner}
     return jobs.create(p.uid, kind, payload, data.request_key)
 
 
@@ -454,6 +509,16 @@ def accept(key: str, p: Principal = Depends(principal)):
     row["result"]["accepted"] = True
     store().put("jobs", p.uid, key, row)
     return jobs.public(row)
+
+
+@app.post("/api/jobs/{key}/regenerate")
+def regenerate(key: str, p: Principal = Depends(principal)):
+    row = require_record("jobs", p.uid, key)
+    if row["kind"] != "try_on" or row["status"] != "succeeded":
+        raise HTTPException(409, "Choose a completed style preview to regenerate")
+    payload = {k: v for k, v in row["payload"].items() if k in GenerationRequest.model_fields}
+    payload["request_key"] = secrets.token_hex(16)
+    return generate("try_on", GenerationRequest.model_validate(payload), p)
 
 
 @app.post("/api/jobs/{key}/retry")
@@ -517,7 +582,7 @@ async def import_catalog(file: UploadFile = File(...), p: Principal = Depends(ad
     records = inventory.parse_import(await file.read(2 * 1024 * 1024 + 1), file.filename or "catalogue.json")
     keys = []
     for product in records:
-        product.sample = p.demo
+        product.sample = product.sample or p.demo
         product.indexed = False
         product.updated_at = now()
         validate_product(product, p)
@@ -543,7 +608,7 @@ def validate_product(product, p):
 @app.put("/api/admin/products/{key}")
 def edit_product(key: str, product: Product, p: Principal = Depends(admin)):
     product.id = key
-    product.sample = p.demo
+    product.sample = product.sample or p.demo
     product.indexed = False
     product.updated_at = now()
     validate_product(product, p)

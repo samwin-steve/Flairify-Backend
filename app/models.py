@@ -62,6 +62,7 @@ class ReferencePhoto(Model):
     id: str
     kind: Literal["portrait", "full_body"]
     media_id: str
+    source_photo_id: str | None = None
     created_at: str = Field(default_factory=now)
 
 
@@ -246,6 +247,7 @@ class GenerationRequest(Model):
     outfit_id: str | None = None
     reference_id: str | None = None
     product_id: str | None = None
+    variant_id: str | None = None
     source_job_id: str | None = None
     duration: Literal[4, 6, 8] = 4
     layering: bool = True

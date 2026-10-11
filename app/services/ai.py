@@ -6,13 +6,16 @@ from ..config import settings
 from ..models import Box, Category
 
 
-def client(gemini=False, timeout=60000):
+def client(gemini=False, timeout=60000, image_edit=False):
     cfg = settings()
     return genai.Client(
         vertexai=True,
         project=cfg.google_cloud_project,
-        location=(cfg.gemini_location or cfg.google_cloud_location) if gemini else cfg.google_cloud_location,
-        http_options=types.HttpOptions(timeout=timeout),
+        location=cfg.image_edit_location
+        if image_edit
+        else ((cfg.gemini_location or cfg.google_cloud_location) if gemini else cfg.google_cloud_location),
+        # Cloud Tasks and the customer-visible retry button control retries.
+        http_options=types.HttpOptions(timeout=timeout, retry_options=types.HttpRetryOptions(attempts=1)),
     )
 
 

@@ -39,7 +39,7 @@ gcloud builds submit --config cloudbuild.yaml --project data-workshops --region 
   --gcs-source-staging-dir gs://data-workshops-flairify-build/source
 ```
 
-Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and deploy their own service. Backend builds deploy the API and private worker together. Anonymous demo sessions keep paid AI off and public admin unlocking disabled. The deployed trigger enables limited Gemini text/analysis for verified Firebase accounts, alongside labeled sample catalogue facts. Production mode requires Firebase configuration, runtime IAM and approved model access.
+Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and deploy their own service. Backend builds deploy the API and private worker together. Anonymous demo sessions keep paid AI off and public admin unlocking disabled. The deployed trigger enables bounded Gemini analysis, conversation and 2D image editing for verified Firebase accounts, alongside labeled sample catalogue facts. Production mode requires Firebase configuration, runtime IAM and approved model access.
 
 - [Architecture and data flow](docs/ARCHITECTURE.md)
 - [Integration configuration](docs/INTEGRATIONS.md)
@@ -51,4 +51,6 @@ Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and d
 - [Three-minute demo](docs/DEMO_SCRIPT.md)
 - [Submission explanation](docs/SUBMISSION.md)
 
-All retailer fixtures are synthetic. Downloaded photographs are illustrative, licensed separately, and credited in the frontend's `public/image-credits.json`. They are not verified retailer product images and cannot satisfy the real try-on provider's verified-image requirement.
+All retailer fixtures are synthetic. Inventory offers ten sample products, nine currently in sample stock. Four photographed clothing items support illustrative 2D previews through Gemini image editing; unsupported accessories/illustrations are disabled. Downloaded photographs are licensed and credited in `fixtures/image-credits.json` and the frontend's `public/image-credits.json`. These are not verified retailer products. Google virtual try-on remains a separate adapter for verified retailer imagery.
+
+With photo-processing consent, a full-body upload automatically queues Gemini garment extraction and becomes a usable private preview reference. Wardrobe uploads start extraction after explicit person selection. Detections remain drafts until ownership is confirmed. Try-on can start directly from Inventory using a reference or existing wardrobe photo; completed previews show source and generated images, and support download, regeneration and deletion.

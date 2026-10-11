@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     embedding_model: str = ""
     try_on_model: str = ""
     image_edit_model: str = ""
+    image_edit_location: str = "global"
+    allow_sample_try_on: bool = False
+    max_daily_image_generations: int = 30
     veo_model: str = ""
     enable_paid_ai: bool = False
     google_photos_client_id: str = ""

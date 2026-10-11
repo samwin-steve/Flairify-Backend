@@ -1,0 +1,38 @@
+[
+  {
+    "file": "images/shirt.jpg",
+    "source": "https://unsplash.com/photos/white-dress-shirt-hanged-on-black-clothes-hanger-R0LzhF574gU",
+    "author": "See source photo page",
+    "image_url": "https://images.unsplash.com/photo-1624222244232-5f1ae13bbd53?auto=format&fit=crop&w=720&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "purpose": "Sample / editorial only; no retailer affiliation or verified product identity"
+  },
+  {
+    "file": "images/blazer.jpg",
+    "source": "https://unsplash.com/photos/a-woman-poses-in-a-large-beige-blazer-hnAWDdHSgSI",
+    "author": "Alina Matveycheva",
+    "image_url": "https://images.unsplash.com/photo-1747814965209-2301e535f209?auto=format&fit=crop&w=720&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "purpose": "Sample / editorial only; no retailer affiliation or verified product identity"
+  },
+  {
+    "file": "images/jacket.jpg",
+    "source": "https://unsplash.com/photos/woman-wearing-green-jacket-standing-near-the-wall-s0CrFb7LoBM",
+    "author": "Yunming Wang",
+    "image_url": "https://images.unsplash.com/photo-1574108233389-8ac5db89e3f5?auto=format&fit=crop&w=720&q=85",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "purpose": "Sample / editorial only; no retailer affiliation or verified product identity"
+  },
+  {
+    "file": "images/trousers.jpg",
+    "source": "https://www.pexels.com/photo/casual-black-pants-on-white-background-33055598/",
+    "author": "Youssef Mahmoud",
+    "image_url": "https://images.pexels.com/photos/33055598/pexels-photo-33055598/free-photo-of-casual-black-pants-on-white-background.jpeg?auto=compress&dpr=1&h=750&w=1260",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "purpose": "Illustrative sample. No retailer affiliation or verified product identity."
+  }
+]
