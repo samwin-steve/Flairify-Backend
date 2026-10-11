@@ -33,6 +33,7 @@ class UserProfile(Model):
     budget: int = Field(default=5000, ge=0, le=1000000)
     consent: ConsentSettings = Field(default_factory=ConsentSettings)
     onboarding_complete: bool = False
+    keep_background: bool = False
 
 
 class Box(Model):
@@ -262,7 +263,14 @@ class ImportRequest(Model):
     photo_ids: list[str] = Field(min_length=1, max_length=12)
 
 
+class TryOnSelection(Model):
+    kind: Literal["product", "wardrobe"]
+    id: str = Field(min_length=1, max_length=100)
+    variant_id: str | None = Field(default=None, max_length=100)
+
+
 class GenerationRequest(Model):
+    selections: list[TryOnSelection] = Field(default_factory=list, max_length=20)
     outfit_id: str | None = None
     reference_id: str | None = None
     product_id: str | None = None

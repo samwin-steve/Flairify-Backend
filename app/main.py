@@ -124,7 +124,7 @@ def unlock(data: AdminUnlock, p: Principal = Depends(principal), credentials=Dep
 def get_profile(p: Principal = Depends(principal)):
     if p.demo or settings().seed_sample_catalog:
         inventory.seed_catalog(p.catalog_owner)
-    value = store().get("profiles", p.uid, "me") or UserProfile().model_dump()
+    value = {**UserProfile().model_dump(), **(store().get("profiles", p.uid, "me") or {})}
     return {**value, "admin": p.admin, "demo": p.demo, "seller": p.seller}
 
 
@@ -214,7 +214,10 @@ def delete_garment(key: str, p: Principal = Depends(principal)):
     # Remove the record first so an in-flight image cannot re-publish this garment.
     store().delete("wardrobe", p.uid, key)
     for job in store().list("jobs", p.uid):
-        if job["kind"] == "garment_image" and job["payload"].get("item_id") == key:
+        if (job["kind"] == "garment_image" and job["payload"].get("item_id") == key) or (
+            job["kind"] == "try_on"
+            and any(s["kind"] == "wardrobe" and s["id"] == key for s in job["payload"].get("selections", []))
+        ):
             delete_job(job["id"], p)
     if item["image"].startswith("media:"):
         media.delete(p.uid, item["image"][6:])
