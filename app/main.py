@@ -336,10 +336,15 @@ def get_media(key: str, p: Principal = Depends(principal)):
 def product_media(key: str, p: Principal = Depends(principal)):
     uploaded = store().get("media", p.catalog_owner, key) or {}
     own_upload = (p.admin or p.seller) and uploaded.get("uploader_id") == p.uid
-    if not own_upload and not any(
-        v["image"] == "media:" + key for v in store().list("products", p.catalog_owner)
-    ):
-        raise HTTPException(404, "Product image not found")
+    listed = any(v["image"] == "media:" + key for v in store().list("products", p.catalog_owner))
+    if not own_upload and not listed:
+        history = store().list("orders", p.uid)
+        if p.admin:
+            history += store().list("order_inbox", p.catalog_owner)
+        elif p.seller:
+            history += store().list("seller_orders", p.uid)
+        if not any(line.get("image") == "media:" + key for order in history for line in order["items"]):
+            raise HTTPException(404, "Product image not found")
     raw, mime = media.read(p.catalog_owner, key)
     return Response(raw, media_type=mime, headers={"Cache-Control": "private, no-store"})
 

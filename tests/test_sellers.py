@@ -190,3 +190,31 @@ def test_seller_shirt_can_replace_owned_top_when_requested(signed):
     matched = [o for o in result["outfits"] if any(p["id"] == "seller-jacket" for p in o["products"])]
     assert matched and all(o["total"] <= 5000 and o["complete"] for o in matched)
     assert all(all(w["category"] != "top" for w in o["owned"]) for o in matched)
+
+
+def test_order_snapshot_photo_survives_listing_photo_replacement(signed):
+    c, who = signed
+    product = create_product(c)
+    old_image = product["image"]
+    who[0] = Principal("customer")
+    payload = {
+        "items": [
+            {"product_id": product["id"], "variant_id": "seller-m", "store_id": "seller-store", "quantity": 1}
+        ],
+        "expected_total": 1200,
+        "request_key": "historical-photo-order",
+        "acknowledge_mock": True,
+    }
+    assert c.post("/api/orders", json=payload).status_code == 200
+    who[0] = Principal("seller-a", seller=True)
+    out = io.BytesIO()
+    Image.new("RGB", (200, 300), "blue").save(out, "JPEG")
+    product["image"] = c.post(
+        "/api/admin/images", files={"file": ("new.jpg", out.getvalue(), "image/jpeg")}
+    ).json()["image"]
+    assert c.put("/api/admin/products/" + product["id"], json=product).status_code == 200
+    assert c.get("/api/catalog/media/" + old_image[6:]).status_code == 200
+    who[0] = Principal("customer")
+    assert c.get("/api/catalog/media/" + old_image[6:]).status_code == 200
+    who[0] = Principal("unrelated-customer")
+    assert c.get("/api/catalog/media/" + old_image[6:]).status_code == 404
