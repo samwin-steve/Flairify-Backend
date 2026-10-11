@@ -88,13 +88,22 @@ def require_record(kind, owner, key):
     return value
 
 
-def quota(owner, kind, limit):
+def quota(owner, kind, limit, *, consume=True):
     key = f"{kind}:{time.strftime('%Y-%m-%d', time.gmtime())}"
 
     def increment(value):
         value = value or {"count": 0}
         if value["count"] >= limit:
-            raise HTTPException(429, "Daily limit reached. Please try again tomorrow.")
+            message = (
+                "Flairify's daily Google image allowance has been used. Please try again after 00:00 UTC (05:30 India time)."
+                if kind == "image-generation"
+                else "Daily limit reached. Please try again tomorrow."
+            )
+            raise HTTPException(429, message)
         return {"count": value["count"] + 1}
 
-    store().mutate("quotas", owner, key, increment)
+    if consume:
+        store().mutate("quotas", owner, key, increment)
+    else:
+        # Preflight only; the worker still reserves atomically before a paid call.
+        increment(store().get("quotas", owner, key))

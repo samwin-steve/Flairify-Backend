@@ -3,6 +3,7 @@ import json
 import logging
 import time
 from concurrent.futures import ThreadPoolExecutor
+from fastapi import HTTPException
 from ..config import settings
 from ..models import GenerationJob, now
 from ..store import store
@@ -148,7 +149,9 @@ def process(owner, key):
             "Job failure: kind=%s exception=%s", job["kind"], type(exc).__name__
         )
         message = (
-            str(exc)
+            str(exc.detail)
+            if isinstance(exc, HTTPException) and exc.status_code == 429
+            else str(exc)
             if isinstance(exc, (try_on.CapabilityUnavailable, ValueError))
             else "The service could not finish this job. Check provider access and try again. No successful result was fabricated."
         )

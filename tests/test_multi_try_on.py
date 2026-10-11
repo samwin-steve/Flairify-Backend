@@ -214,3 +214,24 @@ def test_vto_cannot_silently_ignore_multiple_pieces_or_white_background(signed, 
         try_on.prepare(
             owner, {**payload, "keep_background": True, "selections": [selection(p), owned(owner, "jacket")]}
         )
+
+
+def test_daily_image_limit_fails_before_queue_and_is_clear_if_reached_while_waiting(signed, monkeypatch):
+    from app.auth import quota
+
+    c, owner, calls = signed
+    reference(owner)
+    monkeypatch.setenv("MAX_DAILY_IMAGE_GENERATIONS", "1")
+    settings.cache_clear()
+    monkeypatch.setattr(jobs, "enqueue", lambda *args: None)
+    r = c.post("/api/generate/try_on", json={"product_id": "p-shirt", "request_key": "before-limit-used"})
+    assert r.status_code == 200
+    # Another request reserves the last image while this job waits; the queued job stays truthful.
+    quota("live-ai", "image-generation", 1)
+    jobs.process(owner, r.json()["id"])
+    result = job(c, r)
+    assert result["status"] == "failed" and "daily Google image allowance" in result["error"]
+    assert calls == []
+    new = c.post("/api/generate/try_on", json={"product_id": "p-shirt", "request_key": "after-limit-used"})
+    assert new.status_code == 429 and "05:30 India time" in new.json()["detail"]
+    assert len(c.get("/api/jobs").json()["jobs"]) == 1

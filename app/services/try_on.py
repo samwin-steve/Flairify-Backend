@@ -164,6 +164,9 @@ def prepare(owner, payload):
     reference = resolve_reference(owner, payload.get("reference_id"))
     if payload.get("reference_media_id") and payload["reference_media_id"] != reference["reference_media_id"]:
         raise ValueError("Your reference photo changed. Choose the current photo and request a new preview.")
+    from ..auth import quota
+
+    quota("live-ai", "image-generation", cfg.max_daily_image_generations, consume=False)
     return (
         {
             **payload,
