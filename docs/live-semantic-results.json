@@ -1,0 +1,247 @@
+{
+  "backfill": {
+    "products": 200,
+    "indexed": 200,
+    "generated": 200,
+    "seconds": 224.48
+  },
+  "local_operator_adk": {
+    "events": [
+      {
+        "event": "status",
+        "seconds": 3.63
+      },
+      {
+        "event": "outfits",
+        "seconds": 45.33
+      },
+      {
+        "event": "status",
+        "seconds": 45.33
+      },
+      {
+        "event": "text",
+        "seconds": 46.95,
+        "characters": 7
+      },
+      {
+        "event": "text",
+        "seconds": 47.05,
+        "characters": 93
+      },
+      {
+        "event": "text",
+        "seconds": 47.24,
+        "characters": 138
+      },
+      {
+        "event": "text",
+        "seconds": 47.45,
+        "characters": 145
+      },
+      {
+        "event": "text",
+        "seconds": 47.51,
+        "characters": 66
+      }
+    ],
+    "method": "Google ADK / Gemini + validated outfits",
+    "retrieval": {
+      "method": "firestore-vector",
+      "model": "gemini-embedding-2",
+      "dimensions": 768,
+      "candidates": 56,
+      "semantic": true
+    },
+    "outfits": 3,
+    "totals": [
+      2298,
+      2298,
+      2298
+    ],
+    "text": "To keep things comfortable and polished for your three days in Mumbai, I built complete looks around your favourite white tee paired with your tailored charcoal trousers and straight-leg blue jeans. Adding an easy black jacket gives you a neat layer for air-conditioned meetings, while versatile walking shoes keep you comfortable on the move. Each option lets your reliable wardrobe essentials do the heavy lifting while staying within your budget.",
+    "seconds": 47.59
+  },
+  "graph_operator": {
+    "sync": {
+      "outfits": 3,
+      "source": "BigQuery Graph",
+      "bytes_processed": 918
+    },
+    "evidence": {
+      "status": "ready",
+      "source": "BigQuery Graph",
+      "counts": {
+        "sample-fashion-19342": 3,
+        "sample-fashion-33697": 2,
+        "sample-fashion-59056": 1
+      },
+      "bytes_processed": 822
+    },
+    "other_user_counts": {}
+  },
+  "date": "2026-10-11",
+  "note": "Collected QA observations using sample wardrobes and catalogue data; no human detection, likeness or recommendation relevance measurement.",
+  "deployed_browser": {
+    "sseStatus": 200,
+    "textChunks": 5,
+    "events": [
+      "start",
+      "status",
+      "status",
+      "outfits",
+      "status",
+      "text",
+      "text",
+      "text",
+      "text",
+      "text",
+      "done"
+    ],
+    "evidence": {
+      "wordCounts": [
+        2,
+        23,
+        40,
+        63,
+        81
+      ],
+      "animations": [
+        "word-arrive",
+        "word-arrive",
+        "word-arrive",
+        "word-arrive",
+        "word-arrive"
+      ],
+      "cursor": [
+        "stream-caret",
+        "stream-caret",
+        "stream-caret",
+        "stream-caret",
+        "stream-caret"
+      ],
+      "statuses": [
+        "✧Checking your wardrobe and preferences…",
+        "✧Finding pieces that work with your wardrobe…",
+        "✧Putting the looks together…"
+      ]
+    },
+    "method": "Google ADK / Gemini + validated outfits",
+    "retrieval": {
+      "method": "firestore-vector",
+      "model": "gemini-embedding-2",
+      "dimensions": 768,
+      "candidates": 67,
+      "semantic": true
+    },
+    "graph": {
+      "status": "ready",
+      "source": "BigQuery Graph",
+      "counts": {},
+      "bytes_processed": 2457
+    },
+    "outfits": 3,
+    "totals": [
+      2298,
+      2298,
+      2298
+    ],
+    "conversationRestored": true,
+    "desktopAccessibility": [],
+    "mobileAccessibility": [],
+    "mobile": {
+      "width": 393,
+      "documentWidth": 393
+    },
+    "reducedMotionAnimation": "none",
+    "errors": []
+  },
+  "deployed_indexing": {
+    "new_product_searchable": true,
+    "new_embedding": {
+      "embeddings_generated": 1,
+      "method": "gemini-embedding-2 / Firestore",
+      "requested": 1,
+      "embeddings_reused": 0,
+      "indexed": 1
+    },
+    "price_update": {
+      "embeddings_generated": 0,
+      "method": "gemini-embedding-2 / Firestore",
+      "requested": 1,
+      "embeddings_reused": 1,
+      "indexed": 1
+    },
+    "semantic_update": {
+      "embeddings_generated": 1,
+      "method": "gemini-embedding-2 / Firestore",
+      "requested": 1,
+      "embeddings_reused": 0,
+      "indexed": 1
+    },
+    "model_space": "gemini-embedding-2:768:retail-v1"
+  },
+  "additional_followup": {
+    "completed": false,
+    "provider": "Vertex AI Gemini",
+    "provider_status": 429,
+    "reason": "RESOURCE_EXHAUSTED",
+    "behavior": "SSE terminal error; no fabricated answer. A regression test verifies the clearer busy message and request-key retry."
+  },
+  "automated": {
+    "pytest_passed": 88,
+    "vitest_passed": 17,
+    "playwright_passed": 18,
+    "production_frontend_build": true,
+    "typescript": true
+  },
+  "cleanup": {
+    "qa_account_deleted": true,
+    "qa_graph_deleted": true,
+    "qa_records_remaining": 0,
+    "qa_media_remaining": 0,
+    "catalogue_count": 200,
+    "note": "Owner records, graph rows, catalogue count and media absence verified by cleanup before deleting the account; deletion required a fresh QA password sign-in."
+  },
+  "deployment": {
+    "frontend_source": "2b5405687ba9ded3daaa96c479e9e541959a8d85",
+    "frontend_build": "976cc324-8141-4368-b703-8bc4abeb4b69",
+    "backend_source": "589facae9ca314915308c7386074225ce4f46269",
+    "backend_build": "60eaf52b-fc29-43c2-b592-ea2b009e8d84",
+    "build_status": "SUCCESS",
+    "services": [
+      {
+        "metadata": {
+          "name": "flairify-api"
+        },
+        "status": {
+          "latestReadyRevisionName": "flairify-api-00018-9mj",
+          "url": "https://flairify-api-7kxckvikva-uc.a.run.app"
+        }
+      },
+      {
+        "metadata": {
+          "name": "flairify-web"
+        },
+        "status": {
+          "latestReadyRevisionName": "flairify-web-00013-mvq",
+          "url": "https://flairify-web-7kxckvikva-uc.a.run.app"
+        }
+      },
+      {
+        "metadata": {
+          "name": "flairify-worker"
+        },
+        "status": {
+          "latestReadyRevisionName": "flairify-worker-00036-sll",
+          "url": "https://flairify-worker-7kxckvikva-uc.a.run.app"
+        }
+      }
+    ],
+    "health": {
+      "frontend": 200,
+      "api": 200,
+      "worker_unauthenticated": 403
+    }
+  }
+}

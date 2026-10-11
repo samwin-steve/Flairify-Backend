@@ -54,6 +54,8 @@ The UI reveals newly received words with a subtle fade and a typing cursor; redu
 
 A per-user lease prevents concurrent turns from overwriting history. The stream has a 105-second deadline; disconnects cancel the ADK run. A terminated instance's stale lease expires in 150 seconds. Automatic network retry is deliberately avoided. Partial responses are not presented as completed answers. Cached results are cleared of recommendation cards when wardrobe records are changed/deleted.
 
+Wrapped Vertex AI capacity errors (429) display a clear busy/retry message; deadline failures have a separate timeout message. Error classification walks typed exception causes without exposing provider payloads. Failed turns release their lease and keep the request key available for customer-initiated retry; no successful result is invented.
+
 ## Official references
 
 - [Gemini Embedding 2 model](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/embedding-2)

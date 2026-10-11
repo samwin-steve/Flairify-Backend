@@ -1,5 +1,29 @@
 # Verification — 11 October 2026
 
+## Latest release: semantic retrieval, ADK, SSE and BigQuery Graph
+
+The current suite has **88 passing backend tests, 17 passing frontend logic tests and 18 passing Playwright journey checks** across desktop Chromium and emulated Pixel 7. Production Next.js compilation and TypeScript checks passed. The two new streaming browser cases were rerun successfully after correcting the test fixture to retain consented sizes; the other sixteen had already passed. The final two budget regressions verify that neither an inflated agent interpretation nor an API budget can override a tighter customer ceiling. These are functional checks, not a human styling evaluation.
+
+All **200 existing catalogue products** received real `gemini-embedding-2` embeddings through Vertex AI and were indexed in Firestore. The initial backfill took **224.48 seconds**. Two native Firestore indexes reached READY. A temporary signed-in owner then added a sample product through the deployed admin API: its asynchronous index job completed and semantic catalogue search returned it. A price edit reused the vector; a description/colour edit generated a replacement. The temporary listing and owner grant were removed afterward.
+
+A real deployed browser request used Google ADK and bounded Firestore retrieval, returning three complete sample outfits at **₹2,298 each** against a ₹5,000 budget. The browser received **five text SSE events**, with visible word counts increasing through **2, 23, 40, 63 and 81**, and observed the word fade and typing cursor. No synthetic typing delay was used. Conversation restoration passed. Desktop and mobile Axe checks returned no violations for the tested rules; a 393-pixel mobile viewport had a 393-pixel document width. Reduced-motion mode disabled the animation. This establishes actual incremental rendering, not a latency guarantee.
+
+The deployed property graph is `data-workshops.flairify.WardrobeGraph`. An operator check synchronized three distinct checked outfits and executed a real `GRAPH_TABLE` traversal: product coverage counts were **3, 2 and 1**; querying a different owner returned no evidence. The graph query processed **822 bytes** and the snapshot write processed **918 bytes**. These are processed bytes, not billed-cost estimates. The deployed Cloud Tasks worker also successfully synchronized checked outfit evidence. A new occasion with no prior matching outfits correctly returns an empty graph result. Human-rated recommendation relevance and graph-assisted ranking uplift have **not** been measured.
+
+An additional live follow-up encountered Vertex AI `429 RESOURCE_EXHAUSTED`. It returned an SSE error rather than a fabricated answer. The final patch gives wrapped Google capacity errors a clear busy/retry message and safely distinguishes timeouts; tests confirm no private provider payload is exposed, no failed conversation is saved as successful, and the same request key can be retried. This probe did not collect a completed graph-assisted follow-up answer. No quota was reset or raised.
+
+The online graph query uses Garment ← Wears ← Outfit → Adds → Product, with owner constraints and the current wardrobe fingerprint. An initial longer Customer-to-Product traversal encountered a BigQuery internal error. The deployed shorter query was verified; SDK automatic query-job resubmission is disabled so provider failures remain bounded. Graph unavailability leaves semantic recommendations usable with an explicit missing-evidence status.
+
+| Service | Runtime source | Successful Cloud Build | Ready revision |
+| --- | --- | --- | --- |
+| Frontend | `2b54056` | `976cc324-8141-4368-b703-8bc4abeb4b69` | `flairify-web-00013-mvq` |
+| API | `589faca` | `60eaf52b-fc29-43c2-b592-ea2b009e8d84` | `flairify-api-00018-9mj` |
+| Worker | `589faca` | same backend build | `flairify-worker-00036-sll` |
+
+Final Cloud Build completed successfully, including all 88 backend tests on Python 3.13. Live web/API health checks returned 200, while unauthenticated worker access returned 403. The temporary QA owner grant, listing, Firebase account, owner records and graph rows were removed. Cleanup verified no remaining QA records/media and the shared catalogue back at 200 products.
+
+See [collected semantic and streaming results](live-semantic-results.json). Earlier sections below retain historical observations from previous releases. No image/video generation was performed for this release, and the existing shared image-generation allowance was not increased.
+
 ## Automated checks collected
 
 - Backend: 60 Pytest cases pass. Tests cover the confirmed-wardrobe gate, budget/size/current stock, owner isolation, media deletion, direct upload validation, consent, follow-up continuity, admin imports/indexing, unavailable generation, job deduplication, Firebase token verification, Photos Picker contract mocks and AI output validation. Regression cases also cover automatically extracting a full-body upload, reusing wardrobe photos for previews, available variants, consent, Google image requests, source deletion and regeneration.
