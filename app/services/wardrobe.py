@@ -18,7 +18,7 @@ def extract(owner, photo_ids, progress):
             raise ValueError("A selected photo was deleted")
         progress("Finding clothes" if ai_ready else "Preparing photo for manual review")
         raw, _ = media.read(owner, photo["media_id"])
-        selected = media.crop(raw, photo["person_box"])
+        selected = media.crop(raw, photo["person_box"], max_size=1600)
         cache_key = hashlib.sha256(selected + settings().gemini_model.encode()).hexdigest()
         cached = store().get("analysis", owner, cache_key)
         if cached:
