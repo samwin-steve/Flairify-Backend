@@ -34,5 +34,10 @@
   "builds": {
     "backend": "46d581d7-7b66-4242-82fc-6995101127c5",
     "frontend": "7ceffaba-7098-4182-9c1b-8fc8643cd982"
+  },
+  "follow_up_signup_check": {
+    "date": "2026-10-11T11:21:06.224Z",
+    "new_signed_in_account_opens_wardrobe_setup": true,
+    "frontend_build": "aeb0c60f-2e8b-48e4-83cd-39e4b661756a"
   }
 }
