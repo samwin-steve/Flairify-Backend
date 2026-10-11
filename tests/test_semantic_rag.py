@@ -96,6 +96,19 @@ def test_live_retrieval_failure_never_scans_catalogue(client, monkeypatch):
     assert exc.value.status_code == 503
 
 
+@pytest.mark.parametrize("api_budget,expected", [(5000, 3000), (2000, 2000)])
+def test_agent_and_api_cannot_raise_message_budget(client, onboarded, api_budget, expected):
+    data, _ = onboarded
+    result = recommendations.recommend(
+        Principal(data["user_id"], demo=True),
+        ChatRequest(message="Mumbai work under ₹3,000", budget=api_budget),
+        {},
+        interpreted={"budget": 999999, "query": "work trip"},
+    )
+    assert result["intent"]["budget"] == expected
+    assert all(o["total"] <= expected for o in result["outfits"])
+
+
 def test_scoped_facets_do_not_claim_soldout_size(client):
     p = copy.deepcopy(next(iter(inventory.fixture_products().values())))
     p["attributes"]["department"] = "unisex"

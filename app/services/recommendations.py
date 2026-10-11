@@ -81,7 +81,9 @@ def recommend(principal, request, previous, *, interpreted=None):
         intent["budget"] = max(0, min(ceiling, intent.get("budget", ceiling)))
         method = "Google ADK + validated outfit rules"
     if request.budget is not None:
-        intent["budget"] = request.budget
+        # An API/UI ceiling must not undo a tighter budget in the message or
+        # the agent's cheaper follow-up interpretation.
+        intent["budget"] = min(request.budget, intent["budget"])
     size = request.clothing_size or profile.get("clothing_size", "")
     shoe_size = request.shoe_size or profile.get("shoe_size", "")
     if not size or not shoe_size:
