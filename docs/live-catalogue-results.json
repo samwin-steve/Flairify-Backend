@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-11T13:02:22Z",
+  "mode": "Deployed anonymous demo, deterministic rules; no AI calls",
+  "shared_catalogue": {
+    "before": 10,
+    "after": 200,
+    "existing_seller_changes_preserved": true
+  },
+  "backend_pytest": 60,
+  "frontend_vitest": 4,
+  "browser_journeys": 14,
+  "scenarios": [
+    {
+      "department": "men",
+      "clothing_size": "M",
+      "shoe_size_eu": "39",
+      "outfits": 3,
+      "totals_inr": [
+        2997,
+        2997,
+        2997
+      ],
+      "latency_seconds": 3.52,
+      "budget_stock_ownership_valid": true
+    },
+    {
+      "department": "women",
+      "clothing_size": "M",
+      "shoe_size_eu": "39",
+      "outfits": 3,
+      "totals_inr": [
+        2997,
+        2997,
+        2997
+      ],
+      "latency_seconds": 3.02,
+      "budget_stock_ownership_valid": true
+    },
+    {
+      "department": "men",
+      "clothing_size": "4XL",
+      "shoe_size_eu": "48",
+      "outfits": 3,
+      "totals_inr": [
+        2997,
+        2997,
+        2997
+      ],
+      "latency_seconds": 2.5,
+      "budget_stock_ownership_valid": true
+    },
+    {
+      "department": "women",
+      "clothing_size": "XXS",
+      "shoe_size_eu": "35",
+      "outfits": 3,
+      "totals_inr": [
+        2997,
+        2997,
+        2997
+      ],
+      "latency_seconds": 2.48,
+      "budget_stock_ownership_valid": true
+    }
+  ],
+  "catalogue": {
+    "total": 200,
+    "departments": {
+      "men": 90,
+      "women": 91,
+      "unisex": 19
+    },
+    "in_stock": 199,
+    "supported_clothing_previews": 131
+  },
+  "signed_in_gemini": {
+    "method": "Gemini intent + validated outfit rules",
+    "assessment_sources": [
+      "gemini",
+      "gemini",
+      "gemini"
+    ],
+    "outfits": 3,
+    "totals_inr": [
+      2997,
+      2997,
+      2997
+    ],
+    "latency_seconds": 13.21,
+    "budget_stock_ownership_valid": true,
+    "temporary_firebase_account": true,
+    "input": "Manually confirmed sample white shirt; no customer photos"
+  },
+  "deployed_photographs": {
+    "verified_bytes_match_source_copies": 190,
+    "bytes": 15523508,
+    "myntra_csv_photos": 8
+  },
+  "live_browser": [
+    {
+      "viewport": "desktop 1440px",
+      "catalogue_photos": true,
+      "department_filter": true,
+      "refresh": true,
+      "clothing_size": "4XL",
+      "shoe_size": "48",
+      "outfit_totals": [
+        "\u20b92,997",
+        "\u20b92,997",
+        "\u20b92,997"
+      ],
+      "no_horizontal_overflow": true,
+      "inventory_axe_violations": 0
+    },
+    {
+      "viewport": "Pixel 7 emulation",
+      "catalogue_photos": true,
+      "department_filter": true,
+      "refresh": true,
+      "clothing_size": "4XL",
+      "shoe_size": "48",
+      "outfit_totals": [
+        "\u20b92,997",
+        "\u20b92,997",
+        "\u20b92,997"
+      ],
+      "no_horizontal_overflow": true,
+      "inventory_axe_violations": 0
+    }
+  ],
+  "deployment": {
+    "project": "data-workshops",
+    "region": "us-central1",
+    "backend_commit": "8be5535",
+    "frontend_commit": "37526ef",
+    "backend_build": "9ec835e0-bfae-43ab-a779-e4e2456016c9",
+    "frontend_build": "b2233fd6-c684-48eb-ac36-0512cd0b7ed1",
+    "builds": "SUCCESS",
+    "frontend_revision": "flairify-web-00010-vz8",
+    "backend_revision": "flairify-api-00013-hpb",
+    "worker_revision": "flairify-worker-00026-n9k"
+  },
+  "cleanup": {
+    "temporary_firebase_account_removed": true,
+    "firebase_qa_records_removed": 48,
+    "temporary_demo_session_removed": true,
+    "demo_qa_records_removed": 412,
+    "shared_catalogue_retained": true
+  }
+}
