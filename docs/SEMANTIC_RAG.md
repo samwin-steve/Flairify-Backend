@@ -4,7 +4,7 @@
 
 Firestore provides online catalogue RAG. It already holds Flairify's current catalogue and user state, supports native vector queries and avoids a second serving system or always-on vector infrastructure. Gemini Embedding 2 produces normalized 768-dimensional document and query embeddings through **Vertex AI**, using runtime Google service identities.
 
-BigQuery **WardrobeGraph** supplies a second, bounded retrieval signal: which semantically shortlisted products occur in distinct, previously checked whole outfits using the current confirmed wardrobe and occasion. A real property graph connects Customer → Owns → Garment ← Wears ← Outfit → Adds → Product. Firestore remains authoritative for stock, size and price. Graph counts influence tie-breaking and “most outfits” ranking; they never bypass full outfit validation. No relevance uplift is claimed without a labeled evaluation.
+BigQuery **WardrobeGraph** supplies a second, bounded retrieval signal: which semantically shortlisted products occur in distinct, previously checked whole outfits using the current confirmed wardrobe and occasion. A real property graph connects Customer → Owns → Garment ← Wears ← Outfit → Adds → Product. The online query uses the shorter Garment ← Wears ← Outfit → Adds → Product traversal with the owner bound on every node; the current wardrobe fingerprint establishes ownership validity. Firestore remains authoritative for stock, size and price. Graph counts influence tie-breaking and “most outfits” ranking; they never bypass full outfit validation. No relevance uplift is claimed without a labeled evaluation.
 
 The graph is populated by asynchronous `graph_sync` Cloud Tasks after checked outfits are saved. It stores IDs, wardrobe fingerprints, occasion and assessment provenance; no portraits, garment names or conversation text. Stable outfit signatures ensure repeated recommendations count once. Owner keys occur on all nodes and edges; queries bind the verified owner and current wardrobe fingerprint. Wardrobe edits immediately exclude stale evidence and queue projection cleanup. An empty snapshot deletes that customer's graph rows, even if the generation/query allowance is exhausted.
 
@@ -64,3 +64,5 @@ A per-user lease prevents concurrent turns from overwriting history. The stream 
 - [ADK run configuration and SSE streaming](https://google.github.io/adk-docs/runtime/runconfig/)
 
 Measured deployment results are recorded separately in `VERIFICATION.md`; semantic relevance uplift and graph ranking uplift require a labeled evaluation set and are not claimed.
+
+A live test of the longer Customer-to-Product traversal hit BigQuery internal error 80038528. The shorter two-edge traversal avoids that path. BigQuery SDK automatic job resubmission is explicitly disabled to keep error handling and cost bounds effective.

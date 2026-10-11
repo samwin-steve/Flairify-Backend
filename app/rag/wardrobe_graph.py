@@ -51,16 +51,24 @@ def coverage(owner, owned, product_ids, occasion):
     ]
     sql = f"""SELECT product_id, COUNT(DISTINCT outfit_id) AS distinct_outfits
       FROM GRAPH_TABLE (`{prefix()}.WardrobeGraph`
-        MATCH (u:Customer)-[:Owns]->(g:Garment)<-[:Wears]-(o:Outfit)-[:Adds]->(p:Product)
-        WHERE u.owner=@owner AND g.owner=@owner AND o.owner=@owner AND p.owner=@owner
+        MATCH (g:Garment)<-[:Wears]-(o:Outfit)-[:Adds]->(p:Product)
+        WHERE g.owner=@owner AND o.owner=@owner AND p.owner=@owner
           AND o.wardrobe_version=@revision AND o.occasion=@occasion AND o.complete AND o.score>=0.7
         RETURN p.id AS product_id, o.id AS outfit_id
       ) WHERE product_id IN UNNEST(@product_ids)
       GROUP BY product_id ORDER BY distinct_outfits DESC, product_id LIMIT 70"""
     try:
         quota("live-ai", "graph-query", settings().max_daily_graph_queries)
-        job = client().query(sql, job_config=query_config(parameters, "outfit-coverage"))
-        counts = {r.product_id: r.distinct_outfits for r in job.result(timeout=18)}
+        job = client().query(
+            sql,
+            job_config=query_config(parameters, "outfit-coverage"),
+            job_retry=None,
+            retry=None,
+            timeout=10,
+        )
+        counts = {
+            r.product_id: r.distinct_outfits for r in job.result(timeout=18, retry=None, job_retry=None)
+        }
         return {
             "status": "ready",
             "source": "BigQuery Graph",
@@ -132,8 +140,10 @@ def sync(owner):
         bigquery.ScalarQueryParameter("owner", "STRING", owner),
         bigquery.ScalarQueryParameter("rows", "STRING", json.dumps(rows)),
     ]
-    job = client().query(sql, job_config=query_config(params, "graph-sync"))
-    job.result(timeout=65)
+    job = client().query(
+        sql, job_config=query_config(params, "graph-sync"), job_retry=None, retry=None, timeout=10
+    )
+    job.result(timeout=65, retry=None, job_retry=None)
     store().put(
         "graph_status",
         owner,

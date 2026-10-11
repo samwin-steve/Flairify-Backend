@@ -31,17 +31,17 @@ def test_graph_query_is_parameterized_scoped_and_bounded(client, monkeypatch):
     captured = {}
 
     class Client:
-        def query(self, sql, job_config):
+        def query(self, sql, job_config, **kwargs):
             captured.update(sql=sql, config=job_config)
             return SimpleNamespace(
-                result=lambda timeout: [SimpleNamespace(product_id="jacket-a", distinct_outfits=2)],
+                result=lambda **kwargs: [SimpleNamespace(product_id="jacket-a", distinct_outfits=2)],
                 total_bytes_processed=240,
             )
 
     monkeypatch.setattr(wardrobe_graph, "client", lambda: Client())
     result = wardrobe_graph.coverage("customer-a", [], ["jacket-a"], "Work")
     assert result["counts"] == {"jacket-a": 2}
-    assert "GRAPH_TABLE" in captured["sql"] and "Customer" in captured["sql"] and "Wears" in captured["sql"]
+    assert "GRAPH_TABLE" in captured["sql"] and "Garment" in captured["sql"] and "Wears" in captured["sql"]
     assert "customer-a" not in captured["sql"]
     assert captured["config"].maximum_bytes_billed == 100_000_000
     params = {p.name: p.value for p in captured["config"].query_parameters if hasattr(p, "value")}
