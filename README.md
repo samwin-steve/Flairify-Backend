@@ -46,6 +46,7 @@ Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and d
 - [Deployment and operations](docs/DEPLOYMENT.md)
 - [Limitations and experimental boundaries](docs/LIMITATIONS.md)
 - [3D/AR license evaluation](docs/AVATAR_RESEARCH.md)
+- [Tests and deployment verification](docs/VERIFICATION.md)
 - [Costs and evaluation](docs/COSTS_AND_EVALUATION.md)
 - [Three-minute demo](docs/DEMO_SCRIPT.md)
 - [Submission explanation](docs/SUBMISSION.md)

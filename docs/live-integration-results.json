@@ -1,0 +1,30 @@
+{
+  "environment": "Deployed Cloud Run API + private Cloud Tasks worker",
+  "model": "gemini-3.8-flash",
+  "model_location": "global",
+  "fixture": "Licensed public editorial hero.jpg; not a real customer photo",
+  "upload_and_analysis_seconds": 10.67,
+  "wardrobe_job_status": "succeeded",
+  "detected_garments": 2,
+  "categories": [
+    "jacket",
+    "dress"
+  ],
+  "analysis": "gemini",
+  "chat_seconds": 7.41,
+  "chat_method": "Gemini intent + validated outfit rules",
+  "outfits": 1,
+  "totals": [
+    1890
+  ],
+  "assessment_sources": [
+    "gemini"
+  ],
+  "complete_outfits": true,
+  "budget_valid": true,
+  "stock_valid": true,
+  "other_user_media_status": 404,
+  "deleted_media_status": 404,
+  "collected_at": "2026-10-11T10:56:17.750079+00:00",
+  "limitations": "Single licensed public sample image, automated confirmation in QA, synthetic retailer catalogue; no detection-quality, fashion-usefulness or fit metric."
+}

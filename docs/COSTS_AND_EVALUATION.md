@@ -8,7 +8,7 @@ Limits reduce risk; they do not make a billing spending cap. Billing alerts requ
 
 ## Estimate worksheet
 
-No paid-model generation cost was measured in the demo. Fill in current regional pricing before publishing numeric estimates:
+No billed per-user unit cost has been measured. The illustrative estimate below uses published prices and explicit assumptions; collect provider usage and billing data before treating it as a measured cost:
 
 - Onboarding = selected photos × (Gemini input-image + output-token cost) + CPU processing seconds + Storage bytes/month + Firestore operations.
 - Indexing = changed products × (visual analysis + embedding tokens) + BigQuery scan bytes + write operations.
@@ -28,7 +28,7 @@ Primary pricing sources: [Vertex AI](https://cloud.google.com/vertex-ai/generati
 | Budget, stock and ownership | Exact server assertions against fixtures and changed stock | Automated tests cover totals, variants, unavailable items and owner IDs |
 | Preview preservation | Consenting users rate likeness, visible garment details and proportions | Not collected; customer acceptance required |
 | Video consistency | Frame-by-frame face/garment/proportion review and rejection rate | Not collected |
-| Latency | Actual timing with mode, model, region and workload | Local synthetic evaluation script records observed elapsed times |
+| Latency | Actual timing with mode, model, region and workload | Local synthetic timings plus one deployed upload/analysis observation (10.67s) and one signed-in chat (7.41s); see VERIFICATION.md |
 | Unit cost | Provider token/output counts plus Cloud Billing data | Not collected; symbolic worksheet above |
 
 Run `uv run python scripts/evaluate_demo.py` for a repeatable synthetic attribute/graph comparison. The output explicitly distinguishes validation correctness from fashion relevance and records actual timings. A shared top recommendation or tie is not an improvement.
