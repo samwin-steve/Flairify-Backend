@@ -77,3 +77,7 @@ API additions: `GET/POST /api/orders`, `POST /api/orders/quote`, `GET /api/order
 
 
 Select one or more pieces using the initially empty checkboxes on a stylist look, then click **See it on me** to generate directly. Conflicting slots resolve to the latest selection. Set **Keep my generated outfits in the same background** during onboarding or in Profile; unchecked requests a plain white background. See [integration details](docs/INTEGRATIONS.md#direct-multi-piece-previews-and-backgrounds) for selection validation, deletion and provider limits.
+
+## Semantic catalogue RAG and streamed ADK stylist
+
+See [SEMANTIC_RAG.md](docs/SEMANTIC_RAG.md) for the Gemini Embedding 2 / Firestore implementation, Google ADK modules, SSE contract, indexes, migration and explicit demo limitations.

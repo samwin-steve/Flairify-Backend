@@ -1,1 +1,95 @@
-{"indexes":[],"fieldOverrides":[{"collectionGroup":"flairify_media","fieldPath":"data","indexes":[]},{"collectionGroup":"flairify_conversations","fieldPath":"data","indexes":[]},{"collectionGroup":"flairify_jobs","fieldPath":"data","indexes":[]},{"collectionGroup":"flairify_search","fieldPath":"data.embedding","indexes":[]}]}
+{
+  "indexes": [
+    {
+      "collectionGroup": "flairify_vectors",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "owner",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "space",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "active",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "facets",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "price",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "flairify_vectors",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "owner",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "space",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "active",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "facets",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "price",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "embedding",
+          "vectorConfig": {
+            "dimension": 768,
+            "flat": {}
+          }
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "flairify_media",
+      "fieldPath": "data",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "flairify_conversations",
+      "fieldPath": "data",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "flairify_jobs",
+      "fieldPath": "data",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "flairify_search",
+      "fieldPath": "data.embedding",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "flairify_chat_turns",
+      "fieldPath": "data",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "flairify_vectors",
+      "fieldPath": "description",
+      "indexes": []
+    }
+  ]
+}

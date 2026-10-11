@@ -15,8 +15,8 @@ flowchart LR
   W --> FS
   W --> S
   W --> V[Vertex AI: configurable Gemini, VTO, Veo]
-  W -. optional projection .-> Q[(BigQuery)]
-  A -. bounded graph and search SQL .-> Q
+  W -->|Checked outfit projection| Q[(BigQuery WardrobeGraph)]
+  A -->|Prior whole-outfit coverage| Q
 ```
 
 ## Trust boundaries
@@ -48,7 +48,7 @@ The server reads confirmed garments, interprets intent, bounds candidates, filte
 
 Graph nodes include user, wardrobe garment, retail product, outfit, occasion, style, store and source photo. Edges include ownership, consented preferences, source evidence, candidate complement, outfit membership, occasion and availability. Assessments carry a score, reason, source/version, timestamp, occasion and optional feedback. Only shortlisted combinations are stored. Compatibility is a hypothesis; a pairwise edge is not a whole-outfit guarantee.
 
-Current serving graph is stored alongside application state. BigQuery schema, relational graph queries and parameterized product embedding projection are included. BigQuery Graph GQL requires Enterprise/Enterprise Plus reservations; this prototype uses ordinary SQL to avoid creating a reservation. BigQuery projections do not authorize media access or establish live stock. Personal graph projection is not automatically enabled; no unimplemented projection is advertised as active.
+Firestore serves semantic candidates using Gemini Embedding 2. The actual BigQuery WardrobeGraph traverses customer ownership, whole outfits and shortlisted products to supply prior outfit-coverage evidence. Cloud Tasks updates a compact owner-scoped projection, and parameterized graph queries bind the current wardrobe fingerprint. No reserved-slot capacity was provisioned. The graph does not authorize media access or establish current stock. See SEMANTIC_RAG.md for details.
 
 ## UI
 
@@ -67,3 +67,7 @@ Access requests store the account email obtained from a verified Firebase token.
 ### Garment image pipeline
 
 Authenticated upload → selected-person Gemini extraction → original garment crop and draft record → one `garment_image` Cloud Tasks job per garment → Vertex Gemini image editing → private generated media and model/version provenance. The crop remains the input to duplicate evidence and review; generated imagery changes only presentation. The frontend polls job state, displays AI labels and the original crop, and lets the owner delete the generated illustration independently. Ownership confirmation does not wait for image jobs. Source deletion cancels child image jobs and deletes associated storage.
+
+## Current recommendation request path
+
+The stylist now uses Google ADK, Gemini Embedding 2 and bounded Firestore vector retrieval. See [SEMANTIC_RAG.md](SEMANTIC_RAG.md) for the authoritative module map and data flow; Firestore serves online vectors; BigQuery WardrobeGraph now supplies prior whole-outfit coverage evidence and is updated by the private worker. Earlier generic BigQuery vector SQL remains optional scaffolding.

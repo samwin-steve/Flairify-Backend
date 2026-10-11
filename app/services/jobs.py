@@ -108,11 +108,35 @@ def process(owner, key):
                 if settings().worker_url:
                     enqueue(owner, key, delay=20)
                 return
+        elif kind == "graph_sync":
+            from ..rag.wardrobe_graph import sync
+
+            progress("Updating wardrobe outfit connections")
+            result = sync(owner)
         elif kind == "index":
             from .indexing import index_products
 
-            progress("Indexing catalogue")
-            result = index_products(job["payload"]["catalog_owner"], job["payload"]["product_ids"])
+            payload = job["payload"]
+            ids = payload["product_ids"]
+            cursor = payload.get("index_cursor", 0)
+            progress(f"Indexing catalogue: {cursor} of {len(ids)} processed")
+            chunk = index_products(payload["catalog_owner"], ids[cursor : cursor + 5])
+            cursor = min(cursor + 5, len(ids))
+            result = {**chunk, "requested": len(ids)}
+            for field in ("indexed", "embeddings_generated", "embeddings_reused"):
+                result[field] = payload.get("index_totals", {}).get(field, 0) + chunk[field]
+            if cursor < len(ids):
+                update(
+                    owner,
+                    key,
+                    status="queued",
+                    lease_until=0,
+                    attempts=0,
+                    stage=f"Indexing catalogue: {cursor} of {len(ids)} processed",
+                    payload={**payload, "index_cursor": cursor, "index_totals": result},
+                )
+                enqueue(owner, key)
+                return
         else:
             result = avatars.generate()
         # Cancellation can happen during a provider call: delete any returned media instead of publishing it.

@@ -3,11 +3,11 @@ import re
 
 from fastapi import HTTPException
 
-from ..config import settings
 from ..models import CompatibilityAssessment, Outfit, WardrobeItem
+from ..rag import wardrobe_graph
+from ..rag.retrieval import candidates
 from ..store import store
-from . import ai
-from .inventory import available, search
+from .inventory import available
 
 
 def get_confirmed_wardrobe(owner):
@@ -61,7 +61,7 @@ def assess_outfit_compatibility(owned, products, occasion):
     return min(score, 1), reason, complete
 
 
-def recommend(principal, request, previous):
+def recommend(principal, request, previous, *, interpreted=None):
     owner = principal.uid
     owned = get_confirmed_wardrobe(owner)
     if not owned:
@@ -73,18 +73,13 @@ def recommend(principal, request, previous):
         request.budget if request.budget is not None else profile.get("budget", 5000),
     )
     method = "rule-based"
-    note = None
-    if settings().ai_ready and not principal.demo:
-        try:
-            extracted = ai.interpret(request.message, previous)
-            if extracted["budget"] is None:
-                extracted["budget"] = intent["budget"]
-            intent.update(extracted)
-            method = "Gemini intent + validated outfit rules"
-        except Exception:
-            note = (
-                "The AI stylist is temporarily unavailable. These are clearly labeled rule-based suggestions."
-            )
+    if interpreted:
+        # The agent can refine the search/occasion; explicit UI and textual budget
+        # ceilings remain authoritative. Cheaper can lower, never raise, the ceiling.
+        ceiling = intent["budget"]
+        intent.update({k: v for k, v in interpreted.items() if v is not None})
+        intent["budget"] = max(0, min(ceiling, intent.get("budget", ceiling)))
+        method = "Google ADK + validated outfit rules"
     if request.budget is not None:
         intent["budget"] = request.budget
     size = request.clothing_size or profile.get("clothing_size", "")
@@ -102,7 +97,15 @@ def recommend(principal, request, previous):
     elif re.search(r"\b(men|men['’]?s|mens|male)\b", request.message.lower()):
         department = "men"
     intent["department"] = department
-    catalogue = search(principal.catalog_owner, intent["query"], intent["budget"])
+    catalogue, retrieval = candidates(
+        principal.catalog_owner,
+        intent["query"],
+        intent["budget"],
+        department=department,
+        store_id=request.store_id,
+        clothing_size=size,
+        shoe_size=shoe_size,
+    )
     locations = {s["id"]: s for s in store().list("stores", principal.catalog_owner)}
     eligible = []
     for product in catalogue:
@@ -113,6 +116,15 @@ def recommend(principal, request, previous):
         stock = next((option for option in options if option["store_id"] in locations), None)
         if stock:
             eligible.append({**product, "availability": stock, "store": locations[stock["store_id"]]})
+
+    graph_evidence = (
+        wardrobe_graph.coverage(owner, owned, [p["id"] for p in eligible], intent["occasion"])
+        if not principal.demo
+        else {"status": "demo", "counts": {}}
+    )
+    coverage_counts = graph_evidence["counts"]
+    if intent["jacket_coverage"]:
+        eligible.sort(key=lambda p: -coverage_counts.get(p["id"], 0))
 
     def shortlist(category, count=4):
         candidates = [p for p in eligible if p["category"] == category]
@@ -258,6 +270,7 @@ def recommend(principal, request, previous):
             if intent["jacket_coverage"]
             else 0,
             -o["assessment"]["score"],
+            -max((coverage_counts.get(p["id"], 0) for p in o["products"]), default=0),
             min(
                 (relevance_order[p["id"]] for p in o["products"] if p["category"] == requested_category),
                 default=0,
@@ -287,22 +300,22 @@ def recommend(principal, request, previous):
             if outfit["total"] > intent["budget"]:
                 continue
             outfit.pop("_signature", None)
+            outfit["wardrobe_version"] = wardrobe_graph.version(owned)
+            outfit["graph_evidence"] = {
+                **graph_evidence,
+                "counts": {p["id"]: coverage_counts[p["id"]] for p in current if p["id"] in coverage_counts},
+            }
             store().put("outfits", owner, outfit["id"], outfit)
             store().put("compatibility", owner, outfit["assessment"]["id"], outfit["assessment"])
             valid.append(outfit)
-    if settings().ai_ready and not principal.demo and valid:
-        try:
-            from .stylist_tools import assess_with_tools
-
-            valid = assess_with_tools(principal, valid)
-        except Exception:
-            note = "Whole-outfit AI assessment was unavailable; rule-based assessments are shown."
     from .graph import record_outfit
 
     for outfit in valid:
         record_outfit(owner, outfit)
         store().put("outfits", owner, outfit["id"], outfit)
         store().put("compatibility", owner, outfit["assessment"]["id"], outfit["assessment"])
+    if valid and not principal.demo:
+        wardrobe_graph.schedule(owner)
     intent["last_product_ids"] = [p["id"] for o in valid[:1] for p in o["products"]]
     intent["last_owned_ids"] = [w["id"] for o in valid[:1] for w in o["owned"]]
     if not valid:
@@ -338,6 +351,12 @@ def recommend(principal, request, previous):
             if "Mumbai" in intent["occasion"]
             else "Here are a few combinations to make your own."
         )
-    if note:
-        text = note + " " + text
-    return {"text": text, "outfits": valid, "intent": intent, "method": method, "coverage": counts}
+    return {
+        "text": text,
+        "outfits": valid,
+        "intent": intent,
+        "method": method,
+        "coverage": counts,
+        "retrieval": retrieval,
+        "graph": graph_evidence,
+    }

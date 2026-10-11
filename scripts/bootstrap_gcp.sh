@@ -38,3 +38,10 @@ if ! gcloud tasks queues describe flairify-jobs --location="$REGION" --project="
  gcloud tasks queues create flairify-jobs --location="$REGION" --project="$PROJECT" --max-concurrent-dispatches=2 --max-dispatches-per-second=1 --max-attempts=3 --min-backoff=10s --max-backoff=120s --quiet
 fi
 printf 'Flairify infrastructure ready in %s / %s\n' "$PROJECT" "$REGION"
+# Optional BigQuery Graph query jobs; dataset-level reader/writer grants are applied
+# by python -m scripts.configure_graph after provisioning the graph schema.
+if [[ "${ENABLE_BIGQUERY:-false}" == "true" ]]; then
+ for name in flairify-api flairify-worker; do
+  gcloud projects add-iam-policy-binding "$PROJECT" --member="serviceAccount:$name@$PROJECT.iam.gserviceaccount.com" --role=roles/bigquery.jobUser --condition=None --quiet >/dev/null
+ done
+fi

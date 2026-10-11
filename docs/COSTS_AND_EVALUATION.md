@@ -11,7 +11,7 @@ Limits reduce risk; they do not make a billing spending cap. Billing alerts requ
 No billed per-user unit cost has been measured. The illustrative estimate below uses published prices and explicit assumptions; collect provider usage and billing data before treating it as a measured cost:
 
 - Onboarding = selected photos × (Gemini input-image + output-token cost) + generated garment count × (Gemini image output + input cost, including retries) + CPU processing seconds + Storage bytes/month + Firestore operations.
-- Indexing = changed products × (visual analysis + embedding tokens) + BigQuery scan bytes + write operations.
+- Indexing = changed semantic text × embedding input tokens + Firestore vector/index writes. Stock/price-only updates reuse vectors. Online queries embed once and read at most 70 candidates. BigQuery Graph adds bounded graph query bytes and one snapshot MERGE after checked outfits. Default shared allowances: 1,500 embedding calls and 300 graph read/write attempts daily; required empty-snapshot deletion bypasses the graph quota.
 - Try-on = requested output images × selected model's image price + worker time + storage.
 - Motion = accepted previews × requested seconds × selected Veo output price + polling/storage.
 - Use actual billed currency/conversion, model, region, output resolution, duration and measured token counts. Keep original inputs as assumptions, not results.

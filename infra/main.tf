@@ -68,3 +68,50 @@ resource "google_billing_budget" "flairify" {
   threshold_rules { threshold_percent = 1.0 }
 }
 data "google_project" "project" { project_id = var.project_id }
+
+# 768 dimensions are explicitly requested from Gemini Embedding 2 (Firestore max 2048).
+resource "google_firestore_index" "catalog_vector" {
+  database = google_firestore_database.flairify.name
+  collection = "flairify_vectors"
+  query_scope = "COLLECTION"
+  fields { field_path = "owner"
+    order = "ASCENDING"
+  }
+  fields { field_path = "space"
+    order = "ASCENDING"
+  }
+  fields { field_path = "active"
+    order = "ASCENDING"
+  }
+  fields { field_path = "facets"
+    array_config = "CONTAINS"
+  }
+  fields { field_path = "price"
+    order = "ASCENDING"
+  }
+  fields { field_path = "embedding"
+    vector_config { dimension = 768
+      flat {}
+    }
+  }
+}
+resource "google_firestore_index" "catalog_affordable" {
+  database = google_firestore_database.flairify.name
+  collection = "flairify_vectors"
+  query_scope = "COLLECTION"
+  fields { field_path = "owner"
+    order = "ASCENDING"
+  }
+  fields { field_path = "space"
+    order = "ASCENDING"
+  }
+  fields { field_path = "active"
+    order = "ASCENDING"
+  }
+  fields { field_path = "facets"
+    array_config = "CONTAINS"
+  }
+  fields { field_path = "price"
+    order = "ASCENDING"
+  }
+}

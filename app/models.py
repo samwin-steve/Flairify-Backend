@@ -230,7 +230,7 @@ class JobStatus(StrEnum):
 
 class GenerationJob(Model):
     id: str = Field(default_factory=uid)
-    kind: Literal["wardrobe", "garment_image", "index", "try_on", "video", "avatar"]
+    kind: Literal["wardrobe", "garment_image", "index", "try_on", "video", "avatar", "graph_sync"]
     status: JobStatus = JobStatus.queued
     stage: str = "Queued"
     payload: dict = Field(default_factory=dict)
@@ -250,6 +250,7 @@ class SavedLook(Model):
 
 
 class ChatRequest(Model):
+    request_id: str | None = Field(default=None, min_length=8, max_length=100, pattern=r"^[\w-]+$")
     department: Literal["all", "women", "men", "unisex"] | None = None
     message: str = Field(min_length=1, max_length=2000)
     conversation_id: str | None = None

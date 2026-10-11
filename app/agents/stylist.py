@@ -1,0 +1,86 @@
+"""ADK Runner with actual Gemini streaming; no external model endpoints or agents."""
+
+import json
+import uuid
+
+from google.adk.agents import LlmAgent
+from google.adk.agents.run_config import RunConfig, StreamingMode
+from google.adk.models.google_llm import Gemini
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.genai import types
+
+from ..config import settings
+from ..prompts.stylist import STYLIST
+from ..services import ai
+from .tools import StylistTools
+
+
+async def run(principal, request, conversation, emit):
+    cfg = settings()
+    bound = StylistTools(principal, request, conversation.intent, emit)
+    # One isolated ADK execution per turn. Firestore conversation/intent is the
+    # durable source of history; no singleton in-memory state shared across users.
+    sessions = InMemorySessionService()
+    session = await sessions.create_session(
+        app_name="flairify", user_id=principal.uid, session_id=uuid.uuid4().hex
+    )
+    provider = ai.client(gemini=True, timeout=40000)
+    agent = LlmAgent(
+        name="flairify_stylist",
+        model=Gemini(model=cfg.gemini_model, client=provider),
+        instruction=STYLIST,
+        tools=[
+            bound.get_confirmed_wardrobe,
+            bound.find_outfit_candidates,
+            bound.get_product_details,
+            bound.check_variant_availability,
+        ],
+        generate_content_config=types.GenerateContentConfig(
+            temperature=1,
+            thinking_config=ai.thinking(),
+            max_output_tokens=2048,
+        ),
+    )
+    runner = Runner(app_name="flairify", agent=agent, session_service=sessions)
+    text = ""
+    # Model input is data, never concatenated into system/tool instructions.
+    context = json.dumps(
+        {
+            "previous_request": conversation.intent,
+            "recent_messages": [
+                {"role": m.role, "content": m.content[:2000]} for m in conversation.messages[-6:]
+            ],
+            "message": request.message,
+        },
+        ensure_ascii=False,
+    )
+    try:
+        async for event in runner.run_async(
+            user_id=principal.uid,
+            session_id=session.id,
+            new_message=types.Content(role="user", parts=[types.Part.from_text(text=context)]),
+            run_config=RunConfig(streaming_mode=StreamingMode.SSE, max_llm_calls=5),
+        ):
+            if not bound.result or not event.content or event.content.role != "model":
+                continue
+            chunk = "".join(p.text for p in event.content.parts or [] if p.text and not p.thought)
+            if event.partial and chunk:
+                text += chunk
+                await emit("text", {"delta": chunk})
+            elif event.is_final_response() and chunk and not text:
+                text = chunk
+                await emit("text", {"delta": chunk})
+        if bound.result is None:
+            # Never trust unsupported free-form claims when the model skipped retrieval.
+            await bound.find_outfit_candidates(
+                request.message, conversation.intent.get("occasion", "Everyday")
+            )
+        if not text:
+            text = bound.result["text"]
+            await emit("text", {"delta": text})
+        return {**bound.result, "text": text, "method": "Google ADK / Gemini + validated outfits"}
+    finally:
+        await runner.close()
+        await provider.aio.aclose()
+        provider.close()

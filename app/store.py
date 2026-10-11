@@ -70,6 +70,24 @@ class Store:
                 self.db.commit()
         return data
 
+    def put_many(self, records):
+        """Batch bounded graph writes without one network round trip per edge."""
+        unique = {(kind, owner, key): value for kind, owner, key, value in records}
+        if self.cloud:
+            entries = list(unique.items())
+            for start in range(0, len(entries), 400):
+                batch = self.db.batch()
+                for (kind, owner, key), value in entries[start : start + 400]:
+                    batch.set(self.ref(kind, owner, key), {"owner": owner, "id": key, "data": value})
+                batch.commit()
+        else:
+            with self.lock:
+                self.db.executemany(
+                    "INSERT OR REPLACE INTO records VALUES (?,?,?,?)",
+                    [(k, o, i, json.dumps(v)) for (k, o, i), v in unique.items()],
+                )
+                self.db.commit()
+
     def delete(self, kind, owner, key):
         if self.cloud:
             self.ref(kind, owner, key).delete()

@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,7 +16,10 @@ class Settings(BaseSettings):
     firestore_database: str = "(default)"
     media_bucket: str = ""
     gemini_model: str = ""
-    embedding_model: str = ""
+    embedding_model: str = "gemini-embedding-2"
+    embedding_location: str = "global"
+    embedding_dimensions: int = Field(default=768, ge=128, le=2048)
+    max_daily_embeddings: int = 1500
     try_on_model: str = ""
     image_edit_model: str = ""
     image_edit_location: str = "global"
@@ -31,6 +35,7 @@ class Settings(BaseSettings):
     tasks_queue: str = "flairify-jobs"
     bigquery_dataset: str = "flairify"
     enable_bigquery: bool = False
+    max_daily_graph_queries: int = 300
     cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
     max_upload_mb: int = 10
     max_photos_per_user: int = 30

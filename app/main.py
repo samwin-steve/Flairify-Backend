@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import math
 import secrets
@@ -6,6 +7,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from .auth import Principal, admin, bearer, create_demo_session, merchant, principal, quota, require_record
@@ -13,10 +15,8 @@ from .config import settings
 from .models import (
     Box,
     ChatRequest,
-    Conversation,
     GenerationRequest,
     ImportRequest,
-    Message,
     OrderQuoteRequest,
     PhotoSource,
     PlaceOrderRequest,
@@ -81,6 +81,11 @@ def config(credentials=Depends(bearer)):
         "mode": c.app_mode,
         "analysis": "gemini" if c.ai_ready and live else "manual",
         "chat": "gemini" if c.ai_ready and live else "rules",
+        "agent": "google-adk" if c.ai_ready and live else "demo-rules",
+        "retrieval": "firestore-vector / gemini-embedding-2"
+        if c.enable_paid_ai and live
+        else "demo-attribute-baseline",
+        "chat_streaming": True,
         "try_on": live and c.enable_paid_ai and bool(c.try_on_model or c.image_edit_model),
         "video": live and c.enable_paid_ai and bool(c.veo_model),
         "photos_client_id": c.google_photos_client_id,
@@ -197,15 +202,21 @@ def create_garment_image(key: str, p: Principal = Depends(principal)):
 def invalidate_looks(owner, item_id=None):
     from .services.graph import clear
 
-    clear(owner)
     for kind in ("outfits", "saved", "compatibility"):
         for row in store().list(kind, owner):
             store().delete(kind, owner, row["id"])
+    for turn in store().list("chat_turns", owner):
+        if turn.get("result"):
+            turn["result"]["outfits"] = []
+            for message in turn["result"].get("conversation", {}).get("messages", []):
+                message["outfits"] = []
+            store().put("chat_turns", owner, turn["id"], turn)
     # Historical prose may mention a deleted garment, but stale recommendation cards are removed.
     for c in store().list("conversations", owner):
         for m in c["messages"]:
             m["outfits"] = []
         store().put("conversations", owner, c["id"], c)
+    clear(owner)
 
 
 @app.delete("/api/wardrobe/{key}")
@@ -462,28 +473,27 @@ def conversations(p: Principal = Depends(principal)):
 
 
 @app.post("/api/chat")
-def chat(data: ChatRequest, p: Principal = Depends(principal)):
-    profile = store().get("profiles", p.uid, "me") or {}
-    if not profile.get("onboarding_complete"):
-        raise HTTPException(409, "Complete your wardrobe review before your first chat")
-    quota(p.uid, "chat", 50)
-    if not p.demo and settings().ai_ready:
-        quota("live-ai", "chat", 50)
-    if data.conversation_id:
-        convo = Conversation.model_validate(require_record("conversations", p.uid, data.conversation_id))
-    else:
-        convo = Conversation(title=data.message[:60])
-    if len(convo.messages) > 100:
-        raise HTTPException(409, "Start a new conversation to continue")
-    result = recommendations.recommend(p, data, convo.intent)
-    convo.messages += [
-        Message(role="user", content=data.message),
-        Message(role="assistant", content=result["text"], outfits=result["outfits"]),
-    ]
-    convo.intent = result["intent"]
-    convo.updated_at = now()
-    store().put("conversations", p.uid, convo.id, convo.model_dump(mode="json"))
-    return {**result, "conversation": convo.model_dump(mode="json")}
+async def chat(data: ChatRequest, p: Principal = Depends(principal)):
+    from .services import chat as service
+
+    turn = await asyncio.to_thread(service.prepare, p, data)
+
+    async def discard(event, payload):
+        pass
+
+    return await service.execute(p, data, turn, discard)
+
+
+@app.post("/api/chat/stream")
+async def chat_stream(data: ChatRequest, p: Principal = Depends(principal)):
+    from .services import chat as service
+
+    turn = await asyncio.to_thread(service.prepare, p, data)
+    return StreamingResponse(
+        service.stream(p, data, turn),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
+    )
 
 
 @app.get("/api/saved")
