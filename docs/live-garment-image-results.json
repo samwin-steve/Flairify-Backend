@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-11T12:20:39.388Z",
+  "fixture": "Licensed public hero.jpg; not a customer photo",
+  "checks": {
+    "generated_images_separate_from_evidence": true,
+    "original_and_generated_load": true,
+    "mobile_no_horizontal_overflow": true,
+    "refresh_persists": true,
+    "cross_user_denied": true,
+    "delete_generated_preserves_original": true,
+    "source_deletes_all_garment_media": true
+  },
+  "detected_garments": 2,
+  "model": "gemini-3.1-flash-image",
+  "jobs": [
+    {
+      "kind": "garment_image",
+      "status": "succeeded",
+      "created_at": "2026-10-11T12:18:46.881186+00:00",
+      "updated_at": "2026-10-11T12:18:57.007202+00:00",
+      "elapsed_seconds": 10.126
+    },
+    {
+      "kind": "garment_image",
+      "status": "succeeded",
+      "created_at": "2026-10-11T12:18:46.342227+00:00",
+      "updated_at": "2026-10-11T12:18:58.307777+00:00",
+      "elapsed_seconds": 11.965
+    },
+    {
+      "kind": "wardrobe",
+      "status": "succeeded",
+      "created_at": "2026-10-11T12:18:41.238906+00:00",
+      "updated_at": "2026-10-11T12:18:47.173192+00:00",
+      "elapsed_seconds": 5.935
+    }
+  ],
+  "generated_bytes": 66588,
+  "axe_violations": []
+}

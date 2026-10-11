@@ -2,7 +2,7 @@
 
 ## Automated checks collected
 
-- Backend: 39 Pytest cases pass. Tests cover the confirmed-wardrobe gate, budget/size/current stock, owner isolation, media deletion, direct upload validation, consent, follow-up continuity, admin imports/indexing, unavailable generation, job deduplication, Firebase token verification, Photos Picker contract mocks and AI output validation. Regression cases also cover automatically extracting a full-body upload, reusing wardrobe photos for previews, available variants, consent, Google image requests, source deletion and regeneration.
+- Backend: 44 Pytest cases pass. Tests cover the confirmed-wardrobe gate, budget/size/current stock, owner isolation, media deletion, direct upload validation, consent, follow-up continuity, admin imports/indexing, unavailable generation, job deduplication, Firebase token verification, Photos Picker contract mocks and AI output validation. Regression cases also cover automatically extracting a full-body upload, reusing wardrobe photos for previews, available variants, consent, Google image requests, source deletion and regeneration.
 - New backend cases cover seller ownership, access approval/revocation, protected product photos, indexing, requested seller products in complete outfits, mock-order persistence/idempotency, combined quantities, price/stock rechecks, customer/seller isolation, and historical order photos after a listing update.
 - Frontend: four Vitest logic tests, TypeScript checks and a Next.js production build pass. Cloud Build runs these checks before deploying.
 - Playwright: twelve journeys pass locally using desktop Chromium and emulated Pixel 7 viewports. They include direct mock checkout before wardrobe onboarding, seller photo/listing/stock editing, automatic discovery, order inbox/history and checkout from a stylist look. Existing checks cover sample onboarding before first chat, the Mumbai budget, saving, sign-in-required generation and inventory search, direct upload/manual review, wardrobe persistence, loaded sample GLB, no horizontal overflow, keyboard focus and Axe WCAG A/AA checks on the landing and stylist screens.
@@ -52,3 +52,21 @@ Release evidence:
 | Worker | `b1a4c54` | same backend build | `flairify-worker-00020-5mm` |
 
 Later frontend changes only add the browser-test initialization wait; they do not change runtime source. Both repository main-push triggers remain enabled. The intended real owner's sign-in email was not supplied during this verification, so no real account was granted owner access by assumption.
+
+## Shop-style garment images
+
+On 11 October 2026, a fresh signed-in QA upload of the licensed public `hero.jpg` fixture created two draft garment crops and two real **Gemini 3.1 Flash Image** shop-style images through the deployed Cloud Tasks worker. Both image jobs succeeded. Stored job timestamps record **5.935 seconds** for extraction and **10.126 / 11.965 seconds** from each image job's creation to completion, including queue time. These are single-fixture observations, not latency percentiles or quality measurements.
+
+The deployed review dialog loaded both the generated illustration and original crop. Desktop and 393px mobile screenshots were visually inspected; mobile had no horizontal overflow. The desktop review dialog had no Axe WCAG A/AA violations. Refresh persistence, cross-user image denial (404), deleting only the generated image while retaining the crop, and deleting the source with all garment media passed. The browser check resumed using the same temporary account after fixing test-runner setup and a navigation selector; no extra image generation was needed.
+
+The five new backend tests cover private image provenance, unchanged original evidence and attributes, idempotent reuse, preserving user edits, failed image generation without blocking ownership review, retry, consent at execution, cancellation during generation, and deletion. Existing try-on tests now also account for the automatic garment-image request. TypeScript, four Vitest tests and the production frontend build passed. Both Cloud Build pipelines passed their checks and deployed successfully.
+
+| Service | Runtime source | Cloud Build | Ready revision |
+| --- | --- | --- | --- |
+| Frontend | `f7519b2` | `c889f902-682c-49ba-82c8-10a66d046cd6` | `flairify-web-00009-x4h` |
+| API | `34c4f36` | `e7464102-dd90-4309-9944-13e8d647c617` | `flairify-api-00012-jmd` |
+| Worker | `34c4f36` | same backend build | `flairify-worker-00024-rqt` |
+
+The temporary Firebase QA account, test demo session and owner-scoped records were removed after verification; no residual QA media remained.
+
+See [collected live checks](live-garment-image-results.json). Generated images can complete hidden garment details incorrectly; they do not replace original evidence. No numerical garment-preservation quality or billed-cost result is claimed.

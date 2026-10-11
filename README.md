@@ -53,7 +53,7 @@ Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and d
 
 All retailer fixtures are synthetic. Inventory offers ten sample products, nine currently in sample stock. Four photographed clothing items support illustrative 2D previews through Gemini image editing; unsupported accessories/illustrations are disabled. Downloaded photographs are licensed and credited in `fixtures/image-credits.json` and the frontend's `public/image-credits.json`. These are not verified retailer products. Google virtual try-on remains a separate adapter for verified retailer imagery.
 
-With photo-processing consent, a full-body upload automatically queues Gemini garment extraction and becomes a usable private preview reference. Wardrobe uploads start extraction after explicit person selection. Detections remain drafts until ownership is confirmed. Try-on can start directly from Inventory using a reference or existing wardrobe photo; completed previews show source and generated images, and support download, regeneration and deletion.
+With photo-processing consent, a full-body upload automatically queues Gemini garment extraction and becomes a usable private preview reference. Wardrobe uploads start extraction after explicit person selection. Detections remain drafts until ownership is confirmed. Each detected garment also queues a private Gemini shop-style image, with the original evidence crop retained, AI labeling, retry and an original-only option. Image failure does not block wardrobe review. Try-on can start directly from Inventory using a reference or existing wardrobe photo; completed previews show source and generated images, and support download, regeneration and deletion.
 
 ## Seller Studio and mock orders
 
