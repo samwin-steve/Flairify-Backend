@@ -59,3 +59,35 @@ def test_stream_cannot_read_other_users_conversation(client, onboarded):
         json={"message": "read it", "conversation_id": result["conversation"]["id"]},
     )
     assert response.status_code == 404
+
+
+def test_google_capacity_error_is_clear_private_and_retryable(client, onboarded, monkeypatch):
+    from google.genai.errors import ClientError
+
+    data, headers = onboarded
+    original = recommendations.recommend
+
+    def busy(*args, **kwargs):
+        try:
+            raise ClientError(429, {"error": {"message": "private provider input"}})
+        except ClientError as cause:
+            raise RuntimeError("ADK wrapper") from cause
+
+    monkeypatch.setattr(recommendations, "recommend", busy)
+    payload = {"message": "work", "request_id": "capacity-retry-1"}
+    emitted = events(client.post("/api/chat/stream", headers=headers, json=payload))
+    assert emitted[-1][0] == "error"
+    assert "Google's AI service is busy" in emitted[-1][1]["message"]
+    assert "private provider input" not in str(emitted)
+    assert store().list("conversations", data["user_id"]) == []
+    monkeypatch.setattr(recommendations, "recommend", original)
+    assert events(client.post("/api/chat/stream", headers=headers, json=payload))[-1][0] == "done"
+
+
+def test_timeout_error_and_exception_cycles_are_safe():
+    from app.utils.errors import chat_failure
+
+    assert "took too long" in chat_failure(TimeoutError("private input"))
+    error = RuntimeError("private input")
+    error.__cause__ = error
+    assert "private input" not in chat_failure(error)

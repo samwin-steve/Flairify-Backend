@@ -3,6 +3,7 @@
 import asyncio
 import hashlib
 import json
+import logging
 import secrets
 import time
 
@@ -12,6 +13,7 @@ from ..auth import quota, require_record
 from ..config import settings
 from ..models import Conversation, Message, now
 from ..store import store
+from ..utils.errors import chat_failure
 from ..utils.events import sse
 from . import recommendations
 
@@ -155,12 +157,9 @@ async def stream(principal, request, turn):
             async with asyncio.timeout(105):
                 await execute(principal, request, turn, emit)
         except Exception as exc:  # noqa: BLE001 - SSE must emit an honest terminal error
-            detail = (
-                exc.detail
-                if isinstance(exc, HTTPException)
-                else "The stylist was interrupted. Retry your message or reopen the conversation to check for a completed answer."
-            )
-            await emit("error", {"message": detail})
+            # Type only: raw provider exceptions may include user/model content.
+            logging.getLogger(__name__).warning("Stylist stream failed (%s)", type(exc).__name__)
+            await emit("error", {"message": chat_failure(exc)})
         finally:
             await queue.put(None)
 
