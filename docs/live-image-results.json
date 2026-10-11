@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-11T11:17:10.179Z",
+  "provider": "Google Vertex AI",
+  "fixture": "Licensed public hero.jpg, not a customer photo",
+  "checks": {
+    "upload_automatically_queued_analysis": true,
+    "inventory_available_items": 9,
+    "try_on_dialog_accessibility": true,
+    "existing_uploaded_photo_visible": true,
+    "real_generated_result": true,
+    "download": true,
+    "refresh_resumes_result": true,
+    "mobile_no_overflow": true,
+    "cross_user_media_denied": true,
+    "preview_deletion": true,
+    "source_and_garment_deletion": true
+  },
+  "analysis_ms": 8838,
+  "detected_garments": [
+    {
+      "name": "blazer",
+      "category": "jacket"
+    },
+    {
+      "name": "dress",
+      "category": "dress"
+    }
+  ],
+  "generation_ms": 14519,
+  "model": "gemini-3.1-flash-image",
+  "generated_bytes": 1390426,
+  "environment": "Deployed Next.js UI, Firebase Authentication, Cloud Run API, Cloud Tasks and private worker",
+  "limitations": "One licensed public photo and one sample shirt. Timings are individual observations, not percentiles. No measured likeness, garment-preservation, detection accuracy or physical-fit score.",
+  "builds": {
+    "backend": "46d581d7-7b66-4242-82fc-6995101127c5",
+    "frontend": "7ceffaba-7098-4182-9c1b-8fc8643cd982"
+  }
+}

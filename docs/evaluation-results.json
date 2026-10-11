@@ -1,12 +1,12 @@
 {
-  "collected_at": "2026-10-11T10:49:09Z",
+  "collected_at": "2026-10-11T11:10:10Z",
   "environment": "local synthetic fixtures; no AI calls",
   "results": [
     {
       "method": "attribute",
       "query": "Mumbai work trip under \u20b95,000",
       "outfits": 3,
-      "latency_ms": 6.9,
+      "latency_ms": 7.74,
       "budget_valid": true,
       "stock_valid": true,
       "ownership_valid": true,
@@ -26,7 +26,7 @@
       "method": "coverage",
       "query": "Which jacket under \u20b95,000 works with the most distinct outfits?",
       "outfits": 3,
-      "latency_ms": 6.7,
+      "latency_ms": 7.15,
       "budget_valid": true,
       "stock_valid": true,
       "ownership_valid": true,
