@@ -48,3 +48,32 @@ def test_anonymous_demo_never_calls_live_analysis(client, session, monkeypatch):
     item = client.get("/api/wardrobe", headers=headers).json()["items"][0]
     assert item["category"] == "unknown"
     assert client.get("/api/config", headers=headers).json()["analysis"] == "manual"
+
+
+def test_seller_role_is_read_from_server_and_revocation_takes_effect(client, monkeypatch):
+    import firebase_admin
+    from firebase_admin import auth
+    from app.store import store
+
+    monkeypatch.setenv("ALLOW_FIREBASE_IN_DEMO", "true")
+    settings.cache_clear()
+    monkeypatch.setattr(firebase_admin, "_apps", {"test": object()})
+    monkeypatch.setattr(
+        auth,
+        "verify_id_token",
+        lambda *a, **k: {
+            "uid": "role-user",
+            "email": "seller@example.invalid",
+            "firebase": {"sign_in_provider": "password"},
+        },
+    )
+    h = {"Authorization": "Bearer verified-test-token"}
+    assert client.get("/api/admin/catalog", headers=h).status_code == 403
+    assert client.put("/api/profile", headers=h, json={"seller": True}).status_code == 422
+    store().put("seller_access", "system", "role-user", {"role": "seller"})
+    assert client.get("/api/admin/catalog", headers=h).status_code == 200
+    assert client.get("/api/profile", headers=h).json()["seller"] is True
+    store().put("seller_access", "system", "role-user", {"role": "revoked"})
+    assert client.get("/api/admin/catalog", headers=h).status_code == 403
+    store().put("seller_access", "system", "role-user", {"role": "owner"})
+    assert client.get("/api/admin/seller-requests", headers=h).status_code == 200

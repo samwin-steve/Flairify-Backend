@@ -1,9 +1,10 @@
 import pytest
 from fastapi.testclient import TestClient
+
 from app.config import settings
-from app.store import store
-from app.services import jobs
 from app.main import app
+from app.services import jobs
+from app.store import store
 
 
 @pytest.fixture
@@ -37,6 +38,7 @@ def onboarded(client, session):
     profile = client.get("/api/profile", headers=headers).json()
     profile.pop("admin")
     profile.pop("demo")
+    profile.pop("seller")
     profile.update(
         name="Asha",
         clothing_size="M",

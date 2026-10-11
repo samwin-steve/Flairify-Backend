@@ -1,10 +1,12 @@
 """Identity-bound 2D previews using Google models on Vertex AI only."""
 
 from pathlib import Path
+
 from google.genai import types
+
 from ..config import settings
 from ..store import store
-from . import media, ai, inventory
+from . import ai, inventory, media
 
 
 class CapabilityUnavailable(Exception):
@@ -15,6 +17,8 @@ CLOTHING = {"top", "bottom", "dress", "jacket"}
 
 
 def supports(product):
+    if not product.get("active", True):
+        return False
     if product["category"] not in CLOTHING:
         return False
     if product["image"].startswith("media:"):

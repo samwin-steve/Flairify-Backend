@@ -1,8 +1,10 @@
 import io
 import json
+
 from PIL import Image
-from app.store import store
+
 from app.services import inventory
+from app.store import store
 
 
 def image_bytes():
@@ -208,6 +210,7 @@ def test_consent_and_saved_invalidation(client, onboarded):
     profile = client.get("/api/profile", headers=h).json()
     profile.pop("admin")
     profile.pop("demo")
+    profile.pop("seller")
     profile["consent"]["remember_preferences"] = False
     client.put("/api/profile", headers=h, json=profile)
     result = client.get("/api/profile", headers=h).json()

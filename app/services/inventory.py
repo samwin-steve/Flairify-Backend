@@ -3,7 +3,9 @@ import hashlib
 import io
 import json
 from pathlib import Path
+
 from fastapi import HTTPException
+
 from ..models import Product, Store, WardrobeItem
 from ..store import store
 
@@ -28,6 +30,8 @@ def seed_wardrobe(owner):
 
 
 def available(product, size, store_id=None):
+    if not product or not product.get("active", True):
+        return []
     choices = []
     for variant in product["variants"]:
         if size and variant["size"].casefold() != size.casefold() and variant["size"] != "One size":
@@ -52,7 +56,10 @@ def search(owner, q="", budget=1000000, category=None):
     records = [
         p
         for p in store().list("products", owner)
-        if p["indexed"] and p["price"] <= budget and (not category or p["category"] == category)
+        if p["indexed"]
+        and p.get("active", True)
+        and p["price"] <= budget
+        and (not category or p["category"] == category)
     ]
 
     def score(p):

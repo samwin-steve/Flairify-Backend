@@ -1,7 +1,8 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Literal
 from uuid import uuid4
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
@@ -10,7 +11,7 @@ def uid():
 
 
 def now():
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class Model(BaseModel):
@@ -131,6 +132,16 @@ class Product(Model):
     indexed: bool = False
     updated_at: str = Field(default_factory=now)
     content_hash: str = ""
+    seller_id: str | None = None
+    active: bool = True
+
+    @model_validator(mode="after")
+    def unique_variants(self):
+        if len({v.id for v in self.variants}) != len(self.variants):
+            raise ValueError("Variant IDs must be unique")
+        if any(len({s.store_id for s in v.stock}) != len(v.stock) for v in self.variants):
+            raise ValueError("Each variant can have only one stock record per store")
+        return self
 
     @field_validator("image")
     @classmethod
@@ -156,6 +167,7 @@ class Store(Model):
     latitude: float | None = Field(default=None, ge=-90, le=90)
     longitude: float | None = Field(default=None, ge=-180, le=180)
     sample: bool = False
+    seller_id: str | None = None
 
 
 class CompatibilityAssessment(Model):
@@ -253,3 +265,22 @@ class GenerationRequest(Model):
     layering: bool = True
     accepted_preview: bool = False
     request_key: str = Field(min_length=8, max_length=100)
+
+
+class OrderLineRequest(Model):
+    product_id: str = Field(min_length=1, max_length=100)
+    variant_id: str = Field(min_length=1, max_length=100)
+    store_id: str = Field(min_length=1, max_length=100)
+    quantity: int = Field(ge=1, le=10, strict=True)
+
+
+class OrderQuoteRequest(Model):
+    items: list[OrderLineRequest] = Field(min_length=1, max_length=20)
+    source: Literal["inventory", "stylist"] = "inventory"
+    outfit_id: str | None = None
+
+
+class PlaceOrderRequest(OrderQuoteRequest):
+    request_key: str = Field(min_length=8, max_length=100)
+    expected_total: int = Field(ge=0, le=2000000000, strict=True)
+    acknowledge_mock: Literal[True]

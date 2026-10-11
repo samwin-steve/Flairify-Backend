@@ -1,32 +1,35 @@
 import hashlib
-import json
 import math
 import secrets
 import time
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Header, Response
+
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+
+from .auth import Principal, admin, bearer, create_demo_session, merchant, principal, quota, require_record
 from .config import settings
-from .store import store
-from .auth import Principal, principal, admin, create_demo_session, require_record, quota, bearer
 from .models import (
-    UserProfile,
-    PhotoSource,
-    ReferencePhoto,
     Box,
-    WardrobeItem,
-    ImportRequest,
     ChatRequest,
     Conversation,
-    Message,
     GenerationRequest,
-    SavedLook,
+    ImportRequest,
+    Message,
+    OrderQuoteRequest,
+    PhotoSource,
+    PlaceOrderRequest,
     Product,
+    ReferencePhoto,
+    SavedLook,
     Store,
+    UserProfile,
+    WardrobeItem,
     now,
 )
-from .services import inventory, recommendations, jobs, media, photos, avatars, try_on
+from .services import avatars, inventory, jobs, media, orders, photos, recommendations, sellers, try_on
+from .store import store
 
 
 @asynccontextmanager
@@ -110,7 +113,7 @@ def get_profile(p: Principal = Depends(principal)):
     if not p.demo and settings().seed_sample_catalog:
         inventory.seed_catalog(p.catalog_owner)
     value = store().get("profiles", p.uid, "me") or UserProfile().model_dump()
-    return {**value, "admin": p.admin, "demo": p.demo}
+    return {**value, "admin": p.admin, "demo": p.demo, "seller": p.seller}
 
 
 @app.put("/api/profile")
@@ -331,7 +334,11 @@ def get_media(key: str, p: Principal = Depends(principal)):
 
 @app.get("/api/catalog/media/{key}")
 def product_media(key: str, p: Principal = Depends(principal)):
-    if not any(v["image"] == "media:" + key for v in store().list("products", p.catalog_owner)):
+    uploaded = store().get("media", p.catalog_owner, key) or {}
+    own_upload = (p.admin or p.seller) and uploaded.get("uploader_id") == p.uid
+    if not own_upload and not any(
+        v["image"] == "media:" + key for v in store().list("products", p.catalog_owner)
+    ):
         raise HTTPException(404, "Product image not found")
     raw, mime = media.read(p.catalog_owner, key)
     return Response(raw, media_type=mime, headers={"Cache-Control": "private, no-store"})
@@ -569,23 +576,73 @@ def picker_delete(key: str, p: Principal = Depends(principal), x_photos_token: s
     return {"deleted": True}
 
 
-@app.get("/api/admin/catalog")
-def admin_catalog(p: Principal = Depends(admin)):
+@app.get("/api/seller-access")
+def seller_access(p: Principal = Depends(principal)):
     return {
-        "products": store().list("products", p.catalog_owner),
+        "approved": p.admin or p.seller,
+        "request": store().get("seller_requests", p.catalog_owner, p.uid),
+    }
+
+
+@app.post("/api/seller-access/request")
+def request_seller(p: Principal = Depends(principal)):
+    if p.demo:
+        raise HTTPException(403, "Sign in with Google or email to request seller access")
+    if p.admin or p.seller:
+        return {"status": "approved"}
+    quota(p.uid, "seller-access", 5)
+
+    def update(old):
+        if old and old.get("status") == "pending":
+            return old
+        return {"id": p.uid, "email": p.email, "status": "pending", "created_at": now()}
+
+    return store().mutate("seller_requests", p.catalog_owner, p.uid, update)
+
+
+@app.get("/api/admin/seller-requests")
+def seller_requests(p: Principal = Depends(admin)):
+    return {"requests": store().list("seller_requests", p.catalog_owner)}
+
+
+@app.post("/api/admin/seller-requests/{key}/{decision}")
+def approve_seller(key: str, decision: str, p: Principal = Depends(admin)):
+    if p.demo or decision not in ("approve", "revoke"):
+        raise HTTPException(403, "Only the account owner can approve or revoke signed-in sellers")
+    row = require_record("seller_requests", p.catalog_owner, key)
+
+    def update(old):
+        if old and old.get("role") == "owner":
+            raise HTTPException(409, "Owner access is managed outside the seller workspace")
+        return {
+            "id": key,
+            "role": "seller" if decision == "approve" else "revoked",
+            "updated_at": now(),
+            "approved_by": p.uid,
+        }
+
+    store().mutate("seller_access", "system", key, update)
+    row.update(status="approved" if decision == "approve" else "revoked", updated_at=now())
+    return store().put("seller_requests", p.catalog_owner, key, row)
+
+
+@app.get("/api/admin/catalog")
+def admin_catalog(p: Principal = Depends(merchant)):
+    return {
+        "products": [r for r in store().list("products", p.catalog_owner) if sellers.can_manage(p, r)],
         "stores": store().list("stores", p.catalog_owner),
+        "editable_store_ids": [
+            r["id"] for r in store().list("stores", p.catalog_owner) if sellers.can_manage(p, r)
+        ],
     }
 
 
 @app.post("/api/admin/import")
-async def import_catalog(file: UploadFile = File(...), p: Principal = Depends(admin)):
+async def import_catalog(file: UploadFile = File(...), p: Principal = Depends(merchant)):
+    quota(p.uid, "catalog-import", 20)
     records = inventory.parse_import(await file.read(2 * 1024 * 1024 + 1), file.filename or "catalogue.json")
+    records = [sellers.prepare_product(p, product) for product in records]
     keys = []
-    for product in records:
-        product.sample = product.sample or p.demo
-        product.indexed = False
-        product.updated_at = now()
-        validate_product(product, p)
     for product in records:
         old = store().get("products", p.catalog_owner, product.id)
         if old and inventory.product_hash(old) == inventory.product_hash(product.model_dump()):
@@ -597,60 +654,114 @@ async def import_catalog(file: UploadFile = File(...), p: Principal = Depends(ad
     )
 
 
-def validate_product(product, p):
-    known = {s["id"] for s in store().list("stores", p.catalog_owner)}
-    if any(s.store_id not in known for v in product.variants for s in v.stock):
-        raise HTTPException(422, "Every stock record must reference a known store")
-    if product.image.startswith("media:"):
-        require_record("media", p.catalog_owner, product.image[6:])
+@app.post("/api/admin/products")
+def add_product(product: Product, p: Principal = Depends(merchant)):
+    quota(p.uid, "catalog-write", 100)
+    product = sellers.prepare_product(p, product)
+
+    def create(old):
+        if old:
+            raise HTTPException(409, "This product ID already exists. Edit the existing listing instead.")
+        return product.model_dump()
+
+    store().mutate("products", p.catalog_owner, product.id, create)
+    return jobs.create(
+        p.uid, "index", {"catalog_owner": p.catalog_owner, "product_ids": [product.id]}, secrets.token_hex(16)
+    )
 
 
 @app.put("/api/admin/products/{key}")
-def edit_product(key: str, product: Product, p: Principal = Depends(admin)):
-    product.id = key
-    product.sample = product.sample or p.demo
-    product.indexed = False
-    product.updated_at = now()
-    validate_product(product, p)
-    store().put("products", p.catalog_owner, key, product.model_dump())
+def edit_product(key: str, product: Product, p: Principal = Depends(merchant)):
+    if key != product.id:
+        raise HTTPException(422, "Product ID must match the listing being edited")
+    quota(p.uid, "catalog-write", 100)
+    product = sellers.prepare_product(p, product)
+
+    def update(old):
+        if old and not sellers.can_manage(p, old):
+            raise HTTPException(403, "You can edit only your own products")
+        return product.model_dump()
+
+    store().mutate("products", p.catalog_owner, key, update)
     return jobs.create(
         p.uid, "index", {"catalog_owner": p.catalog_owner, "product_ids": [key]}, secrets.token_hex(16)
     )
 
 
 @app.post("/api/admin/reindex")
-def reindex(p: Principal = Depends(admin)):
+def reindex(p: Principal = Depends(merchant)):
+    quota(p.uid, "catalog-reindex", 10)
     return jobs.create(
         p.uid,
         "index",
         {
             "catalog_owner": p.catalog_owner,
-            "product_ids": [r["id"] for r in store().list("products", p.catalog_owner)],
+            "product_ids": [
+                r["id"] for r in store().list("products", p.catalog_owner) if sellers.can_manage(p, r)
+            ],
         },
         secrets.token_hex(16),
     )
 
 
 @app.put("/api/admin/stores/{key}")
-def edit_store(key: str, data: Store, p: Principal = Depends(admin)):
-    data.id = key
-    data.sample = p.demo
-    return store().put("stores", p.catalog_owner, key, data.model_dump())
+def edit_store(key: str, data: Store, p: Principal = Depends(merchant)):
+    if key != data.id:
+        raise HTTPException(422, "Store ID must match")
+    quota(p.uid, "store-write", 50)
+    return sellers.manage_store(p, data)
 
 
 @app.post("/api/admin/images")
-async def upload_product_image(file: UploadFile = File(...), p: Principal = Depends(admin)):
+async def upload_product_image(file: UploadFile = File(...), p: Principal = Depends(merchant)):
+    quota(p.uid, "product-images", 50)
     raw, _ = media.normalize(await file.read(settings().max_upload_mb * 1024 * 1024 + 1))
-    return {"image": "media:" + media.save(p.catalog_owner, raw)}
+    key = media.save(p.catalog_owner, raw)
+    record = require_record("media", p.catalog_owner, key)
+    record["uploader_id"] = p.uid
+    store().put("media", p.catalog_owner, key, record)
+    return {"image": "media:" + key}
 
 
 @app.get("/api/admin/sample-import")
-def sample_import(p: Principal = Depends(admin)):
+def sample_import(p: Principal = Depends(merchant)):
     return Response(
         (inventory.FIXTURES / "catalogue.json").read_bytes(),
         media_type="application/json",
         headers={"Content-Disposition": 'attachment; filename="flairify-sample-catalogue.json"'},
     )
+
+
+@app.post("/api/orders/quote")
+def order_quote(data: OrderQuoteRequest, p: Principal = Depends(principal)):
+    return orders.quote(p, data)
+
+
+@app.post("/api/orders")
+def place_order(data: PlaceOrderRequest, p: Principal = Depends(principal)):
+    return orders.place(p, data)
+
+
+@app.get("/api/orders")
+def order_history(p: Principal = Depends(principal)):
+    return {
+        "orders": sorted(
+            [orders.public(r) for r in store().list("orders", p.uid)],
+            key=lambda r: r["created_at"],
+            reverse=True,
+        )
+    }
+
+
+@app.get("/api/orders/{key}")
+def order_detail(key: str, p: Principal = Depends(principal)):
+    return orders.public(require_record("orders", p.uid, key))
+
+
+@app.get("/api/admin/orders")
+def seller_orders(p: Principal = Depends(merchant)):
+    rows = store().list("order_inbox", p.catalog_owner) if p.admin else store().list("seller_orders", p.uid)
+    return {"orders": sorted(rows, key=lambda r: r["created_at"], reverse=True)}
 
 
 @app.get("/api/compatibility")

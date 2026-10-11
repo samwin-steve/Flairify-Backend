@@ -54,3 +54,21 @@ Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and d
 All retailer fixtures are synthetic. Inventory offers ten sample products, nine currently in sample stock. Four photographed clothing items support illustrative 2D previews through Gemini image editing; unsupported accessories/illustrations are disabled. Downloaded photographs are licensed and credited in `fixtures/image-credits.json` and the frontend's `public/image-credits.json`. These are not verified retailer products. Google virtual try-on remains a separate adapter for verified retailer imagery.
 
 With photo-processing consent, a full-body upload automatically queues Gemini garment extraction and becomes a usable private preview reference. Wardrobe uploads start extraction after explicit person selection. Detections remain drafts until ownership is confirmed. Try-on can start directly from Inventory using a reference or existing wardrobe photo; completed previews show source and generated images, and support download, regeneration and deletion.
+
+## Seller Studio and mock orders
+
+Owners and approved sellers can add clothes with a product photo, SKU, INR price, sizes, store quantities, and optional aisle/rack. Each save queues indexing; successfully indexed active products appear in Inventory and are eligible for size-, stock-, and budget-checked recommendations. Sellers manage only their own products and stores. Owners manage the shared catalogue and approve seller requests. Existing Firebase `admin` and `seller` claims remain supported.
+
+A signed-in customer opens **Seller Studio → Request seller access**. An owner reviews requests in Seller Studio. Bootstrap the first owner from a trusted operator terminal after that person has signed in to Flairify:
+
+```bash
+.venv/bin/python scripts/grant_seller_access.py --project data-workshops --email OWNER_EMAIL --role owner
+```
+
+The operator needs Identity Platform account-read and Firestore write permissions and an active `gcloud auth login`. No identity-admin permission is added to the running app. Roles live in the server-only `flairify_seller_access` collection; browser Firestore access remains denied. App-managed revocations take effect on the next request. Firebase custom claims are managed separately; a preexisting custom claim must be removed separately to revoke its grant. Never bootstrap an account based only on a name or client-supplied UID.
+
+Customers can choose **Inventory → Mock buy** without wardrobe onboarding, or **Mock buy new pieces** on a stylist recommendation. Checkout requires explicit mock acknowledgment, selected sizes/stores/quantities, and a server-validated total. Orders are persisted privately and reappear in **My Orders**. Seller Studio shows only the seller's item lines; the owner sees the catalogue-wide mock inbox. No payment, shipment, reservation, stock decrement, or wardrobe-ownership confirmation occurs.
+
+The backend rechecks serving inventory at quote and placement, rejects changed totals, unavailable sizes and excessive quantities, and merges repeated product/variant/store cart lines. A stable request key prevents duplicate placement; replay returns the original price snapshot. Order persistence is atomic per customer/order key. Inbox projections are separate idempotent writes and are repaired on retry; there is no cross-document transaction or background repair sweep. These are mock records, not a production fulfillment system. Anonymous demo history lasts only while its isolated session is valid; sign in for account-based history.
+
+API additions: `GET/POST /api/orders`, `POST /api/orders/quote`, `GET /api/orders/{id}`, `GET /api/admin/orders`, `POST /api/admin/products`, `GET /api/seller-access`, `POST /api/seller-access/request`, `GET /api/admin/seller-requests`, and owner-only approval/revocation actions. The protected image upload accepts validated files rather than fetching arbitrary URLs. Index publication checks the product hash to avoid overwriting stock edited during indexing.

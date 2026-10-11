@@ -1,8 +1,9 @@
 import json
-from ..store import store
+
 from ..config import settings
-from .inventory import product_hash
+from ..store import store
 from . import ai
+from .inventory import product_hash
 
 
 def index_products(owner, ids):
@@ -46,9 +47,15 @@ def index_products(owner, ids):
                 sql,
                 job_config=bigquery.QueryJobConfig(query_parameters=params, maximum_bytes_billed=100_000_000),
             ).result()
-        product.update(indexed=True, content_hash=digest)
-        store().put("products", owner, key, product)
-        changed += 1
+
+        def publish(current):
+            if current and product_hash(current) == digest:
+                return {**current, "indexed": True, "content_hash": digest}
+            return current
+
+        current = store().mutate("products", owner, key, publish)
+        if current and current.get("content_hash") == digest:
+            changed += 1
     return {
         "indexed": changed,
         "requested": len(ids),

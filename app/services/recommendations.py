@@ -139,15 +139,43 @@ def recommend(principal, request, previous):
             )
         if not tops and not bottoms:
             bases += [([], [p]) for p in eligible if p["category"] == "dress"][:2]
+    # Explicit shopping requests can replace a base or add an accessory, using
+    # the same current, size-filtered catalogue as the jacket flow.
+    requested_category = None
+    buying = re.search(r"\b(show|find|buy|new|need|want|looking for)\b", request.message.lower())
+    if buying and not intent["keep_shirt"]:
+        for category, pattern in [
+            ("dress", r"\bdress(?:es)?\b"),
+            ("bottom", r"\b(trousers|jeans|pants|skirt|bottoms?)\b"),
+            ("top", r"\b(shirts?|tees?|tops?)\b"),
+            ("bag", r"\b(bags?|tote|handbag)\b"),
+            ("accessory", r"\b(accessor(?:y|ies)|scarf|belt)\b"),
+        ]:
+            if re.search(pattern, request.message.lower()):
+                requested_category = category
+                break
+    requested = [p for p in eligible if p["category"] == requested_category][:3]
+    if requested_category == "top":
+        bases = [([bottom], [product]) for product in requested for bottom in bottoms[:3]]
+    elif requested_category == "bottom":
+        bases = [([top], [product]) for product in requested for top in tops[:3]]
+    elif requested_category == "dress":
+        bases = [([], [product]) for product in requested]
+    elif requested_category in ("bag", "accessory"):
+        bases = [(base, pieces + [product]) for base, pieces in bases[:3] for product in requested]
     explicit_jacket = (
         intent["jacket_coverage"]
         or intent["another_jacket"]
         or bool(re.search(r"\b(jacket|blazer)\b", request.message.lower()))
     )
     layers = (
-        jackets[:8]
-        if intent["jacket_coverage"]
-        else ((jackets[:3] or [None]) if explicit_jacket or not owned_jackets else [None])
+        [None]
+        if requested_category
+        else (
+            jackets[:8]
+            if intent["jacket_coverage"]
+            else ((jackets[:3] or [None]) if explicit_jacket or not owned_jackets else [None])
+        )
     )
     outfits = []
     counts = {}

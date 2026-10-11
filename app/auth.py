@@ -2,8 +2,10 @@ import hashlib
 import secrets
 import time
 from dataclasses import dataclass
+
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 from .config import settings
 from .store import store
 
@@ -15,6 +17,8 @@ class Principal:
     uid: str
     admin: bool = False
     demo: bool = False
+    seller: bool = False
+    email: str = ""
 
     @property
     def catalog_owner(self):
@@ -54,7 +58,13 @@ def principal(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)
         decoded = auth.verify_id_token(token, check_revoked=True)
         if decoded.get("firebase", {}).get("sign_in_provider") == "anonymous":
             raise ValueError("Use an email or Google account for signed-in features")
-        return Principal(decoded["uid"], decoded.get("admin") is True)
+        access = store().get("seller_access", "system", decoded["uid"]) or {}
+        return Principal(
+            decoded["uid"],
+            admin=decoded.get("admin") is True or access.get("role") == "owner",
+            seller=decoded.get("seller") is True or access.get("role") == "seller",
+            email=decoded.get("email", ""),
+        )
     except Exception:
         raise HTTPException(401, "Invalid or expired sign-in")
 
@@ -62,6 +72,12 @@ def principal(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)
 def admin(p: Principal = Depends(principal)):
     if not p.admin:
         raise HTTPException(403, "Retailer administrator access required")
+    return p
+
+
+def merchant(p: Principal = Depends(principal)):
+    if not (p.admin or p.seller):
+        raise HTTPException(403, "Owner or approved seller access required")
     return p
 
 
