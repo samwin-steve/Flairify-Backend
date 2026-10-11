@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from ..config import settings
 from ..models import GenerationJob, now
 from ..store import store
-from . import wardrobe, try_on, video, avatars
+from . import wardrobe, try_on, video, avatars, garment_images
 
 pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="flairify-local")
 
@@ -83,10 +83,14 @@ def process(owner, key):
     except InterruptedError:
         return
     progress = lambda stage: update(owner, key, stage=stage)
+    result = None
     try:
         kind = job["kind"]
         if kind == "wardrobe":
             result = wardrobe.extract(owner, job["payload"]["photo_ids"], progress)
+        elif kind == "garment_image":
+            progress("Creating shop-style garment image with Gemini")
+            result = garment_images.generate(owner, job["payload"])
         elif kind == "try_on":
             progress("Creating your style visualization")
             result = try_on.generate(owner, job["payload"])
@@ -118,6 +122,14 @@ def process(owner, key):
 
                 delete(owner, result["media_id"])
             return
+        if kind == "garment_image":
+            try:
+                garment_images.publish(owner, key, job["payload"], result)
+            except Exception:
+                from .media import delete
+
+                delete(owner, result["media_id"])
+                raise
         update(
             owner,
             key,
@@ -128,6 +140,8 @@ def process(owner, key):
             lease_until=0,
         )
     except InterruptedError:
+        if job["kind"] == "garment_image" and result and result.get("media_id"):
+            garment_images.discard(owner, job["payload"], result)
         return
     except Exception as exc:
         logging.getLogger(__name__).warning(

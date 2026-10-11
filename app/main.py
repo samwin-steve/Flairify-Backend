@@ -28,7 +28,18 @@ from .models import (
     WardrobeItem,
     now,
 )
-from .services import avatars, inventory, jobs, media, orders, photos, recommendations, sellers, try_on
+from .services import (
+    avatars,
+    garment_images,
+    inventory,
+    jobs,
+    media,
+    orders,
+    photos,
+    recommendations,
+    sellers,
+    try_on,
+)
 from .store import store
 
 
@@ -77,6 +88,7 @@ def config(credentials=Depends(bearer)):
         "demo_admin": c.app_mode == "demo" and c.enable_demo_admin,
         "sample_try_on": c.allow_sample_try_on,
         "generation_provider": "Google Vertex AI",
+        "garment_images": live and garment_images.available("signed-in"),
     }
 
 
@@ -144,7 +156,7 @@ def sample(p: Principal = Depends(principal)):
 def wardrobe(p: Principal = Depends(principal)):
     items = store().list("wardrobe", p.uid)
     return {
-        "items": items,
+        "items": [garment_images.public(p.uid, item) for item in items],
         "confirmed_count": sum(w["confirmed"] for w in items),
         "duplicates": store().list("duplicates", p.uid),
     }
@@ -152,24 +164,34 @@ def wardrobe(p: Principal = Depends(principal)):
 
 @app.put("/api/wardrobe/{key}")
 def edit_garment(key: str, item: WardrobeItem, p: Principal = Depends(principal)):
-    old = store().get("wardrobe", p.uid, key)
     if item.confirmed and (item.category == "unknown" or item.name == "Describe this garment"):
         raise HTTPException(422, "Name and categorize the garment before confirming ownership")
-    if old:
-        # Evidence fields are server-owned and cannot be reassigned to another photo.
-        for field in ("image", "source_photo_id", "box", "sample", "evidence", "created_at"):
-            setattr(
-                item, field, Box.model_validate(old[field]) if field == "box" and old[field] else old[field]
-            )
-    else:
-        item.source_photo_id = None
-        item.image = ""
-        item.evidence = "manual"
-        item.sample = False
-    item.id = key
-    value = store().put("wardrobe", p.uid, key, item.model_dump(mode="json"))
+
+    def update(old):
+        value = item.model_dump(mode="json")
+        value["id"] = key
+        # Preserve concurrently generated media; all evidence/provenance is server-owned.
+        for field in garment_images.FIELDS:
+            value[field] = old.get(field) if old else None
+        if old:
+            for field in ("image", "source_photo_id", "box", "sample", "evidence", "created_at"):
+                value[field] = old[field]
+        else:
+            value.update(source_photo_id=None, image="", evidence="manual", sample=False, box=None)
+        return value
+
+    value = store().mutate("wardrobe", p.uid, key, update)
     invalidate_looks(p.uid, key)
     return value
+
+
+@app.post("/api/wardrobe/{key}/shop-image")
+def create_garment_image(key: str, p: Principal = Depends(principal)):
+    require_record("wardrobe", p.uid, key)
+    try:
+        return garment_images.request(p.uid, key)
+    except ValueError as exc:
+        raise HTTPException(409, str(exc))
 
 
 def invalidate_looks(owner, item_id=None):
@@ -189,9 +211,15 @@ def invalidate_looks(owner, item_id=None):
 @app.delete("/api/wardrobe/{key}")
 def delete_garment(key: str, p: Principal = Depends(principal)):
     item = require_record("wardrobe", p.uid, key)
+    # Remove the record first so an in-flight image cannot re-publish this garment.
+    store().delete("wardrobe", p.uid, key)
+    for job in store().list("jobs", p.uid):
+        if job["kind"] == "garment_image" and job["payload"].get("item_id") == key:
+            delete_job(job["id"], p)
     if item["image"].startswith("media:"):
         media.delete(p.uid, item["image"][6:])
-    store().delete("wardrobe", p.uid, key)
+    if item.get("generated_image"):
+        media.delete(p.uid, item["generated_image"][6:])
     invalidate_looks(p.uid, key)
     for d in store().list("duplicates", p.uid):
         if key in d["item_ids"]:
@@ -547,10 +575,37 @@ def retry(key: str, p: Principal = Depends(principal)):
 @app.delete("/api/jobs/{key}")
 def delete_job(key: str, p: Principal = Depends(principal)):
     row = require_record("jobs", p.uid, key)
+    # Cancel before deleting files so the worker cannot publish an in-flight result.
+    store().mutate(
+        "jobs",
+        p.uid,
+        key,
+        lambda current: {**current, "status": "cancelled", "stage": "Deleted", "result": None},
+    )
+    if row["kind"] == "garment_image":
+
+        def clear(current):
+            if not current or current.get("shop_image_job_id") != key:
+                raise InterruptedError("Garment removed or changed")
+            if current.get("generated_image"):
+                removed.append(current["generated_image"][6:])
+            return {
+                **current,
+                "generated_image": None,
+                "generated_image_model": None,
+                "generated_image_version": None,
+            }
+
+        removed = []
+        try:
+            store().mutate("wardrobe", p.uid, row["payload"]["item_id"], clear)
+        except InterruptedError:
+            pass
+        for media_id in set(removed):
+            media.delete(p.uid, media_id)
+        invalidate_looks(p.uid)
     if row.get("result") and row["result"].get("media_id"):
         media.delete(p.uid, row["result"]["media_id"])
-    row.update(status="cancelled", stage="Deleted", result=None)
-    store().put("jobs", p.uid, key, row)
     for child in store().list("jobs", p.uid):
         if child["payload"].get("source_job_id") == key and child["status"] != "cancelled":
             delete_job(child["id"], p)

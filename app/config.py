@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     image_edit_location: str = "global"
     allow_sample_try_on: bool = False
     max_daily_image_generations: int = 30
+    enable_garment_images: bool = True
+    max_daily_garment_images: int = 12
     veo_model: str = ""
     enable_paid_ai: bool = False
     google_photos_client_id: str = ""

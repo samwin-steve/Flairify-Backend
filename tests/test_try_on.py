@@ -86,7 +86,7 @@ def test_full_body_upload_detects_garments_and_reuses_photo_for_preview(signed):
     assert job["result"]["provider"] == "google-gemini-image-edit"
     assert job["result"]["sample_product"] is True
     assert c.get("/api/media/" + job["result"]["media_id"]).status_code == 200
-    assert len(calls) == 1 and calls[0]["model"] == "gemini-3.1-flash-image"
+    assert len(calls) == 2 and all(c["model"] == "gemini-3.1-flash-image" for c in calls)
     # Opening wardrobe review does not repeat the already successful auto-analysis.
     before = len(c.get("/api/jobs").json()["jobs"])
     c.post("/api/wardrobe/import", json={"photo_ids": [ref["source_photo_id"]]})
@@ -116,7 +116,7 @@ def test_wardrobe_upload_becomes_reference_and_selection_starts_analysis(signed)
     assert r.status_code == 200
     job = next(j for j in c.get("/api/jobs").json()["jobs"] if j["id"] == r.json()["id"])
     assert job["status"] == "succeeded" and job["result"]["reference_media_id"] == photo["media_id"]
-    assert any("Layer the selected jacket" in p for p in calls[0]["contents"] if isinstance(p, str))
+    assert any("Layer the selected jacket" in p for p in calls[-1]["contents"] if isinstance(p, str))
 
 
 def test_try_on_validates_current_stock_and_reference_owner(signed):

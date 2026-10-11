@@ -81,6 +81,12 @@ class WardrobeItem(Model):
     material: str | None = None
     size: str | None = None
     image: str = ""
+    generated_image: str | None = None
+    generated_image_model: str | None = None
+    generated_image_version: str | None = None
+    shop_image_job_id: str | None = None
+    shop_image_status: str | None = None
+    shop_image_error: str | None = None
     source_photo_id: str | None = None
     box: Box | None = None
     uncertainty: list[str] = Field(default_factory=list)
@@ -223,7 +229,7 @@ class JobStatus(StrEnum):
 
 class GenerationJob(Model):
     id: str = Field(default_factory=uid)
-    kind: Literal["wardrobe", "index", "try_on", "video", "avatar"]
+    kind: Literal["wardrobe", "garment_image", "index", "try_on", "video", "avatar"]
     status: JobStatus = JobStatus.queued
     stage: str = "Queued"
     payload: dict = Field(default_factory=dict)

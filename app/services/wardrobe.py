@@ -49,7 +49,7 @@ def extract(owner, photo_ids, progress):
             if store().get("wardrobe", owner, item_id):
                 results.append(item_id)
                 continue
-            thumbnail = media.save(owner, media.crop(selected, d["box"]), source_id=photo_id)
+            thumbnail = media.save(owner, media.crop(selected, d["box"], max_size=1200), source_id=photo_id)
             item = WardrobeItem(
                 id=item_id,
                 name=d["name"],
@@ -88,6 +88,13 @@ def extract(owner, photo_ids, progress):
                         method="exact-image-hash",
                     )
                     store().put("duplicates", owner, group_id, group.model_dump())
+    # Each garment gets a bounded worker job; slow image generation never blocks ownership review.
+    from . import garment_images
+
+    if garment_images.available(owner):
+        progress("Queuing shop-style garment images")
+        for item_id in results:
+            garment_images.request(owner, item_id)
     return {
         "item_ids": results,
         "analysis": "gemini" if ai_ready else "manual",

@@ -65,3 +65,13 @@ After signed-in photo-processing consent, uploading `kind=full_body` saves a pri
 [Official Gemini image editing](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/gemini-edit-images) · [Gemini 3.1 Flash Image](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/3-1-flash-image).
 
 The deployed signed-in browser journey has now verified automatic garment extraction and a successful `gemini-3.1-flash-image` preview, including visible private reference imagery, download, refresh, cross-user isolation and deletion. See [live image verification](live-image-results.json). One sample output does not establish likeness or exact garment/fit accuracy.
+
+## Shop-style wardrobe images
+
+With signed-in photo-processing consent, each extracted garment now queues a separate `garment_image` job using the configured `IMAGE_EDIT_MODEL` and `IMAGE_EDIT_LOCATION`. The worker sends the original garment crop to Gemini on Vertex AI, requesting a 1K studio flat lay. `ENABLE_GARMENT_IMAGES=true` controls the feature. `MAX_DAILY_GARMENT_IMAGES=12` limits each user; `MAX_DAILY_IMAGE_GENERATIONS=30` is shared with try-on. Quotas count attempts, not just successful outputs. Disable the feature to retain extraction/crops without automatic image-generation spend. These are request limits, not billing caps.
+
+Original crops remain in `image` and preserve detection/duplicate evidence. Generated illustrations are separate `generated_image` media, with model/version metadata, never a source of confirmed attributes. Model reconstruction of occluded areas can be wrong. The UI labels generated imagery and shows the original in garment review. Generation failure does not prevent confirming ownership or using the stylist. Anonymous sample mode does not fake this capability.
+
+`POST /api/wardrobe/{id}/shop-image` provides an idempotent request for an existing evidence crop; failed jobs use the existing bounded retry endpoint. Success is reused across extraction retries. `Keep original only` cancels/deletes the generated image; deleting the garment/source removes both media and cancels related work. The worker rechecks consent and source ownership, and cancelled/deleted garments cannot receive an in-flight result. Each separate job fits the worker timeout and queue concurrency limits.
+
+API contract verified against [Google's Gemini image-editing documentation](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/gemini-edit-images). No outside model provider, segmentation model or GPU is used.

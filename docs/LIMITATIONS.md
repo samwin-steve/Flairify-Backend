@@ -17,3 +17,5 @@
 
 - Mock order placement is atomic per customer/idempotency key. Seller inbox projections are separate writes repaired on a repeated request; no background reconciliation sweep is implemented. Saved snapshots retain historical prices and photos. Quote validation is suitable for this non-reserving mock flow, not a production transaction that allocates scarce stock.
 - Seller access requires owner approval. Initial owner bootstrap requires the intended account email and a trusted GCP operator. A separately assigned Firebase seller custom claim must also be removed to revoke its legacy access; app-managed role revocation alone does not remove Firebase claims.
+
+- Shop-style wardrobe images are Gemini reconstructions, not extracted garment pixels. Hidden construction and patterns may differ; original evidence remains available and attributes are not inferred from the generated image. No garment-preservation accuracy or cost benchmark has been measured. Image jobs can fail independently because of provider safety, quota or availability; evidence review stays usable.
