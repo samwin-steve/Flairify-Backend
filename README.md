@@ -1,5 +1,6 @@
 # Flairify backend
 
+[Open the deployed Flairify app](https://flairify-web-7kxckvikva-uc.a.run.app) · [API documentation](https://flairify-api-7kxckvikva-uc.a.run.app/docs)
 Wardrobe-first personalized retail shopping API and asynchronous worker. Paid integration adapters target Google Cloud only. This repository is intended for a public hackathon submission; it contains no credentials.
 
 ## Run locally

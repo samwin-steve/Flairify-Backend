@@ -15,14 +15,25 @@ def test_model_boxes_are_validated_and_converted(monkeypatch):
         "uncertainty": [],
     }
     sent = []
+    clients = []
+
+    class Provider:
+        def __init__(self):
+            self.closed = False
+            self.models = SimpleNamespace(generate_content=generate)
+            clients.append(self)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            self.closed = True
 
     def generate(**kwargs):
         sent.append(kwargs)
         return SimpleNamespace(text=json.dumps({"garments": [garment]}))
 
-    monkeypatch.setattr(
-        ai, "client", lambda **k: SimpleNamespace(models=SimpleNamespace(generate_content=generate))
-    )
+    monkeypatch.setattr(ai, "client", lambda **k: Provider())
     item = ai.detect(b"validated-image")[0]
     assert item.box.model_dump() == {"x": 0.2, "y": 0.1, "width": 0.6, "height": 0.8}
     assert sent[0]["config"].response_schema is ai.VisionResult
@@ -30,3 +41,5 @@ def test_model_boxes_are_validated_and_converted(monkeypatch):
     garment["bbox"] = [100, 900, 900, 200]
     with pytest.raises(ValueError, match="invalid garment location"):
         ai.detect(b"validated-image")
+
+    assert all(provider.closed for provider in clients)

@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import time
 from concurrent.futures import ThreadPoolExecutor
 from ..config import settings
@@ -129,6 +130,9 @@ def process(owner, key):
     except InterruptedError:
         return
     except Exception as exc:
+        logging.getLogger(__name__).warning(
+            "Job failure: kind=%s exception=%s", job["kind"], type(exc).__name__
+        )
         message = (
             str(exc)
             if isinstance(exc, (try_on.CapabilityUnavailable, ValueError))

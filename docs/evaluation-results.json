@@ -1,19 +1,19 @@
 {
-  "collected_at": "2026-10-11T10:28:20Z",
+  "collected_at": "2026-10-11T10:49:09Z",
   "environment": "local synthetic fixtures; no AI calls",
   "results": [
     {
       "method": "attribute",
       "query": "Mumbai work trip under \u20b95,000",
       "outfits": 3,
-      "latency_ms": 12.01,
+      "latency_ms": 6.9,
       "budget_valid": true,
       "stock_valid": true,
       "ownership_valid": true,
       "complete_outfits": 3,
       "top_products": [
-        "p-jacket",
-        "p-sneakers"
+        "p-sneakers",
+        "p-jacket"
       ],
       "coverage": {
         "p-blazer": 4,
@@ -26,14 +26,14 @@
       "method": "coverage",
       "query": "Which jacket under \u20b95,000 works with the most distinct outfits?",
       "outfits": 3,
-      "latency_ms": 9.47,
+      "latency_ms": 6.7,
       "budget_valid": true,
       "stock_valid": true,
       "ownership_valid": true,
       "complete_outfits": 3,
       "top_products": [
-        "p-jacket",
-        "p-sneakers"
+        "p-sneakers",
+        "p-jacket"
       ],
       "coverage": {
         "p-blazer": 4,

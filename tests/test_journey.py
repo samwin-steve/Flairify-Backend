@@ -245,3 +245,42 @@ def test_keep_my_shirt_preserves_previous_top(client, onboarded):
     ).json()
     assert next_turn["outfits"]
     assert all(top in {w["id"] for w in outfit["owned"]} for outfit in next_turn["outfits"])
+
+
+def test_single_owned_top_fills_base_before_optional_layer(client, onboarded):
+    data, headers = onboarded
+    owner = data["user_id"]
+    items = store().list("wardrobe", owner)
+    top = next(w for w in items if w["category"] == "top")
+    for item in items:
+        if item["id"] != top["id"]:
+            store().delete("wardrobe", owner, item["id"])
+    result = client.post("/api/chat", headers=headers, json={"message": "Mumbai work under ₹5,000"}).json()
+    assert result["outfits"]
+    for outfit in result["outfits"]:
+        assert outfit["complete"] and outfit["total"] <= 5000
+        assert {w["id"] for w in outfit["owned"]} == {top["id"]}
+        assert {"bottom", "shoes"} <= {p["category"] for p in outfit["products"]}
+    for product in store().list("products", owner):
+        if product["category"] == "bottom":
+            for variant in product["variants"]:
+                for stock in variant["stock"]:
+                    stock["quantity"] = 0
+            store().put("products", owner, product["id"], product)
+    unavailable = client.post(
+        "/api/chat", headers=headers, json={"message": "Mumbai work under ₹5,000"}
+    ).json()
+    assert unavailable["outfits"] == []
+
+
+def test_existing_jacket_is_reused_without_upselling(client, onboarded):
+    from app.models import WardrobeItem
+
+    data, headers = onboarded
+    jacket = WardrobeItem(name="My existing jacket", category="jacket", colour="Navy", confirmed=True)
+    store().put("wardrobe", data["user_id"], jacket.id, jacket.model_dump(mode="json"))
+    result = client.post("/api/chat", headers=headers, json={"message": "Mumbai work under ₹5,000"}).json()
+    assert result["outfits"]
+    for outfit in result["outfits"]:
+        assert jacket.id in {w["id"] for w in outfit["owned"]}
+        assert all(p["category"] != "jacket" for p in outfit["products"])

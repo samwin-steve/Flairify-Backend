@@ -20,23 +20,25 @@ def generate(owner, job, persist):
     if not cfg.media_bucket:
         raise CapabilityUnavailable("Private Cloud Storage is required for Veo outputs")
     if job.get("operation"):
-        operation = ai.client().operations.get(types.GenerateVideosOperation(name=job["operation"]))
+        with ai.client() as provider:
+            operation = provider.operations.get(types.GenerateVideosOperation(name=job["operation"]))
     else:
         raw, mime = media.read(owner, source["result"]["media_id"])
-        operation = ai.client().models.generate_videos(
-            model=cfg.veo_model,
-            source=types.GenerateVideosSource(
-                prompt="A gentle natural pose change, mostly front-facing. Preserve this adult person’s face, clothing design and proportions. Static camera. No spin, no new objects, no changes of clothing.",
-                image=types.Image(image_bytes=raw, mime_type=mime),
-            ),
-            config=types.GenerateVideosConfig(
-                number_of_videos=1,
-                duration_seconds=job["payload"].get("duration", 4),
-                aspect_ratio="9:16",
-                output_gcs_uri=f"gs://{cfg.media_bucket}/{owner}/veo/{job['id']}/",
-                person_generation="allow_adult",
-            ),
-        )
+        with ai.client() as provider:
+            operation = provider.models.generate_videos(
+                model=cfg.veo_model,
+                source=types.GenerateVideosSource(
+                    prompt="A gentle natural pose change, mostly front-facing. Preserve this adult person’s face, clothing design and proportions. Static camera. No spin, no new objects, no changes of clothing.",
+                    image=types.Image(image_bytes=raw, mime_type=mime),
+                ),
+                config=types.GenerateVideosConfig(
+                    number_of_videos=1,
+                    duration_seconds=job["payload"].get("duration", 4),
+                    aspect_ratio="9:16",
+                    output_gcs_uri=f"gs://{cfg.media_bucket}/{owner}/veo/{job['id']}/",
+                    person_generation="allow_adult",
+                ),
+            )
         persist(operation.name)
     if not operation.done:
         return None

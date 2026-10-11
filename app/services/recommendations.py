@@ -122,26 +122,58 @@ def recommend(principal, request, previous):
     bottoms = [w for w in owned if w["category"] == "bottom"]
     owned_shoes = [w for w in owned if w["category"] == "shoes"]
     dresses = [w for w in owned if w["category"] == "dress"]
-    bases = [list(pair) for pair in itertools.product(tops[:4], bottoms[:4])] + [[d] for d in dresses[:4]]
+    owned_jackets = [w for w in owned if w["category"] == "jacket"]
+    # Fill missing base pieces from size/stock-validated records; never imply ownership.
+    bases = [(list(pair), []) for pair in itertools.product(tops[:4], bottoms[:4])]
+    bases += [([d], []) for d in dresses[:4]]
     if not bases:
-        bases = [owned[:2]]
+        top_choices = [(w, True) for w in tops[:4]] or [
+            (p, False) for p in eligible if p["category"] == "top"
+        ][:2]
+        bottom_choices = [(w, True) for w in bottoms[:4]] or [
+            (p, False) for p in eligible if p["category"] == "bottom"
+        ][:2]
+        for pair in itertools.product(top_choices, bottom_choices):
+            bases.append(
+                ([p for p, is_owned in pair if is_owned], [p for p, is_owned in pair if not is_owned])
+            )
+        if not tops and not bottoms:
+            bases += [([], [p]) for p in eligible if p["category"] == "dress"][:2]
+    explicit_jacket = (
+        intent["jacket_coverage"]
+        or intent["another_jacket"]
+        or bool(re.search(r"\b(jacket|blazer)\b", request.message.lower()))
+    )
+    layers = (
+        jackets[:8]
+        if intent["jacket_coverage"]
+        else ((jackets[:3] or [None]) if explicit_jacket or not owned_jackets else [None])
+    )
     outfits = []
     counts = {}
-    for jacket in jackets[:8] if intent["jacket_coverage"] else (jackets[:3] or [None]):
-        for base in bases[:8]:
+    for jacket in layers:
+        for base, missing_pieces in bases[:8]:
             used_owned = base + owned_shoes[:1]
-            purchases = [jacket] if jacket else []
-            if not owned_shoes and shoes:
-                purchases += shoes[:1]
+            if not jacket:
+                used_owned += owned_jackets[:1]
+            if not used_owned:
+                # A confirmed accessory or existing jacket can still anchor the outfit.
+                used_owned = [owned[0]]
+            essentials = missing_pieces + (shoes[:1] if not owned_shoes else [])
+            purchases = essentials + ([jacket] if jacket else [])
             total = sum(p["price"] for p in purchases)
             if total > intent["budget"]:
                 if intent["jacket_coverage"]:
                     continue
-                purchases = (
-                    shoes[:1] if not owned_shoes and shoes and shoes[0]["price"] <= intent["budget"] else []
-                )
+                purchases = essentials
                 total = sum(p["price"] for p in purchases)
+                if owned_jackets and not any(w["category"] == "jacket" for w in used_owned):
+                    used_owned += owned_jackets[:1]
+            if total > intent["budget"]:
+                continue
             score, reason, complete = assess_outfit_compatibility(used_owned, purchases, intent["occasion"])
+            if not complete:
+                continue
             signature = tuple(sorted(w["id"] for w in used_owned) + sorted(p["id"] for p in purchases))
             if any(o["_signature"] == signature for o in outfits):
                 continue
