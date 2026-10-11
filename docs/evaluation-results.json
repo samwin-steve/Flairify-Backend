@@ -1,23 +1,24 @@
 {
-  "collected_at": "2026-10-11T11:10:10Z",
+  "collected_at": "2026-10-11T12:55:33Z",
   "environment": "local synthetic fixtures; no AI calls",
   "results": [
     {
       "method": "attribute",
       "query": "Mumbai work trip under \u20b95,000",
       "outfits": 3,
-      "latency_ms": 7.74,
+      "latency_ms": 16.37,
       "budget_valid": true,
       "stock_valid": true,
       "ownership_valid": true,
       "complete_outfits": 3,
       "top_products": [
-        "p-sneakers",
-        "p-jacket"
+        "sample-fashion-10268",
+        "sample-fashion-13241"
       ],
       "coverage": {
-        "p-blazer": 4,
-        "p-jacket": 4
+        "sample-fashion-13241": 8,
+        "sample-fashion-19342": 8,
+        "p-blazer": 8
       },
       "human_relevance": null,
       "human_explanation_rating": null
@@ -26,18 +27,24 @@
       "method": "coverage",
       "query": "Which jacket under \u20b95,000 works with the most distinct outfits?",
       "outfits": 3,
-      "latency_ms": 7.15,
+      "latency_ms": 15.37,
       "budget_valid": true,
       "stock_valid": true,
       "ownership_valid": true,
       "complete_outfits": 3,
       "top_products": [
-        "p-sneakers",
-        "p-jacket"
+        "sample-fashion-10268",
+        "sample-fashion-13241"
       ],
       "coverage": {
-        "p-blazer": 4,
-        "p-jacket": 4
+        "sample-fashion-13241": 8,
+        "sample-fashion-19342": 8,
+        "sample-fashion-59102": 8,
+        "sample-fashion-8785": 8,
+        "sample-fashion-58526": 8,
+        "sample-fashion-6886": 8,
+        "sample-fashion-6889": 8,
+        "sample-fashion-18201": 8
       },
       "human_relevance": null,
       "human_explanation_rating": null

@@ -249,6 +249,7 @@ class SavedLook(Model):
 
 
 class ChatRequest(Model):
+    department: Literal["all", "women", "men", "unisex"] | None = None
     message: str = Field(min_length=1, max_length=2000)
     conversation_id: str | None = None
     store_id: str | None = None

@@ -122,7 +122,7 @@ def unlock(data: AdminUnlock, p: Principal = Depends(principal), credentials=Dep
 
 @app.get("/api/profile")
 def get_profile(p: Principal = Depends(principal)):
-    if not p.demo and settings().seed_sample_catalog:
+    if p.demo or settings().seed_sample_catalog:
         inventory.seed_catalog(p.catalog_owner)
     value = store().get("profiles", p.uid, "me") or UserProfile().model_dump()
     return {**value, "admin": p.admin, "demo": p.demo, "seller": p.seller}
@@ -419,7 +419,7 @@ def complete(p: Principal = Depends(principal)):
 def catalog(
     q: str = "", category: str | None = None, budget: int = 1000000, p: Principal = Depends(principal)
 ):
-    if not p.demo and settings().seed_sample_catalog:
+    if p.demo or settings().seed_sample_catalog:
         inventory.seed_catalog(p.catalog_owner)
     return {
         "products": [

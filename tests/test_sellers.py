@@ -186,7 +186,7 @@ def test_seller_shirt_can_replace_owned_top_when_requested(signed):
         "me",
         UserProfile(clothing_size="M", shoe_size="39", onboarding_complete=True).model_dump(),
     )
-    result = c.post("/api/chat", json={"message": "Find a new white shirt under ₹5,000"}).json()
+    result = c.post("/api/chat", json={"message": "Find the Seller white shirt under ₹5,000"}).json()
     matched = [o for o in result["outfits"] if any(p["id"] == "seller-jacket" for p in o["products"])]
     assert matched and all(o["total"] <= 5000 and o["complete"] for o in matched)
     assert all(all(w["category"] != "top" for w in o["owned"]) for o in matched)

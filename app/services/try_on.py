@@ -28,13 +28,8 @@ def supports(product):
 
 def sample_asset(product):
     # A fixed manifest, never a path or URL supplied by a customer.
-    import json
-
-    manifest = json.loads((inventory.FIXTURES / "catalogue.json").read_text())
-    original = next(
-        (p for p in manifest if p["id"] == product["id"] and p["image"] == product["image"]), None
-    )
-    if not original:
+    original = inventory.fixture_products().get(product["id"])
+    if not original or original["image"] != product["image"]:
         return None
     path = inventory.FIXTURES / "images" / Path(original["image"]).name
     return path if path.suffix == ".jpg" and path.is_file() else None

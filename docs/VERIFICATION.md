@@ -2,7 +2,7 @@
 
 ## Automated checks collected
 
-- Backend: 44 Pytest cases pass. Tests cover the confirmed-wardrobe gate, budget/size/current stock, owner isolation, media deletion, direct upload validation, consent, follow-up continuity, admin imports/indexing, unavailable generation, job deduplication, Firebase token verification, Photos Picker contract mocks and AI output validation. Regression cases also cover automatically extracting a full-body upload, reusing wardrobe photos for previews, available variants, consent, Google image requests, source deletion and regeneration.
+- Backend: 60 Pytest cases pass. Tests cover the confirmed-wardrobe gate, budget/size/current stock, owner isolation, media deletion, direct upload validation, consent, follow-up continuity, admin imports/indexing, unavailable generation, job deduplication, Firebase token verification, Photos Picker contract mocks and AI output validation. Regression cases also cover automatically extracting a full-body upload, reusing wardrobe photos for previews, available variants, consent, Google image requests, source deletion and regeneration.
 - New backend cases cover seller ownership, access approval/revocation, protected product photos, indexing, requested seller products in complete outfits, mock-order persistence/idempotency, combined quantities, price/stock rechecks, customer/seller isolation, and historical order photos after a listing update.
 - Frontend: four Vitest logic tests, TypeScript checks and a Next.js production build pass. Cloud Build runs these checks before deploying.
 - Playwright: twelve journeys pass locally using desktop Chromium and emulated Pixel 7 viewports. They include direct mock checkout before wardrobe onboarding, seller photo/listing/stock editing, automatic discovery, order inbox/history and checkout from a stylist look. Existing checks cover sample onboarding before first chat, the Mumbai budget, saving, sign-in-required generation and inventory search, direct upload/manual review, wardrobe persistence, loaded sample GLB, no horizontal overflow, keyboard focus and Axe WCAG A/AA checks on the landing and stylist screens.
@@ -70,3 +70,9 @@ The five new backend tests cover private image provenance, unchanged original ev
 The temporary Firebase QA account, test demo session and owner-scoped records were removed after verification; no residual QA media remained.
 
 See [collected live checks](live-garment-image-results.json). Generated images can complete hidden garment details incorrectly; they do not replace original evidence. No numerical garment-preservation quality or billed-cost result is claimed.
+
+## Expanded catalogue checks
+
+200 validated sample products, 190 additional local archive photos (8 exact image references from the requested Myntra CSV), department counts 90 men / 91 women / 19 unisex. All sample clothing variants cover XXS–4XL and shoes EU 35–48. Asset tests verify photo integrity, manifest identity, supported clothing preview inputs and two-store size coverage. Migration tests preserve retailer edits while upgrading untouched legacy fixtures.
+
+Twelve parameterized Mumbai checks cover men/women, XXS+EU35 / XXL+EU45 / 4XL+EU48, and a wardrobe containing only a shirt or only a jacket. Every scenario returned complete outfits with current stock and combined totals at or below ₹5,000. Additional checks cover a requested new shirt with a missing bottom, category retrieval beyond 60 results, unavailable sizes and explicit error explanations. These are synthetic correctness results; no human relevance score is claimed. The local comparison in `evaluation-results.json` was recollected for this catalogue.

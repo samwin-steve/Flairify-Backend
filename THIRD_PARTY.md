@@ -19,4 +19,8 @@ Declarations below are read from the installed pinned package metadata. Each dis
 | google-auth | 2.61.0 | Apache 2.0 |
 | numpy | 2.5.4 | BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0 |
 
-The four bundled product photographs retain their Unsplash/Pexels licenses and photographer/source credits in [fixtures/image-credits.json](fixtures/image-credits.json). These licenses are separate from this repository code license. Other image credits are included in the frontend repository. See [avatar research](docs/AVATAR_RESEARCH.md) for the separate code/model-weight license review.
+The existing bundled editorial photographs retain their Unsplash/Pexels licenses and photographer/source credits in [fixtures/image-credits.json](fixtures/image-credits.json). These licenses are separate from this repository code license. Other image credits are included in the frontend repository. See [avatar research](docs/AVATAR_RESEARCH.md) for the separate code/model-weight license review.
+
+## Expanded fashion photographs
+
+See [catalogue sources and dataset license notice](docs/CATALOGUE.md) and `fixtures/catalogue-sources.json`. Hitesh Suthar’s Myntra dataset declares ODC PDDL 1.0; Param Aggarwal’s fashion dataset declares MIT. These are publisher declarations. All sample prices, sizes and availability are simulated; photographs are archived source material.

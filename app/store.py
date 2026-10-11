@@ -4,8 +4,9 @@ import hashlib
 import json
 import sqlite3
 import threading
-from pathlib import Path
 from functools import lru_cache
+from pathlib import Path
+
 from .config import settings
 
 
@@ -75,6 +76,37 @@ class Store:
         else:
             with self.lock:
                 self.db.execute("DELETE FROM records WHERE kind=? AND owner=? AND id=?", (kind, owner, key))
+                self.db.commit()
+
+    def create_missing(self, kind, owner, records):
+        """Bulk fixture bootstrap without replacing seller records or concurrent writes."""
+        if self.cloud:
+            from google.api_core.exceptions import AlreadyExists
+
+            for start in range(0, len(records), 200):
+                group = records[start : start + 200]
+                batch = self.db.batch()
+                for value in group:
+                    batch.create(
+                        self.ref(kind, owner, value["id"]), {"owner": owner, "id": value["id"], "data": value}
+                    )
+                try:
+                    batch.commit()
+                except AlreadyExists:
+                    # Another request may have seeded concurrently. Never overwrite it.
+                    for value in group:
+                        try:
+                            self.ref(kind, owner, value["id"]).create(
+                                {"owner": owner, "id": value["id"], "data": value}
+                            )
+                        except AlreadyExists:
+                            pass
+        else:
+            with self.lock:
+                self.db.executemany(
+                    "INSERT OR IGNORE INTO records VALUES (?,?,?,?)",
+                    [(kind, owner, v["id"], json.dumps(v)) for v in records],
+                )
                 self.db.commit()
 
     def mutate(self, kind, owner, key, fn):

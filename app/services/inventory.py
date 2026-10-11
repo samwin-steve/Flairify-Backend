@@ -2,6 +2,8 @@ import csv
 import hashlib
 import io
 import json
+import re
+from functools import lru_cache
 from pathlib import Path
 
 from fastapi import HTTPException
@@ -10,16 +12,48 @@ from ..models import Product, Store, WardrobeItem
 from ..store import store
 
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
+CATALOG_VERSION = "2026-10-expanded-200-v1"
+
+
+@lru_cache(maxsize=1)
+def fixture_products():
+    return {
+        p["id"]: Product.model_validate(p).model_dump(mode="json")
+        for p in json.loads((FIXTURES / "catalogue.json").read_text())
+    }
 
 
 def seed_catalog(owner):
-    if store().get("meta", owner, "seeded"):
+    marker = store().get("meta", owner, "seeded")
+    if marker and marker.get("version") == CATALOG_VERSION:
         return
-    for name, kind, model in [("catalogue", "products", Product), ("stores", "stores", Store)]:
-        for record in json.loads((FIXTURES / f"{name}.json").read_text()):
-            item = model.model_validate(record).model_dump(mode="json")
-            store().put(kind, owner, item["id"], item)
-    store().put("meta", owner, "seeded", {"done": True})
+    fixtures = fixture_products()
+    existing = {p["id"]: p for p in store().list("products", owner)}
+    store().create_missing("products", owner, [p for key, p in fixtures.items() if key not in existing])
+    # Widen sizes only on untouched legacy fixtures. Preserve retailer/admin corrections.
+    for raw in json.loads((FIXTURES / "catalogue-legacy.json").read_text()):
+        old = Product.model_validate(raw).model_dump(mode="json")
+        if old["id"] in existing and product_hash(existing[old["id"]]) == product_hash(old):
+
+            def upgrade(current, expected=old):
+                return (
+                    fixtures[expected["id"]]
+                    if current and product_hash(current) == product_hash(expected)
+                    else current
+                )
+
+            store().mutate("products", owner, old["id"], upgrade)
+    current_stores = {s["id"] for s in store().list("stores", owner)}
+    store().create_missing(
+        "stores",
+        owner,
+        [
+            Store.model_validate(s).model_dump(mode="json")
+            for s in json.loads((FIXTURES / "stores.json").read_text())
+            if s["id"] not in current_stores
+        ],
+    )
+    store().put("meta", owner, "seeded", {"done": True, "version": CATALOG_VERSION})
 
 
 def seed_wardrobe(owner):
@@ -51,8 +85,32 @@ def available(product, size, store_id=None):
     return choices
 
 
-def search(owner, q="", budget=1000000, category=None):
-    words = q.lower().split()
+def search(owner, q="", budget=1000000, category=None, limit=None):
+    stop_words = {
+        "a",
+        "an",
+        "the",
+        "i",
+        "my",
+        "me",
+        "for",
+        "to",
+        "and",
+        "with",
+        "some",
+        "new",
+        "show",
+        "find",
+        "want",
+        "need",
+        "buy",
+        "under",
+        "budget",
+        "please",
+        "in",
+        "of",
+    }
+    words = [w for w in re.findall(r"[a-z]+", q.lower()) if w not in stop_words]
     records = [
         p
         for p in store().list("products", owner)
@@ -64,9 +122,10 @@ def search(owner, q="", budget=1000000, category=None):
 
     def score(p):
         text = " ".join([p["name"], p["description"], p["category"], json.dumps(p["attributes"])]).lower()
-        return sum(w in text for w in words)
+        name = p["name"].lower()
+        return sum(3 * (w in name) + (w in text) for w in words)
 
-    return sorted(records, key=lambda p: (-score(p), p["price"], p["id"]))[:60]
+    return sorted(records, key=lambda p: (-score(p), p["price"], p["id"]))[:limit]
 
 
 def parse_import(raw, filename):
