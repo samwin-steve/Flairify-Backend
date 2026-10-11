@@ -1,0 +1,54 @@
+steps:
+  - id: backend-tests
+    name: python:3.13-slim
+    entrypoint: bash
+    args: ['-ceu', 'pip install --no-cache-dir -r requirements-test.txt >/dev/null && pytest -q']
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args: ['build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/flairify/backend:$BUILD_ID', '.']
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/flairify/backend:$BUILD_ID']
+  - id: deploy-worker
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - flairify-worker
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/flairify/backend:$BUILD_ID
+      - --region=${_REGION}
+      - --service-account=flairify-worker@$PROJECT_ID.iam.gserviceaccount.com
+      - --no-allow-unauthenticated
+      - --max=2
+      - --min-instances=0
+      - --max-instances=2
+      - --concurrency=1
+      - --cpu=1
+      - --memory=1Gi
+      - --timeout=240
+      - --update-env-vars=APP_MODULE=app.worker:app,APP_MODE=${_APP_MODE},STORE_BACKEND=firestore,FIRESTORE_DATABASE=flairify,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=${_REGION},MEDIA_BUCKET=$PROJECT_ID-flairify-media,TASK_SERVICE_ACCOUNT=flairify-tasks@$PROJECT_ID.iam.gserviceaccount.com,ENABLE_PAID_AI=${_ENABLE_PAID_AI},GEMINI_MODEL=${_GEMINI_MODEL},GEMINI_LOCATION=${_GEMINI_LOCATION},ALLOW_FIREBASE_IN_DEMO=${_ALLOW_FIREBASE_IN_DEMO},SEED_SAMPLE_CATALOG=${_SEED_SAMPLE_CATALOG}
+      - --quiet
+  - id: configure-worker-and-deploy-api
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        WORKER_URL=$$(gcloud run services describe flairify-worker --region=${_REGION} --format='value(status.url)')
+        gcloud run services update flairify-worker --region=${_REGION} --update-env-vars="WORKER_URL=$$WORKER_URL" --quiet
+        gcloud run services add-iam-policy-binding flairify-worker --region=${_REGION} --member=serviceAccount:flairify-tasks@$PROJECT_ID.iam.gserviceaccount.com --role=roles/run.invoker --quiet
+        gcloud run deploy flairify-api --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/flairify/backend:$BUILD_ID --region=${_REGION} --service-account=flairify-api@$PROJECT_ID.iam.gserviceaccount.com --no-invoker-iam-check --min-instances=0 --max=2 --max-instances=2 --concurrency=20 --cpu=1 --memory=512Mi --timeout=120 --update-env-vars="APP_MODE=${_APP_MODE},STORE_BACKEND=firestore,FIRESTORE_DATABASE=flairify,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=${_REGION},MEDIA_BUCKET=$PROJECT_ID-flairify-media,WORKER_URL=$$WORKER_URL,TASK_SERVICE_ACCOUNT=flairify-tasks@$PROJECT_ID.iam.gserviceaccount.com,ENABLE_PAID_AI=${_ENABLE_PAID_AI},GEMINI_MODEL=${_GEMINI_MODEL},GEMINI_LOCATION=${_GEMINI_LOCATION},ALLOW_FIREBASE_IN_DEMO=${_ALLOW_FIREBASE_IN_DEMO},SEED_SAMPLE_CATALOG=${_SEED_SAMPLE_CATALOG},ENABLE_DEMO_ADMIN=false" --quiet
+images: ['${_REGION}-docker.pkg.dev/$PROJECT_ID/flairify/backend:$BUILD_ID']
+substitutions:
+  _REGION: us-central1
+  _APP_MODE: demo
+  _ENABLE_PAID_AI: 'false'
+  _GEMINI_MODEL: ''
+  _GEMINI_LOCATION: global
+  _ALLOW_FIREBASE_IN_DEMO: 'false'
+  _SEED_SAMPLE_CATALOG: 'false'
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_MEDIUM
+timeout: 1200s

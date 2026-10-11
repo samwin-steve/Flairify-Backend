@@ -1,0 +1,8 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Browser clients never access Firestore directly. Verified FastAPI identities
+    // enforce owner/admin checks; runtime service accounts use IAM.
+    match /{document=**} { allow read, write: if false; }
+  }
+}

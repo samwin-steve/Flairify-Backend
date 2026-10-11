@@ -1,0 +1,1 @@
+{"indexes":[],"fieldOverrides":[{"collectionGroup":"flairify_media","fieldPath":"data","indexes":[]},{"collectionGroup":"flairify_conversations","fieldPath":"data","indexes":[]},{"collectionGroup":"flairify_jobs","fieldPath":"data","indexes":[]},{"collectionGroup":"flairify_search","fieldPath":"data.embedding","indexes":[]}]}

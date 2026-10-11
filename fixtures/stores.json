@@ -1,0 +1,18 @@
+[
+  {
+    "id": "bandra",
+    "name": "Flairify Studio \u00b7 Bandra",
+    "address": "Sample store \u00b7 Linking Road, Mumbai",
+    "latitude": 19.0596,
+    "longitude": 72.8295,
+    "sample": true
+  },
+  {
+    "id": "lower-parel",
+    "name": "Flairify Studio \u00b7 Lower Parel",
+    "address": "Sample store \u00b7 Senapati Bapat Marg, Mumbai",
+    "latitude": 18.9943,
+    "longitude": 72.8252,
+    "sample": true
+  }
+]

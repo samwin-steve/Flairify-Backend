@@ -1,0 +1,13 @@
+[project]
+name = "flairify-backend"
+version = "0.1.0"
+description = "Wardrobe-first retail stylist, API and Cloud Tasks worker"
+requires-python = ">=3.12,<3.15"
+dependencies = ["fastapi", "uvicorn[standard]", "pydantic-settings", "python-multipart", "pillow", "httpx", "google-genai", "google-cloud-firestore", "google-cloud-storage", "google-cloud-tasks", "google-cloud-bigquery", "firebase-admin", "google-auth", "numpy"]
+[dependency-groups]
+dev = ["pytest", "pytest-cov", "ruff"]
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+[tool.ruff]
+line-length = 110

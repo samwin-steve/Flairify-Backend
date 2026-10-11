@@ -1,0 +1,54 @@
+[
+  {
+    "id": "w-shirt",
+    "name": "My white shirt",
+    "category": "top",
+    "colour": "White",
+    "image": "/images/shirt.jpg",
+    "sample": true,
+    "evidence": "sample",
+    "confirmed": false,
+    "uncertainty": [
+      "Sample garment, not inferred from your photos"
+    ]
+  },
+  {
+    "id": "w-trousers",
+    "name": "Tailored charcoal trousers",
+    "category": "bottom",
+    "colour": "Charcoal",
+    "image": "/images/trousers.jpg",
+    "sample": true,
+    "evidence": "sample",
+    "confirmed": false,
+    "uncertainty": [
+      "Sample garment, not inferred from your photos"
+    ]
+  },
+  {
+    "id": "w-jeans",
+    "name": "Straight-leg blue jeans",
+    "category": "bottom",
+    "colour": "Blue",
+    "image": "/images/jeans.jpg",
+    "sample": true,
+    "evidence": "sample",
+    "confirmed": false,
+    "uncertainty": [
+      "Sample garment, not inferred from your photos"
+    ]
+  },
+  {
+    "id": "w-tee",
+    "name": "A favourite white tee",
+    "category": "top",
+    "colour": "White",
+    "image": "/images/tee.jpg",
+    "sample": true,
+    "evidence": "sample",
+    "confirmed": false,
+    "uncertainty": [
+      "Sample garment, not inferred from your photos"
+    ]
+  }
+]

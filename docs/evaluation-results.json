@@ -1,0 +1,47 @@
+{
+  "collected_at": "2026-10-11T10:28:20Z",
+  "environment": "local synthetic fixtures; no AI calls",
+  "results": [
+    {
+      "method": "attribute",
+      "query": "Mumbai work trip under \u20b95,000",
+      "outfits": 3,
+      "latency_ms": 12.01,
+      "budget_valid": true,
+      "stock_valid": true,
+      "ownership_valid": true,
+      "complete_outfits": 3,
+      "top_products": [
+        "p-jacket",
+        "p-sneakers"
+      ],
+      "coverage": {
+        "p-blazer": 4,
+        "p-jacket": 4
+      },
+      "human_relevance": null,
+      "human_explanation_rating": null
+    },
+    {
+      "method": "coverage",
+      "query": "Which jacket under \u20b95,000 works with the most distinct outfits?",
+      "outfits": 3,
+      "latency_ms": 9.47,
+      "budget_valid": true,
+      "stock_valid": true,
+      "ownership_valid": true,
+      "complete_outfits": 3,
+      "top_products": [
+        "p-jacket",
+        "p-sneakers"
+      ],
+      "coverage": {
+        "p-blazer": 4,
+        "p-jacket": 4
+      },
+      "human_relevance": null,
+      "human_explanation_rating": null
+    }
+  ],
+  "finding": "Coverage ranking provides counts of assessed combinations. No human usefulness or explanation improvement has been established."
+}

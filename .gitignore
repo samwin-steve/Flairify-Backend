@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.env*
+!.env.example
+.data/
+*.tfstate*
+.terraform/
+*.tfplan
+*.auto.tfvars
+.DS_Store

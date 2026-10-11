@@ -1,0 +1,1086 @@
+[
+  {
+    "id": "p-blazer",
+    "sku": "FL-100",
+    "name": "The everyday blazer",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. work minimal tailored. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "jacket",
+    "price": 2490,
+    "image": "/images/blazer.jpg",
+    "variants": [
+      {
+        "id": "p-blazer-XS",
+        "size": "XS",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A1",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A1",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-blazer-S",
+        "size": "S",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A1",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A1",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-blazer-M",
+        "size": "M",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A1",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A1",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-blazer-L",
+        "size": "L",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A1",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A1",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-blazer-XL",
+        "size": "XL",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A1",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A1",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "work minimal tailored",
+      "colour": "Oat"
+    },
+    "delivery": [
+      "Home delivery eligible; timing confirmed by retailer"
+    ],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-jacket",
+    "sku": "FL-101",
+    "name": "The relaxed overshirt",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. relaxed casual travel. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "jacket",
+    "price": 1790,
+    "image": "/images/jacket.jpg",
+    "variants": [
+      {
+        "id": "p-jacket-XS",
+        "size": "XS",
+        "colour": "Sage",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A2",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A2",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-jacket-S",
+        "size": "S",
+        "colour": "Sage",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A2",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A2",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-jacket-M",
+        "size": "M",
+        "colour": "Sage",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A2",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A2",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-jacket-L",
+        "size": "L",
+        "colour": "Sage",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A2",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A2",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-jacket-XL",
+        "size": "XL",
+        "colour": "Sage",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A2",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A2",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "relaxed casual travel",
+      "colour": "Sage"
+    },
+    "delivery": [],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-sneakers",
+    "sku": "FL-102",
+    "name": "Everyday walking sneakers",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. walking comfort travel. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "shoes",
+    "price": 1890,
+    "image": "/images/sneakers.jpg",
+    "variants": [
+      {
+        "id": "p-sneakers-37",
+        "size": "37",
+        "colour": "Cream",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B3",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B3",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-sneakers-38",
+        "size": "38",
+        "colour": "Cream",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B3",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B3",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-sneakers-39",
+        "size": "39",
+        "colour": "Cream",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B3",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B3",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-sneakers-40",
+        "size": "40",
+        "colour": "Cream",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B3",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B3",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-sneakers-41",
+        "size": "41",
+        "colour": "Cream",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B3",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B3",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-sneakers-42",
+        "size": "42",
+        "colour": "Cream",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B3",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B3",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-sneakers-43",
+        "size": "43",
+        "colour": "Cream",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B3",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B3",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "walking comfort travel",
+      "colour": "Cream"
+    },
+    "delivery": [
+      "Home delivery eligible; timing confirmed by retailer"
+    ],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-loafers",
+    "sku": "FL-103",
+    "name": "Everyday brown shoes",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. work classic. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "shoes",
+    "price": 2290,
+    "image": "/images/loafers.jpg",
+    "variants": [
+      {
+        "id": "p-loafers-37",
+        "size": "37",
+        "colour": "Cocoa",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B4",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B4",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-loafers-38",
+        "size": "38",
+        "colour": "Cocoa",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B4",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B4",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-loafers-39",
+        "size": "39",
+        "colour": "Cocoa",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B4",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B4",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-loafers-40",
+        "size": "40",
+        "colour": "Cocoa",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B4",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B4",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-loafers-41",
+        "size": "41",
+        "colour": "Cocoa",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B4",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B4",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-loafers-42",
+        "size": "42",
+        "colour": "Cocoa",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B4",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B4",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-loafers-43",
+        "size": "43",
+        "colour": "Cocoa",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "B4",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "B4",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "work classic",
+      "colour": "Cocoa"
+    },
+    "delivery": [],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-tote",
+    "sku": "FL-104",
+    "name": "The carry-everywhere tote",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. work travel. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "bag",
+    "price": 1290,
+    "image": "/images/tote.jpg",
+    "variants": [
+      {
+        "id": "p-tote-One-size",
+        "size": "One size",
+        "colour": "Natural",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A5",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A5",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "work travel",
+      "colour": "Natural"
+    },
+    "delivery": [
+      "Home delivery eligible; timing confirmed by retailer"
+    ],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-shirt",
+    "sku": "FL-105",
+    "name": "A fresh white shirt",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. work minimal. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "top",
+    "price": 1490,
+    "image": "/images/shirt.jpg",
+    "variants": [
+      {
+        "id": "p-shirt-XS",
+        "size": "XS",
+        "colour": "White",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A6",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A6",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-shirt-S",
+        "size": "S",
+        "colour": "White",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A6",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A6",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-shirt-M",
+        "size": "M",
+        "colour": "White",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A6",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A6",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-shirt-L",
+        "size": "L",
+        "colour": "White",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A6",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A6",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-shirt-XL",
+        "size": "XL",
+        "colour": "White",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A6",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A6",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "work minimal",
+      "colour": "White"
+    },
+    "delivery": [],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-trousers",
+    "sku": "FL-106",
+    "name": "Easy tailored trousers",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. work tailored. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "bottom",
+    "price": 1990,
+    "image": "/images/trousers.jpg",
+    "variants": [
+      {
+        "id": "p-trousers-XS",
+        "size": "XS",
+        "colour": "Charcoal",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A7",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A7",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-trousers-S",
+        "size": "S",
+        "colour": "Charcoal",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A7",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A7",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-trousers-M",
+        "size": "M",
+        "colour": "Charcoal",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A7",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A7",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-trousers-L",
+        "size": "L",
+        "colour": "Charcoal",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A7",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A7",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-trousers-XL",
+        "size": "XL",
+        "colour": "Charcoal",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A7",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A7",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "work tailored",
+      "colour": "Charcoal"
+    },
+    "delivery": [
+      "Home delivery eligible; timing confirmed by retailer"
+    ],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-dress",
+    "sku": "FL-107",
+    "name": "The weekend midi dress",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. relaxed weekend. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "dress",
+    "price": 2690,
+    "image": "/images/dress.svg",
+    "variants": [
+      {
+        "id": "p-dress-XS",
+        "size": "XS",
+        "colour": "Rose",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A8",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A8",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-dress-S",
+        "size": "S",
+        "colour": "Rose",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A8",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A8",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-dress-M",
+        "size": "M",
+        "colour": "Rose",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A8",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A8",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-dress-L",
+        "size": "L",
+        "colour": "Rose",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A8",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A8",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-dress-XL",
+        "size": "XL",
+        "colour": "Rose",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A8",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A8",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "relaxed weekend",
+      "colour": "Rose"
+    },
+    "delivery": [],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-scarf",
+    "sku": "FL-108",
+    "name": "A little colour scarf",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. classic colourful. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "accessory",
+    "price": 690,
+    "image": "/images/scarf.svg",
+    "variants": [
+      {
+        "id": "p-scarf-One-size",
+        "size": "One size",
+        "colour": "Blush",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 3,
+            "aisle": "A9",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 2,
+            "aisle": "A9",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "classic colourful",
+      "colour": "Blush"
+    },
+    "delivery": [
+      "Home delivery eligible; timing confirmed by retailer"
+    ],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  },
+  {
+    "id": "p-soldout",
+    "sku": "FL-109",
+    "name": "Limited sample jacket (unavailable)",
+    "brand": "Sample catalogue",
+    "description": "Synthetic catalogue item. work. Illustrative licensed photograph; not a verified retailer product image. Brands shown do not imply affiliation.",
+    "category": "jacket",
+    "price": 990,
+    "image": "/images/blazer.jpg",
+    "variants": [
+      {
+        "id": "p-soldout-XS",
+        "size": "XS",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-soldout-S",
+        "size": "S",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-soldout-M",
+        "size": "M",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-soldout-L",
+        "size": "L",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          }
+        ]
+      },
+      {
+        "id": "p-soldout-XL",
+        "size": "XL",
+        "colour": "Oat",
+        "stock": [
+          {
+            "store_id": "bandra",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          },
+          {
+            "store_id": "lower-parel",
+            "quantity": 0,
+            "aisle": "A10",
+            "rack": "02"
+          }
+        ]
+      }
+    ],
+    "attributes": {
+      "styles": "work",
+      "colour": "Oat"
+    },
+    "delivery": [],
+    "sample": true,
+    "indexed": true,
+    "updated_at": "2026-10-11T00:00:00+00:00"
+  }
+]
