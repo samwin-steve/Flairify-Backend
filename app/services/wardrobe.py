@@ -7,6 +7,10 @@ from . import media, ai
 
 def extract(owner, photo_ids, progress):
     ai_ready = settings().ai_ready and not owner.startswith("demo-")
+    if ai_ready:
+        profile = store().get("profiles", owner, "me") or {}
+        if not profile.get("consent", {}).get("ai_photo_processing"):
+            raise ValueError("Photo processing consent was withdrawn. Enable it before retrying.")
     results = []
     for photo_id in photo_ids:
         photo = store().get("photos", owner, photo_id)

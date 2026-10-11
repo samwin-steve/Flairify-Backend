@@ -17,6 +17,8 @@ def normalize(raw: bytes):
         with Image.open(io.BytesIO(raw)) as source:
             if source.format not in ("JPEG", "PNG", "WEBP"):
                 raise ValueError("format")
+            if source.width * source.height > 30_000_000:
+                raise ValueError("pixel limit")
             source.load()
             captured = source.getexif().get(36867)
             img = ImageOps.exif_transpose(source).convert("RGB")

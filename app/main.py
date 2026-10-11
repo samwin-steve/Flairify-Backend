@@ -309,7 +309,7 @@ def product_media(key: str, p: Principal = Depends(principal)):
 def start_import(data: ImportRequest, p: Principal = Depends(principal)):
     quota(p.uid, "analysis", 20)
     profile = store().get("profiles", p.uid, "me") or {}
-    if settings().ai_ready and not profile.get("consent", {}).get("ai_photo_processing"):
+    if settings().ai_ready and not p.demo and not profile.get("consent", {}).get("ai_photo_processing"):
         raise HTTPException(409, "Enable photo processing consent in Profile first")
     for key in data.photo_ids:
         require_record("photos", p.uid, key)

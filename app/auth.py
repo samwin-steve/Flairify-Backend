@@ -52,6 +52,8 @@ def principal(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)
         if not firebase_admin._apps:
             firebase_admin.initialize_app(options={"projectId": settings().google_cloud_project})
         decoded = auth.verify_id_token(token, check_revoked=True)
+        if decoded.get("firebase", {}).get("sign_in_provider") == "anonymous":
+            raise ValueError("Use an email or Google account for signed-in features")
         return Principal(decoded["uid"], decoded.get("admin") is True)
     except Exception:
         raise HTTPException(401, "Invalid or expired sign-in")
