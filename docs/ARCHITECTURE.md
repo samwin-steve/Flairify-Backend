@@ -21,10 +21,10 @@ flowchart LR
 
 ## Trust boundaries
 
-- Firebase ID tokens are verified server-side, including revocation, in production. Firebase `admin: true` is required for retailer operations. Google login is not Google Photos authorization.
+- Firebase ID tokens are verified server-side, including revocation, in production. Retailer operations require an owner/admin or approved seller role. Server-only `seller_access` records are read after token verification; legacy Firebase admin/seller claims are also supported. Sellers may edit only their own products and stores. Google login is not Google Photos authorization.
 - Credential-free demo sessions receive random bearer tokens. Only token hashes are persisted. Every demo has a separate wardrobe, private media, conversations and sample catalogue. A client-supplied user ID is never authorization.
 - Every private lookup contains an owner namespace. SQLite enforces `(kind, owner, id)` keys locally; Firestore document IDs are hashes of `owner:id`, with owner-filtered list operations. Browser Firestore/Storage access is denied by rules.
-- Media is delivered through an authenticated backend stream with `private, no-store`. Object paths never serve as public URLs. Product media has a separate retailer-scoped route that verifies a catalogue reference.
+- Media is delivered through an authenticated backend stream with `private, no-store`. Object paths never serve as public URLs. Product media has a separate retailer-scoped route that verifies a catalogue reference, the uploader, or an authorized historical order snapshot.
 - A Cloud Tasks OIDC service identity is the only worker invoker. Workers also validate audience and caller identity. The model has only bounded read tools; save, generation and deletion need explicit customer actions through authorized endpoints.
 - Raw photos and conversations are not written to application logs. Production Uvicorn access logging is disabled. Provider errors return a sanitized failure, never a fabricated result.
 
@@ -53,3 +53,13 @@ Current serving graph is stored alongside application state. BigQuery schema, re
 ## UI
 
 Light pink palette, serif headings and compact sans-serif controls. Desktop has navigation / conversation / outfit notebook. Small screens use bottom navigation, a sticky composer and dialogs for details. Radix handles modal focus trapping and Escape. React Hook Form + Zod validate style basics; TanStack Query maintains server state and job polling. The AR lab loads an original CC0 mannequin through model-viewer, checks AR availability and retains normal 3D controls when AR is unavailable.
+
+## Seller listings and mock orders
+
+Seller Studio validates uploaded product images and server-assigned seller ownership. Adding or editing a listing queues the existing index worker. Only indexed, active records enter inventory search; shortlisted recommendations still recheck serving stock and total cost. Requested new tops/bottoms can replace owned base pieces, and requested accessories can join complete combinations. Availability does not imply that every listing will be recommended.
+
+Mock checkout is available before wardrobe onboarding. `OrderQuoteRequest` and `PlaceOrderRequest` reject extra client facts and validate variant/store/quantity selections. The server reads current products and stock, aggregates repeated lines, calculates INR totals, and validates the acknowledged total again on placement. Stylist checkout must reference a customer-owned outfit and only its new product IDs. The model cannot place an order.
+
+Customer `orders` records are stored under the verified customer ID, with immutable line/price snapshots and a deterministic ID derived from the user and request key. One-record transactions prevent duplicate placement; altered payloads cannot reuse a successful key. `order_inbox` contains the owner catalogue view and `seller_orders` contains only each seller's own lines. No payment, address, shipment, stock reservation or wardrobe ownership change is performed. Projections are replayable on a retried request, rather than a distributed transaction.
+
+Access requests store the account email obtained from a verified Firebase token. Owners approve/revoke app-managed seller roles through protected endpoints. The first owner must be bootstrapped by an authorized operator using the documented exact-email script. The API runtime does not receive Firebase identity-administration permissions.

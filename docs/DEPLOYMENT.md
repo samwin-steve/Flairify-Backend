@@ -38,3 +38,9 @@ Production sign-in setup, API access and provider model validation are documente
 `infra/main.tf` defines repeatable core resources and an optional budget alert. Import existing resources before Terraform applies; the bootstrap script and Terraform are alternative ownership workflows. Cloud Run revisions/CI triggers are managed by the provided build and trigger scripts. Budget alerts are not spending caps and require an explicit account/amount.
 
 Public API/web services use Google’s documented `--no-invoker-iam-check` public-service setting, compatible with the project’s domain-restricted IAM sharing. The worker retains IAM enforcement. No organization policy is changed. See [Cloud Run public access](https://docs.cloud.google.com/run/docs/authenticating/public). The dedicated Firestore deny-all client rules and BigQuery schema were deployed on 11 October 2026.
+
+## Owner and seller access
+
+After the intended owner signs in to Flairify, a trusted operator can run `scripts/grant_seller_access.py --project data-workshops --email OWNER_EMAIL --role owner` with the backend virtual environment. The script uses the operator's current gcloud login, supplies the quota-project header for Identity Platform lookup, verifies an existing account with the exact email, and writes only Flairify's server-side role record. It does not change project IAM or Firebase claims. The owner can then approve seller requests in Seller Studio. The bootstrap was exercised with a temporary Firebase QA account and that account/role were removed afterward.
+
+New seller/order records use the same Firestore database and existing owner-filtered queries. No new cloud service, GPU, payment service, identity-admin runtime permission or composite query index is required. Existing deny-all browser rules cover the new collections.
