@@ -1,4 +1,4 @@
-"""Download free Unsplash sample imagery; each source page confirms its license."""
+"""Download free licensed sample imagery; each source page confirms its license."""
 
 import html, json, re
 from pathlib import Path
@@ -32,10 +32,6 @@ items.update(
             "Eduardo Pastor",
         ),
         "tee": ("https://unsplash.com/photos/white-crew-neck-t-shirt-acn5ERAeSb4", "Haryo Setyadi"),
-        "trousers": (
-            "https://unsplash.com/photos/black-pants-on-clothes-hanger-HDqIwmQ_oNA",
-            "Sonny Mauricio",
-        ),
         "jacket": (
             "https://unsplash.com/photos/woman-wearing-green-jacket-standing-near-the-wall-s0CrFb7LoBM",
             "Yunming Wang",
@@ -83,4 +79,19 @@ with httpx.Client(timeout=45, follow_redirects=True) as client:
             }
         )
         print(name, len(photo.content))
+    trousers_url = "https://images.pexels.com/photos/33055598/pexels-photo-33055598/free-photo-of-casual-black-pants-on-white-background.jpeg?auto=compress&dpr=1&h=750&w=1260"
+    photo = client.get(trousers_url)
+    photo.raise_for_status()
+    (root / "frontend/public/images/trousers.jpg").write_bytes(photo.content)
+    manifest.append(
+        {
+            "file": "images/trousers.jpg",
+            "source": "https://www.pexels.com/photo/casual-black-pants-on-white-background-33055598/",
+            "author": "Youssef Mahmoud",
+            "image_url": trousers_url,
+            "license": "Pexels License",
+            "license_url": "https://www.pexels.com/license/",
+            "purpose": "Illustrative sample. No retailer affiliation or verified product identity.",
+        }
+    )
 (root / "frontend/public/image-credits.json").write_text(json.dumps(manifest, indent=2))
