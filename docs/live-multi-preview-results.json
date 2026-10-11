@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-11T14:20:44.731Z",
+  "fixture": "Licensed public hero.jpg; not a customer photo",
+  "checks": {
+    "signed_in_live_onboarding_default_white": true,
+    "live_extraction_review_and_recommendation": true,
+    "initially_empty_multi_selection": true,
+    "direct_click_no_dialog": true,
+    "multi_piece_payload": true,
+    "daily_allowance_429_before_queue": true,
+    "no_failed_try_on_job_created": true,
+    "background_checked_and_unchecked_persist_after_reload": true,
+    "private_source_and_reference_images_load": true,
+    "reference_settings_open": true,
+    "profile_desktop_axe_violations": 0,
+    "profile_mobile_axe_violations": 0,
+    "mobile_width": 393,
+    "mobile_document_width": 393,
+    "source_and_dependent_media_deletion": true
+  },
+  "generation_verification": {
+    "new_image_generated": false,
+    "reason": "Shared Google image allowance already at 30 attempts; cap unchanged. Multi-image Google requests and background prompts verified with mocked SDK tests only in this update.",
+    "preservation_quality_measured": false
+  },
+  "automated_tests": {
+    "pytest": 70,
+    "vitest": 13,
+    "playwright": 16
+  },
+  "cloud_build": {
+    "backend": "18d3b7cb-59b2-4e20-8333-fe684315c986",
+    "frontend": "24355dfc-82bb-4322-b65d-b2f512b86934"
+  },
+  "cleanup": {
+    "temporary_firebase_account_deleted": true,
+    "owner_scoped_records_removed": 9,
+    "residual_media_removed": 0
+  },
+  "revisions": {
+    "frontend": "flairify-web-00012-2bm",
+    "api": "flairify-api-00015-rsk",
+    "worker": "flairify-worker-00030-gj4"
+  }
+}
