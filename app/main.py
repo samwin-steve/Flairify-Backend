@@ -647,7 +647,13 @@ async def import_catalog(file: UploadFile = File(...), p: Principal = Depends(me
         old = store().get("products", p.catalog_owner, product.id)
         if old and inventory.product_hash(old) == inventory.product_hash(product.model_dump()):
             continue
-        store().put("products", p.catalog_owner, product.id, product.model_dump())
+
+        def publish(current, value=product):
+            if current and not sellers.can_manage(p, current):
+                raise HTTPException(403, "You can edit only your own products")
+            return value.model_dump()
+
+        store().mutate("products", p.catalog_owner, product.id, publish)
         keys.append(product.id)
     return jobs.create(
         p.uid, "index", {"catalog_owner": p.catalog_owner, "product_ids": keys}, secrets.token_hex(16)
