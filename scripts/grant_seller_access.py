@@ -22,7 +22,7 @@ def main():
     token = subprocess.check_output(["gcloud", "auth", "print-access-token"], text=True).strip()
     response = httpx.post(
         f"https://identitytoolkit.googleapis.com/v1/projects/{args.project}/accounts:lookup",
-        headers={"Authorization": "Bearer " + token},
+        headers={"Authorization": "Bearer " + token, "x-goog-user-project": args.project},
         json={"email": [args.email]},
         timeout=30,
     )
