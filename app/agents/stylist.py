@@ -13,6 +13,7 @@ from google.genai import types
 from ..config import settings
 from ..prompts.stylist import STYLIST
 from ..services import ai
+from ..store import store
 from .tools import StylistTools
 
 
@@ -47,6 +48,23 @@ async def run(principal, request, conversation, emit):
     # Model input is data, never concatenated into system/tool instructions.
     context = json.dumps(
         {
+            "shopping_preferences": {
+                k: v
+                for k, v in (store().get("profiles", principal.uid, "me") or {}).items()
+                if k
+                in (
+                    "department",
+                    "clothing_size",
+                    "shoe_size",
+                    "preferred_store_id",
+                    "budget",
+                    "fit",
+                    "styles",
+                    "colours",
+                    "include_wardrobe",
+                )
+            },
+            "wardrobe_override": request.include_wardrobe,
             "previous_request": conversation.intent,
             "recent_messages": [
                 {"role": m.role, "content": m.content[:2000]} for m in conversation.messages[-6:]

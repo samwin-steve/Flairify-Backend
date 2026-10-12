@@ -135,14 +135,15 @@ def get_profile(p: Principal = Depends(principal)):
 
 @app.put("/api/profile")
 def put_profile(profile: UserProfile, p: Principal = Depends(principal)):
-    profile.onboarding_complete = bool(recommendations.get_confirmed_wardrobe(p.uid))
+    existing = store().get("profiles", p.uid, "me") or {}
+    profile.onboarding_complete = existing.get("onboarding_complete", False)
+    if profile.preferred_store_id and not store().get("stores", p.catalog_owner, profile.preferred_store_id):
+        raise HTTPException(422, "Choose an available store or all stores")
     if not profile.consent.remember_preferences:
         profile.styles = []
         profile.colours = []
-        profile.clothing_size = ""
-        profile.shoe_size = ""
-        profile.fit = "Comfortable"
-        profile.budget = 5000
+        # Account shopping settings are explicitly saved by the customer.
+        # Optional long-term style/colour memory has separate consent.
     from .services.graph import clear
 
     clear(p.uid)
@@ -417,13 +418,9 @@ def start_import(data: ImportRequest, p: Principal = Depends(principal)):
 
 @app.post("/api/onboarding/complete")
 def complete(p: Principal = Depends(principal)):
-    if not recommendations.get_confirmed_wardrobe(p.uid):
-        raise HTTPException(409, "Confirm at least one garment first")
-    if any(
-        j["kind"] == "wardrobe" and j["status"] in ("queued", "running") for j in store().list("jobs", p.uid)
-    ):
-        raise HTTPException(409, "Wait for wardrobe processing to finish")
     profile = store().get("profiles", p.uid, "me") or UserProfile().model_dump()
+    if not profile.get("clothing_size") or not profile.get("shoe_size"):
+        raise HTTPException(409, "Save your clothing and shoe sizes in Profile first")
     profile["onboarding_complete"] = True
     store().put("profiles", p.uid, "me", profile)
     return {"ready": True, "confirmed_count": len(recommendations.get_confirmed_wardrobe(p.uid))}

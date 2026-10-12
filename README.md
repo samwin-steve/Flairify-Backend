@@ -1,7 +1,7 @@
 # Flairify backend
 
 [Open the deployed Flairify app](https://flairify-web-7kxckvikva-uc.a.run.app) · [API documentation](https://flairify-api-7kxckvikva-uc.a.run.app/docs)
-Wardrobe-first personalized retail shopping API and asynchronous worker. Paid integration adapters target Google Cloud only. This repository is intended for a public hackathon submission; it contains no credentials.
+Personalized retail shopping API with optional wardrobe pairing and asynchronous worker. Paid integration adapters target Google Cloud only. This repository is intended for a public hackathon submission; it contains no credentials.
 
 ## Run locally
 
@@ -16,7 +16,7 @@ uv run uvicorn app.main:app --reload --port 8000
 
 Open [API docs](http://localhost:8000/docs). Run the [frontend repository](https://github.com/samwin-steve/Flairify-Frontend) on port 3000 with `BACKEND_URL=http://127.0.0.1:8000`.
 
-Demo mode needs no credentials. Start a session in the frontend, choose clothing/shoe sizes, optionally upload reference photos, then use sample wardrobe or direct uploads. Confirm at least one garment. Uploaded photos require manual review when Gemini is not configured. Review and correct any unknown category before confirming. For a repeatable sample, confirm all four pieces and request a Mumbai work trip within ₹5,000.
+Demo mode needs no credentials. Save your shopping department, clothing/shoe sizes, preferred store and budget, then start shopping without photos. These settings persist independently of optional style-memory consent and can be changed in Profile. Wardrobe pairing defaults off; turn it on in chat to consider suitable confirmed pieces. Uploaded photos require manual review when Gemini is not configured. Review and correct unknown details before confirming ownership.
 
 ## Tests
 
@@ -25,7 +25,7 @@ uv run pytest -q
 uv run python scripts/evaluate_demo.py
 ```
 
-Tests verify wardrobe gating, isolation, media access/deletion, budget/stock/size validation, follow-up context, import/indexing, safe image sources, consent, generation failures/idempotency and Photos Picker contracts. Provider mocks are not live integration results.
+Tests verify shopping-preference setup, optional confirmed-wardrobe use, isolation, media access/deletion, budget/stock/size validation, follow-up context, import/indexing, safe image sources, consent, generation failures/idempotency and Photos Picker contracts. Provider mocks are not live integration results.
 
 ## Deploy
 
@@ -51,7 +51,7 @@ Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and d
 - [Three-minute demo](docs/DEMO_SCRIPT.md)
 - [Submission explanation](docs/SUBMISSION.md)
 
-The sample catalogue contains **200 options** (90 men’s, 91 women’s, 19 unisex): 48 tops, 43 bottoms, 25 jackets, 16 dresses, 42 shoes, 15 bags and 11 accessories. 199 are in simulated stock; one deliberately sold-out fixture exercises unavailable-item handling. Sample clothing offers XXS–4XL, shoes EU 35–48, and bags/accessories one size, at two sample stores. These variants are demonstration data, not manufacturer size availability. Seller-supplied stock and sizes remain unchanged.
+The sample catalogue contains **200 options** (90 men’s, 91 women’s, 19 unisex): 48 tops, 43 bottoms, 25 jackets, 16 dresses, 42 shoes, 15 bags and 11 accessories. Ten contradictory or children’s listings are excluded from adult shopping results without deleting the source records. This leaves 190 shopper-visible records, 189 in simulated stock; one deliberately sold-out fixture exercises unavailable-item handling. Sample clothing offers XXS–4XL, shoes EU 35–48, and bags/accessories one size, at two sample stores. These variants are demonstration data, not manufacturer size availability. Seller-supplied stock and sizes remain unchanged.
 
 190 new archive photographs include eight image references from the requested Myntra fashion CSV and 182 from Param Aggarwal’s fashion image dataset. Provenance and publisher-declared licenses are recorded in `fixtures/catalogue-sources.json`, `fixtures/image-credits.json`, and [catalogue documentation](docs/CATALOGUE.md). Photographed clothing, footwear, bags and accessories support illustrative Google Gemini previews; items without supported original photographs stay disabled. No sample listing is a current retailer offer.
 
@@ -81,3 +81,7 @@ Select one or more pieces using the initially empty checkboxes on a stylist look
 ## Semantic catalogue RAG and streamed ADK stylist
 
 See [SEMANTIC_RAG.md](docs/SEMANTIC_RAG.md) for the Gemini Embedding 2 / Firestore implementation, Google ADK modules, SSE contract, indexes, migration and explicit demo limitations.
+
+## Occasion-aware recommendations
+
+Saved shopping settings replace the repeated chat selectors. Catalogue-only recommendations work without photos; the chat switch opts into suitable confirmed wardrobe pieces. Ranking retains semantic similarity, interprets the occasion, assesses complete shortlisted outfits with Gemini and diversifies the main garment. Checkout preselects saved/recommended variants but still requires review and confirmation. See [recommendation quality and limits](docs/RECOMMENDATION_QUALITY.md).

@@ -1,0 +1,317 @@
+{
+  "collected_on": "2026-10-12",
+  "environment": "local application code against real Vertex AI and Firestore in data-workshops; temporary operator QA records removed",
+  "sample_catalogue": true,
+  "runs": [
+    {
+      "department": "men",
+      "retrieval": {
+        "method": "firestore-vector",
+        "model": "gemini-embedding-2",
+        "dimensions": 768,
+        "candidates": 54,
+        "semantic": true
+      },
+      "assessment_method": "gemini",
+      "text": "For an Independence Day celebration at the office, pairing a refined ethnic kurta with sharp formal trousers strikes the right balance between festive tradition and workplace professionalism. \n\nThe first option features a rust kurta that brings a warm saffron accent balanced by clean black trousers and dress shoes. If you prefer a crisp, understated look, the second set pairs a striped white kurta with tailored grey trousers, while the third option introduces a subtle green note with an olive printed kurta grounded by dark grey trousers. Each ensemble offers a distinct festive shade without feeling overly ornate for the office.",
+      "intent": {
+        "occasion": "Independence Day at the office",
+        "palette": [
+          "white",
+          "green",
+          "orange"
+        ],
+        "dress_code": "office celebration",
+        "include_wardrobe": false
+      },
+      "outfits": [
+        {
+          "title": "Rust top \u00b7 a fresh combination",
+          "total": 2997,
+          "reason": "The rust khadi kurta provides an elegant saffron-toned accent fitting the occasion's theme, combined smoothly with classic black formal trousers and black dress shoes suitable for work.",
+          "source": "gemini",
+          "products": [
+            {
+              "id": "sample-fashion-30779",
+              "name": "Fabindia Men Rust Khadi Kurta",
+              "category": "top",
+              "colour": "Rust",
+              "image": "/images/catalog-fashion-30779.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-fashion-10257",
+              "name": "John Miller Men Solid Type Black Trousers",
+              "category": "bottom",
+              "colour": "Black",
+              "image": "/images/catalog-fashion-10257.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-fashion-59435",
+              "name": "Arrow Men Black Formal Shoes",
+              "category": "shoes",
+              "colour": "Black",
+              "image": "/images/catalog-fashion-59435.jpg",
+              "size": "39"
+            }
+          ]
+        },
+        {
+          "title": "White top \u00b7 a fresh combination",
+          "total": 2397,
+          "reason": "The white striped ethnic kurta adheres nicely to the celebratory Independence Day palette and requested attire, paired smartly with grey formal trousers and black formal leather shoes for an office-appropriate look.",
+          "source": "gemini",
+          "products": [
+            {
+              "id": "sample-fashion-30784",
+              "name": "Fabindia Men Striped White Kurta",
+              "category": "top",
+              "colour": "White",
+              "image": "/images/catalog-fashion-30784.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-fashion-26164",
+              "name": "John Miller Men Striped Grey Trousers",
+              "category": "bottom",
+              "colour": "Grey",
+              "image": "/images/catalog-fashion-26164.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-fashion-10268",
+              "name": "Clarks Men Hang Work Leather Black Formal Shoes",
+              "category": "shoes",
+              "colour": "Black",
+              "image": "/images/catalog-fashion-10268.jpg",
+              "size": "39"
+            }
+          ]
+        },
+        {
+          "title": "Olive top \u00b7 a fresh combination",
+          "total": 2797,
+          "reason": "The printed olive kurta brings the requested green palette element in an ethnic style, well-matched with dark grey formal trousers and black formal shoes for an office celebration.",
+          "source": "gemini",
+          "products": [
+            {
+              "id": "sample-fashion-32197",
+              "name": "Fabindia Men Printed Olive Kurta",
+              "category": "top",
+              "colour": "Olive",
+              "image": "/images/catalog-fashion-32197.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom",
+              "colour": "Grey",
+              "image": "/images/catalog-fashion-26163.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-fashion-23247",
+              "name": "Arrow Men Formal Black Shoe",
+              "category": "shoes",
+              "colour": "Black",
+              "image": "/images/catalog-fashion-23247.jpg",
+              "size": "39"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "event": "start",
+          "seconds": 0.0
+        },
+        {
+          "event": "status",
+          "seconds": 0.0
+        },
+        {
+          "event": "status",
+          "seconds": 3.53
+        },
+        {
+          "event": "outfits",
+          "seconds": 29.93
+        },
+        {
+          "event": "status",
+          "seconds": 29.93
+        },
+        {
+          "event": "text",
+          "seconds": 32.03
+        },
+        {
+          "event": "text",
+          "seconds": 32.23
+        },
+        {
+          "event": "text",
+          "seconds": 32.36
+        },
+        {
+          "event": "text",
+          "seconds": 32.55
+        },
+        {
+          "event": "text",
+          "seconds": 32.76
+        },
+        {
+          "event": "text",
+          "seconds": 32.94
+        },
+        {
+          "event": "done",
+          "seconds": 35.0
+        }
+      ],
+      "seconds": 36.99
+    },
+    {
+      "department": "women",
+      "retrieval": {
+        "method": "firestore-vector",
+        "model": "gemini-embedding-2",
+        "dimensions": 768,
+        "candidates": 60,
+        "semantic": true
+      },
+      "assessment_method": "gemini",
+      "text": "For an office Independence Day celebration, a green kurta paired with tailored black trousers offers an understated, celebratory touch while keeping your look professional and comfortable. The first outfit features a printed green kurta paired with sleek black trousers and black-and-gold flats for an easy, polished ethnic feel. The second option leans slightly more formal, showcasing an embroidered green kurta worn over black parallel trousers and classic brown leather flats. Both combinations provide a smart, workplace-appropriate way to honor the occasion.",
+      "intent": {
+        "occasion": "Independence Day at the office",
+        "palette": [
+          "white",
+          "green",
+          "orange"
+        ],
+        "dress_code": "office celebration",
+        "include_wardrobe": false
+      },
+      "outfits": [
+        {
+          "title": "Green top \u00b7 a fresh combination",
+          "total": 2897,
+          "reason": "The printed green kurta provides an appropriate ethnic element aligned with the Independence Day theme, nicely balanced by the black trousers and coordinated black and gold toned flats for an office celebration.",
+          "source": "gemini",
+          "products": [
+            {
+              "id": "sample-fashion-54588",
+              "name": "Sushilas Women Printed Green Kurta",
+              "category": "top",
+              "colour": "Green",
+              "image": "/images/catalog-fashion-54588.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-myntra-12723704",
+              "name": "KASSUALLY Women Black Trousers",
+              "category": "bottom",
+              "colour": "Black",
+              "image": "/images/catalog-myntra-12723704.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-fashion-59051",
+              "name": "Carlton London Women Black & Gold Toned Flats",
+              "category": "shoes",
+              "colour": "Black",
+              "image": "/images/catalog-fashion-59051.jpg",
+              "size": "39"
+            }
+          ]
+        },
+        {
+          "title": "Green top \u00b7 a fresh combination",
+          "total": 3097,
+          "reason": "The green embroidered kurta fits the thematic palette and requested ethnic style. Pairing it with black parallel trousers and brown leather flats creates an office-appropriate, smart ethnic combination.",
+          "source": "gemini",
+          "products": [
+            {
+              "id": "sample-fashion-20099",
+              "name": "Diva Women Embroided Green Kurta",
+              "category": "top",
+              "colour": "Green",
+              "image": "/images/catalog-fashion-20099.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-myntra-10856380",
+              "name": "SASSAFRAS Women Black Parallel Trousers",
+              "category": "bottom",
+              "colour": "Black",
+              "image": "/images/catalog-myntra-10856380.jpg",
+              "size": "M"
+            },
+            {
+              "id": "sample-fashion-2886",
+              "name": "Catwalk Women Leather Brown Flats",
+              "category": "shoes",
+              "colour": "Brown",
+              "image": "/images/catalog-fashion-2886.jpg",
+              "size": "39"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "event": "start",
+          "seconds": 0.0
+        },
+        {
+          "event": "status",
+          "seconds": 0.0
+        },
+        {
+          "event": "status",
+          "seconds": 3.02
+        },
+        {
+          "event": "outfits",
+          "seconds": 20.11
+        },
+        {
+          "event": "status",
+          "seconds": 20.11
+        },
+        {
+          "event": "text",
+          "seconds": 21.58
+        },
+        {
+          "event": "text",
+          "seconds": 21.72
+        },
+        {
+          "event": "text",
+          "seconds": 21.93
+        },
+        {
+          "event": "text",
+          "seconds": 22.09
+        },
+        {
+          "event": "text",
+          "seconds": 22.36
+        },
+        {
+          "event": "text",
+          "seconds": 22.36
+        },
+        {
+          "event": "done",
+          "seconds": 23.93
+        }
+      ],
+      "seconds": 24.98
+    }
+  ]
+}

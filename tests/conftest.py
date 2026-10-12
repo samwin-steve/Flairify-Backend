@@ -41,6 +41,7 @@ def onboarded(client, session):
     profile.pop("seller")
     profile.update(
         name="Asha",
+        include_wardrobe=True,
         clothing_size="M",
         shoe_size="39",
         consent={"remember_preferences": True, "ai_photo_processing": False},

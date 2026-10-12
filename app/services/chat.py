@@ -22,7 +22,7 @@ def prepare(principal, request):
     owner = principal.uid
     profile = store().get("profiles", owner, "me") or {}
     if not profile.get("onboarding_complete"):
-        raise HTTPException(409, "Complete your wardrobe review before your first chat")
+        raise HTTPException(409, "Save your shopping preferences before your first chat")
     key = request.request_id or secrets.token_hex(16)
     digest = hashlib.sha256(
         json.dumps(request.model_dump(exclude={"request_id"}), sort_keys=True).encode()
@@ -94,7 +94,7 @@ async def execute(principal, request, turn, emit):
     conversation, key = turn["conversation"], turn["key"]
     try:
         await emit("start", {"conversation_id": conversation.id, "request_id": key})
-        await emit("status", {"message": "Checking your wardrobe and preferences…"})
+        await emit("status", {"message": "Checking your saved shopping preferences…"})
         if settings().ai_ready and not principal.demo:
             from ..agents.stylist import run
 

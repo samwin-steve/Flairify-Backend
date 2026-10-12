@@ -76,6 +76,10 @@ def test_image_failure_does_not_block_review_and_retry_is_real(signed, monkeypat
     assert "no garment image" in item["shop_image_error"]
     assert c.get("/api/media/" + item["image"][6:]).status_code == 200
     assert c.put(f"/api/wardrobe/{item['id']}", json={**item, "confirmed": True}).status_code == 200
+    profile = c.get("/api/profile").json()
+    for key in ("admin", "demo", "seller"):
+        profile.pop(key, None)
+    c.put("/api/profile", json={**profile, "clothing_size": "M", "shoe_size": "39"})
     assert c.post("/api/onboarding/complete").status_code == 200
     monkeypatch.setattr(ai, "client", provider)
     assert c.post(f"/api/jobs/{item['shop_image_job_id']}/retry").status_code == 200

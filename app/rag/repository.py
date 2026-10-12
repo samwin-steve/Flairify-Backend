@@ -142,11 +142,17 @@ def nearest(
     with ThreadPoolExecutor(max_workers=4) as pool:
         groups = list(pool.map(category_candidates, categories))
     ids = list(dict.fromkeys(row["id"] for group in groups for row in group))
+    similarity = {
+        row["id"]: max(0.0, 1.0 - float(row["distance"]))
+        for group in groups
+        for row in group
+        if "distance" in row
+    }
     # Bounded point reads only; never load the catalogue to perform online ranking.
     refs = [db.ref("products", owner, key) for key in ids]
-    latest = {s.to_dict()["id"]: s.to_dict()["data"] for s in db.db.get_all(refs)} if refs else {}
+    latest = {s.to_dict()["id"]: s.to_dict()["data"] for s in db.db.get_all(refs) if s.exists} if refs else {}
     return [
-        latest[key]
+        {**latest[key], "_semantic_score": similarity.get(key, 0.0)}
         for key in ids
         if key in latest
         and latest[key].get("indexed")

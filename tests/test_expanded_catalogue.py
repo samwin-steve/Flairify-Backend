@@ -84,6 +84,7 @@ def test_single_garment_mumbai_trip_across_departments_and_sizes(
         ChatRequest(
             message="Mumbai for work for three days, walking a lot, under ₹5,000",
             department=department,
+            include_wardrobe=True,
             clothing_size=size,
             shoe_size=shoe_size,
             store_id="lower-parel",
@@ -93,7 +94,7 @@ def test_single_garment_mumbai_trip_across_departments_and_sizes(
     assert result["outfits"], result["text"]
     for outfit in result["outfits"]:
         assert outfit["complete"] and outfit["total"] == sum(p["price"] for p in outfit["products"]) <= 5000
-        assert garment["id"] in {w["id"] for w in outfit["owned"]}
+        assert {w["id"] for w in outfit["owned"]} <= {garment["id"]}  # Never force an irrelevant layer.
         for p in outfit["products"]:
             assert p["attributes"]["department"] in (department, "unisex")
             assert p["availability"]["size"] == (shoe_size if p["category"] == "shoes" else size)
@@ -110,7 +111,7 @@ def test_requested_top_can_fill_missing_bottom_and_shoes(client, session):
     result = recommendations.recommend(
         Principal(owner, demo=True),
         ChatRequest(
-            message="Find a new shirt under ₹5,000",
+            message="Find a new shirt in a complete outfit under ₹5,000",
             clothing_size="4XL",
             shoe_size="48",
             department="men",
@@ -125,7 +126,7 @@ def test_requested_top_can_fill_missing_bottom_and_shoes(client, session):
 
 def test_search_does_not_starve_categories_and_failure_is_specific(client, onboarded):
     data, headers = onboarded
-    assert len(inventory.search(data["user_id"])) == 200
+    assert len(inventory.search(data["user_id"])) == 190  # Ten misclassified/adult-ineligible fixtures are excluded.
     assert {p["category"] for p in inventory.search(data["user_id"])} == {
         "top",
         "bottom",

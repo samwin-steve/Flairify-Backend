@@ -16,6 +16,14 @@ class StylistTools:
 
     async def get_confirmed_wardrobe(self) -> dict:
         """Read the current customer's confirmed owned garments."""
+        profile = await asyncio.to_thread(store().get, "profiles", self.principal.uid, "me") or {}
+        include = (
+            self.request.include_wardrobe
+            if self.request.include_wardrobe is not None
+            else profile.get("include_wardrobe", False)
+        )
+        if not include:
+            return {"garments": [], "wardrobe_pairing": "off"}
         rows = await asyncio.to_thread(recommendations.get_confirmed_wardrobe, self.principal.uid)
         return {
             "garments": [{k: r.get(k) for k in ("id", "name", "category", "colour", "pattern")} for r in rows]
@@ -31,11 +39,15 @@ class StylistTools:
         another_jacket: bool = False,
         keep_shirt: bool = False,
         jacket_coverage: bool = False,
+        palette: list[str] | None = None,
+        preferred_types: list[str] | None = None,
+        avoid_types: list[str] | None = None,
+        dress_code: str = "everyday",
     ) -> dict:
         """Retrieve semantic catalogue matches, then validate complete outfits against owned clothes, sizes, stock and total budget."""
         async with self._candidate_lock:
             if self.result is None:
-                await self.emit("status", {"message": "Finding pieces that work with your wardrobe…"})
+                await self.emit("status", {"message": "Finding suitable pieces for your occasion…"})
                 intent = {
                     "query": query[:2000],
                     "occasion": occasion[:150],
@@ -45,6 +57,10 @@ class StylistTools:
                     "another_jacket": another_jacket,
                     "keep_shirt": keep_shirt,
                     "jacket_coverage": jacket_coverage,
+                    "palette": palette or [],
+                    "preferred_types": preferred_types or [],
+                    "avoid_types": avoid_types or [],
+                    "dress_code": dress_code,
                 }
                 self.result = await asyncio.to_thread(
                     recommendations.recommend,

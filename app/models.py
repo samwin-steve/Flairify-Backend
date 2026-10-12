@@ -34,6 +34,9 @@ class UserProfile(Model):
     consent: ConsentSettings = Field(default_factory=ConsentSettings)
     onboarding_complete: bool = False
     keep_background: bool = False
+    department: Literal["all", "women", "men", "unisex"] = "all"
+    preferred_store_id: str | None = Field(default=None, max_length=100)
+    include_wardrobe: bool = False
 
 
 class Box(Model):
@@ -250,6 +253,7 @@ class SavedLook(Model):
 
 
 class ChatRequest(Model):
+    include_wardrobe: bool | None = None
     request_id: str | None = Field(default=None, min_length=8, max_length=100, pattern=r"^[\w-]+$")
     department: Literal["all", "women", "men", "unisex"] | None = None
     message: str = Field(min_length=1, max_length=2000)

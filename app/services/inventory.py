@@ -158,8 +158,12 @@ def product_hash(p):
 def search(owner, q="", budget=1000000, category=None, limit=None):
     # Browsing an empty query retains the inventory screen contract. Recommendation
     # retrieval never uses this listing path.
+    from .styling import quality_issue
+
     if not q.strip():
-        return attribute_search(owner, q, budget, category, limit)
-    from ..rag.retrieval import candidates
-    rows, _ = candidates(owner, q, budget, category=category)
-    return rows[:limit]
+        rows = attribute_search(owner, q, budget, category)
+    else:
+        from ..rag.retrieval import candidates
+
+        rows, _ = candidates(owner, q, budget, category=category)
+    return [p for p in rows if not quality_issue(p)][:limit]

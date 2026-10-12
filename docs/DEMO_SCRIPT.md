@@ -6,7 +6,7 @@ Use a signed-in demonstration account and a photo you are authorized to process.
 “Shopping usually starts with a product. Flairify starts with what you already own. Share your wardrobe once. Find pieces that work with your life—and see the look on you.” Show the light pink home page and explain the distinction between a signed-in account and the credential-free sample demo.
 
 **0:25–1:05 — Upload once**
-Sign in, enter sizes and choose photo-processing consent. Upload a clear full-body photo. Show that the photo is saved privately and automatically queues Google Gemini garment detection. Review the detected garment crops, correct anything uncertain and confirm ownership. The first personalized conversation stays gated until at least one garment is confirmed and processing finishes.
+Sign in, enter sizes and choose photo-processing consent. Upload a clear full-body photo. Show that the photo is saved privately and automatically queues Google Gemini garment detection. Review the detected garment crops, correct anything uncertain and confirm ownership. Sizes, department and store are saved once. Photos are optional for catalogue shopping; turn on “Pair with my wardrobe” to use confirmed garments.
 
 **1:05–1:45 — A real-life request**
 Choose “Help me pack for Mumbai”: three working days, walking, ₹5,000. Show owned versus new pieces, the combined new-piece total, available sample sizes and supplied store/aisle information. Explain that each recommendation checks a complete outfit. Save a look. Open Inventory to browse the same catalogue, filter available clothing and select a photographed shirt or jacket.

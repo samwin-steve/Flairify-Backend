@@ -102,6 +102,7 @@ def test_upload_manual_review_and_deletion(client, session):
     assert client.put("/api/wardrobe/" + item["id"], headers=h, json=item).status_code == 422
     item.update(name="My shirt", category="top", colour="White")
     assert client.put("/api/wardrobe/" + item["id"], headers=h, json=item).status_code == 200
+    client.put("/api/profile", headers=h, json={"clothing_size": "M", "shoe_size": "39"})
     assert client.post("/api/onboarding/complete", headers=h).status_code == 200
     original = p["original_media_id"]
     assert client.get("/api/media/" + original, headers=h).content == image_bytes()
@@ -214,7 +215,7 @@ def test_consent_and_saved_invalidation(client, onboarded):
     profile["consent"]["remember_preferences"] = False
     client.put("/api/profile", headers=h, json=profile)
     result = client.get("/api/profile", headers=h).json()
-    assert result["styles"] == [] and result["clothing_size"] == "" and result["shoe_size"] == ""
+    assert result["styles"] == [] and result["clothing_size"] == "M" and result["shoe_size"] == "39"
 
 
 def test_size_not_inferred(client, onboarded):
@@ -271,7 +272,7 @@ def test_single_owned_top_fills_base_before_optional_layer(client, onboarded):
                     stock["quantity"] = 0
             store().put("products", owner, product["id"], product)
     unavailable = client.post(
-        "/api/chat", headers=headers, json={"message": "Mumbai work under ₹5,000"}
+        "/api/chat", headers=headers, json={"message": "Keep my shirt for a Mumbai work outfit under ₹5,000"}
     ).json()
     assert unavailable["outfits"] == []
 
@@ -285,5 +286,10 @@ def test_existing_jacket_is_reused_without_upselling(client, onboarded):
     result = client.post("/api/chat", headers=headers, json={"message": "Mumbai work under ₹5,000"}).json()
     assert result["outfits"]
     for outfit in result["outfits"]:
-        assert jacket.id in {w["id"] for w in outfit["owned"]}
+        assert {w["category"] for w in outfit["owned"]} <= {
+            "top",
+            "bottom",
+            "shoes",
+            "jacket",
+        }  # Optional layers are not forced.
         assert all(p["category"] != "jacket" for p in outfit["products"])

@@ -1,6 +1,6 @@
 # Flairify architecture
 
-Flairify starts with a customer-confirmed wardrobe, then suggests combinations of owned and available retailer pieces. It has two independently deployable repositories: Next.js frontend and FastAPI backend (including the worker).
+Flairify starts with saved customer shopping settings and suggests available retailer pieces. Customers can optionally enable pairing with their confirmed wardrobe. It has two independently deployable repositories: Next.js frontend and FastAPI backend (including the worker).
 
 ```mermaid
 flowchart LR
@@ -34,7 +34,7 @@ Pydantic models cover UserProfile, ConsentSettings, ReferencePhoto, PhotoSource,
 
 Photo import validates JPEG/PNG/WebP byte content, maximum size and decoded dimensions, corrects EXIF orientation, and saves a resized processing/evidence copy. Validated direct-upload originals remain private alongside the processing copy and available capture date. Google Photos retains the selected 1600px download, not a guarantee of full original resolution. Photo dates are evidence of appearance, not a complete wear history. Crops retain source IDs and normalized boxes relative to the selected-person image. Brand, material and size remain unknown unless provided by the customer. Thumbnails are evidence rectangles, **not segmented garments**.
 
-Without Vertex credentials, uploaded photos produce a manual-review card, not invented detections. The sample wardrobe is a separate explicit choice. At least one garment must be confirmed, and import jobs finished, before personalized chat. Repeated imports preserve corrected records using deterministic item IDs.
+Without Vertex credentials, uploaded photos produce a manual-review card, not invented detections. The sample wardrobe is a separate explicit choice. Chat requires saved clothing and shoe sizes. Photo processing and wardrobe ownership review can happen later; only confirmed garments are eligible when optional wardrobe pairing is enabled. Repeated imports preserve corrected records using deterministic item IDs.
 
 ## Jobs and concurrency
 
@@ -71,3 +71,5 @@ Authenticated upload → selected-person Gemini extraction → original garment 
 ## Current recommendation request path
 
 The stylist now uses Google ADK, Gemini Embedding 2 and bounded Firestore vector retrieval. See [SEMANTIC_RAG.md](SEMANTIC_RAG.md) for the authoritative module map and data flow; Firestore serves online vectors; BigQuery WardrobeGraph now supplies prior whole-outfit coverage evidence and is updated by the private worker. Earlier generic BigQuery vector SQL remains optional scaffolding.
+
+The latest occasion-aware ranking and preference flow is documented in [RECOMMENDATION_QUALITY.md](RECOMMENDATION_QUALITY.md). BigQuery wardrobe evidence is only read/updated when pairing with owned garments is enabled.
