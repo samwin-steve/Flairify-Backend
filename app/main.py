@@ -551,6 +551,11 @@ def generate(kind: str, data: GenerationRequest, p: Principal = Depends(principa
     return jobs.create(p.uid, kind, payload, data.request_key)
 
 
+@app.get("/api/jobs/{key}/shopping")
+def preview_shopping(key: str, p: Principal = Depends(principal)):
+    return orders.preview_products(p, key)
+
+
 @app.post("/api/jobs/{key}/accept")
 def accept(key: str, p: Principal = Depends(principal)):
     row = require_record("jobs", p.uid, key)

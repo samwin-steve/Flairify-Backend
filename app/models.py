@@ -296,8 +296,9 @@ class OrderLineRequest(Model):
 
 class OrderQuoteRequest(Model):
     items: list[OrderLineRequest] = Field(min_length=1, max_length=20)
-    source: Literal["inventory", "stylist"] = "inventory"
+    source: Literal["inventory", "stylist", "fitting_room"] = "inventory"
     outfit_id: str | None = None
+    preview_job_id: str | None = Field(default=None, max_length=100)
 
 
 class PlaceOrderRequest(OrderQuoteRequest):

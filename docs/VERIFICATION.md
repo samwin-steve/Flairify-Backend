@@ -1,6 +1,14 @@
 # Verification — 12 October 2026
 
-## Latest release: saved preferences, optional wardrobe and occasion relevance
+## Latest release: generated preview and Fitting Room checkout
+
+**106 backend tests, 21 frontend logic tests and 22 desktop/mobile Playwright journeys passed.** TypeScript and production Next.js compilation passed. Completed preview cards display only the generated image; the original photo is neither rendered nor fetched by the preview card. Reference management remains available separately. Buy opens checkout for all available new products from the original recommendation, even when fewer were selected for generation; owned items are excluded.
+
+New checks cover authenticated preview access, unfinished jobs, unrelated product injection, standalone/legacy previews, missing recommendations, unavailable stock, changed prices, idempotent order placement and refresh persistence. The browser tests use real local order APIs and explicitly labeled completed-preview media fixtures. No new Google image or video was generated for this interface/order change, and no generation-quality improvement is claimed. Tested Axe WCAG A/AA rules reported zero violations; desktop and Pixel 7 layouts had no horizontal overflow. Screenshots were inspected.
+
+Shopping actions now read Buy and Order placed. Orders still persist without payment or fulfillment; internal legacy API fields remain compatible. Cloud deployment results are recorded below after release verification.
+
+## Previous release: saved preferences, optional wardrobe and occasion relevance
 
 **99 backend tests, 21 frontend logic tests and 20 desktop/mobile Playwright journeys passed.** Production Next.js compilation and TypeScript checks passed. The new cases cover profile persistence without optional style-memory consent, no-photo onboarding, catalogue-only default, matching confirmed wardrobe items only, per-turn toggle overrides, saved department/store/size constraints, distinct main garments, different-options follow-ups, changing from an office celebration to a workout, unavailable stock, model rejection and unknown-ID validation. Browser journeys cover persisted Profile edits, no size/department selectors in chat, payloads using saved settings, explicit checkout confirmation, tested Axe WCAG A/AA rules and mobile overflow. These are functional regressions, not an accuracy benchmark.
 

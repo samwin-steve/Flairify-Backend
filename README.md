@@ -57,7 +57,7 @@ The sample catalogue contains **200 options** (90 men’s, 91 women’s, 19 unis
 
 With photo-processing consent, a full-body upload automatically queues Gemini garment extraction and becomes a usable private preview reference. Wardrobe uploads start extraction after explicit person selection. Detections remain drafts until ownership is confirmed. Each detected garment also queues a private Gemini shop-style image, with the original evidence crop retained, AI labeling, retry and an original-only option. Image failure does not block wardrobe review. Try-on can start directly from Inventory using a reference or existing wardrobe photo; completed previews show source and generated images, and support download, regeneration and deletion.
 
-## Seller Studio and mock orders
+## Seller Studio and orders
 
 Owners and approved sellers can add clothes with a product photo, SKU, INR price, sizes, store quantities, and optional aisle/rack. Each save queues indexing; successfully indexed active products appear in Inventory and are eligible for size-, stock-, and budget-checked recommendations. Sellers manage only their own products and stores. Owners manage the shared catalogue and approve seller requests. Existing Firebase `admin` and `seller` claims remain supported.
 
@@ -69,7 +69,7 @@ A signed-in customer opens **Seller Studio → Request seller access**. An owner
 
 The operator needs Identity Platform account-read and Firestore write permissions and an active `gcloud auth login`. No identity-admin permission is added to the running app. Roles live in the server-only `flairify_seller_access` collection; browser Firestore access remains denied. App-managed revocations take effect on the next request. Firebase custom claims are managed separately; a preexisting custom claim must be removed separately to revoke its grant. Never bootstrap an account based only on a name or client-supplied UID.
 
-Customers can choose **Inventory → Mock buy** without wardrobe onboarding, or **Mock buy new pieces** on a stylist recommendation. Checkout requires explicit mock acknowledgment, selected sizes/stores/quantities, and a server-validated total. Orders are persisted privately and reappear in **My Orders**. Seller Studio shows only the seller's item lines; the owner sees the catalogue-wide mock inbox. No payment, shipment, reservation, stock decrement, or wardrobe-ownership confirmation occurs.
+Customers can choose **Inventory → Buy** without wardrobe onboarding, or **Buy** on a stylist recommendation. Checkout requires explicit item confirmation, selected sizes/stores/quantities, and a server-validated total. Orders are persisted privately and reappear in **My Orders**. Seller Studio shows only the seller's item lines; the owner sees the catalogue-wide order inbox. No payment, shipment, reservation, stock decrement, or wardrobe-ownership confirmation occurs.
 
 The backend rechecks serving inventory at quote and placement, rejects changed totals, unavailable sizes and excessive quantities, and merges repeated product/variant/store cart lines. A stable request key prevents duplicate placement; replay returns the original price snapshot. Order persistence is atomic per customer/order key. Inbox projections are separate idempotent writes and are repaired on retry; there is no cross-document transaction or background repair sweep. These are mock records, not a production fulfillment system. Anonymous demo history lasts only while its isolated session is valid; sign in for account-based history.
 
@@ -85,3 +85,9 @@ See [SEMANTIC_RAG.md](docs/SEMANTIC_RAG.md) for the Gemini Embedding 2 / Firesto
 ## Occasion-aware recommendations
 
 Saved shopping settings replace the repeated chat selectors. Catalogue-only recommendations work without photos; the chat switch opts into suitable confirmed wardrobe pieces. Ranking retains semantic similarity, interprets the occasion, assesses complete shortlisted outfits with Gemini and diversifies the main garment. Checkout preselects saved/recommended variants but still requires review and confirmation. See [recommendation quality and limits](docs/RECOMMENDATION_QUALITY.md).
+
+## Fitting Room shopping
+
+`GET /api/jobs/{id}/shopping` resolves the authenticated customer’s completed try-on to current inventory. Recommendation previews offer every new product in their stored look; owned garments are excluded. Standalone previews resolve their selected products, with support for older single-product previews. Unavailable listings are reported separately. `source=fitting_room` orders require `preview_job_id`; quote and placement validate the customer, job completion, allowed product IDs, current variants, stock and prices. Orders retain the preview reference and remain idempotent.
+
+Customer-facing actions say **Buy** and **Order placed**. Orders remain saved without payment or fulfillment. Legacy API fields (`mock`, `mock_placed`, `acknowledge_mock`) remain for compatibility and are not displayed as interface labels.
