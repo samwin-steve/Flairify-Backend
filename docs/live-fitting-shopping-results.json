@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-10-12T17:54:44.426Z",
+  "url": "https://flairify-web-7kxckvikva-uc.a.run.app",
+  "media": "Explicitly labeled verification fixture, no new AI generation",
+  "checks": [
+    {
+      "device": "desktop",
+      "generatedImageLoaded": true,
+      "originalImageAbsent": true,
+      "allRecommendedNewProducts": 3,
+      "selectedPreviewProducts": 1,
+      "orderSaved": true,
+      "orderRestoredAfterRefresh": true,
+      "paymentStatus": "not_required",
+      "source": "fitting_room",
+      "orderTotal": 2097,
+      "visibleMockLabels": false,
+      "axeViolations": [],
+      "layout": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "browserErrors": [],
+      "sourceImageRequests": 0
+    },
+    {
+      "device": "mobile",
+      "generatedImageLoaded": true,
+      "originalImageAbsent": true,
+      "allRecommendedNewProducts": 3,
+      "selectedPreviewProducts": 1,
+      "orderSaved": true,
+      "orderRestoredAfterRefresh": true,
+      "paymentStatus": "not_required",
+      "source": "fitting_room",
+      "orderTotal": 2097,
+      "visibleMockLabels": false,
+      "axeViolations": [],
+      "layout": {
+        "viewport": 412,
+        "document": 412
+      },
+      "browserErrors": [],
+      "sourceImageRequests": 0
+    }
+  ],
+  "cleanup": {
+    "temporaryOwnerRecordsDeleted": 214,
+    "temporaryMediaDeleted": 1,
+    "remainingOwnerRecords": 0,
+    "temporarySessionDeleted": true
+  },
+  "deployment": {
+    "flairify-web": {
+      "revision": "flairify-web-00015-q2g",
+      "url": "https://flairify-web-7kxckvikva-uc.a.run.app",
+      "http": 200,
+      "image": "us-central1-docker.pkg.dev/data-workshops/flairify/frontend:ed518007-e38f-4a94-961a-147868143e25"
+    },
+    "flairify-api": {
+      "revision": "flairify-api-00020-l5r",
+      "url": "https://flairify-api-7kxckvikva-uc.a.run.app",
+      "http": 200,
+      "image": "us-central1-docker.pkg.dev/data-workshops/flairify/backend:7e28ea8c-5b79-45aa-a7a1-522df12d1d11"
+    },
+    "flairify-worker": {
+      "revision": "flairify-worker-00040-k5q",
+      "url": "https://flairify-worker-7kxckvikva-uc.a.run.app",
+      "http": 403,
+      "image": "us-central1-docker.pkg.dev/data-workshops/flairify/backend:7e28ea8c-5b79-45aa-a7a1-522df12d1d11"
+    }
+  },
+  "source": {
+    "frontend": "05aaba9",
+    "backend": "c2c0a33"
+  }
+}
