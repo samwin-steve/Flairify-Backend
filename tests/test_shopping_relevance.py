@@ -175,3 +175,12 @@ def test_whole_outfit_model_rejects_candidates_and_cannot_invent_ids(client, mon
     unchanged = deepcopy(options)
     assert styling.assess_shortlist(options, intent, True) == "rules-fallback"
     assert options == unchanged
+
+
+@pytest.mark.parametrize(
+    "message,occasion", [("Office shirts", "Work & everyday"), ("White shirts", "Everyday")]
+)
+def test_new_request_does_not_inherit_old_occasion(message, occasion):
+    result = styling.brief(message, {"occasion": "Independence Day", "palette": ["orange"]}, None)
+    assert result["occasion"] == occasion
+    assert result["palette"] != ["orange"]

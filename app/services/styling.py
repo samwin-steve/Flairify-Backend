@@ -117,6 +117,8 @@ def brief(message, previous, interpreted):
     result.setdefault("preferred_types", [])
     result.setdefault("avoid_types", [])
     result.setdefault("dress_code", "everyday")
+    if not followup:
+        result["occasion"] = (interpreted or {}).get("occasion") or "Everyday"
     if re.search(r"independ\w*\s*day|republic\s*day|15\s*(?:aug|august)", text) and not re.search(
         r"\b(usa|american|united states|july|pakistan|bangladesh)\b", text
     ):
@@ -130,6 +132,9 @@ def brief(message, previous, interpreted):
         )
     elif re.search(r"\b(office|work|conference|interview|meeting)\b", text):
         result["dress_code"] = "office"
+        result["occasion"] = (interpreted or {}).get("occasion") or (
+            "Mumbai · work trip" if "mumbai" in text else "Work & everyday"
+        )
     elif any(w in text for w in ("gym", "workout", "running")):
         result["dress_code"] = "sports"
         result["occasion"] = (interpreted or {}).get("occasion") or "Workout & running"
