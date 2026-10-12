@@ -1,0 +1,125 @@
+{
+  "collected_on": "2026-10-12",
+  "browser": {
+    "onboardingWithoutPhotos": true,
+    "settingsSavedWithoutOptionalMemory": true,
+    "profileTogglePersisted": true,
+    "checkoutConfirmation": true,
+    "conversationRestored": true,
+    "request": "Independence Day office with original typos",
+    "outfits": [
+      {
+        "title": "Fabindia Men Striped White Kurta",
+        "total": 2797,
+        "products": [
+          {
+            "id": "sample-fashion-30784",
+            "name": "Fabindia Men Striped White Kurta",
+            "size": "M",
+            "store": "bandra"
+          },
+          {
+            "id": "sample-fashion-26164",
+            "name": "John Miller Men Striped Grey Trousers",
+            "size": "M",
+            "store": "bandra"
+          },
+          {
+            "id": "sample-fashion-59435",
+            "name": "Arrow Men Black Formal Shoes",
+            "size": "39",
+            "store": "bandra"
+          }
+        ]
+      },
+      {
+        "title": "Fabindia Men Printed Olive Kurta",
+        "total": 3097,
+        "products": [
+          {
+            "id": "sample-fashion-32197",
+            "name": "Fabindia Men Printed Olive Kurta",
+            "size": "M",
+            "store": "bandra"
+          },
+          {
+            "id": "sample-fashion-10257",
+            "name": "John Miller Men Solid Type Black Trousers",
+            "size": "M",
+            "store": "bandra"
+          },
+          {
+            "id": "sample-fashion-23247",
+            "name": "Arrow Men Formal Black Shoe",
+            "size": "39",
+            "store": "bandra"
+          }
+        ]
+      },
+      {
+        "title": "Fabindia Men Rust Khadi Kurta",
+        "total": 2797,
+        "products": [
+          {
+            "id": "sample-fashion-30779",
+            "name": "Fabindia Men Rust Khadi Kurta",
+            "size": "M",
+            "store": "bandra"
+          },
+          {
+            "id": "sample-fashion-27614",
+            "name": "Scullers Men Beige Trousers",
+            "size": "M",
+            "store": "bandra"
+          },
+          {
+            "id": "sample-fashion-10268",
+            "name": "Clarks Men Hang Work Leather Black Formal Shoes",
+            "size": "39",
+            "store": "bandra"
+          }
+        ]
+      }
+    ],
+    "text": "For an Independence Day celebration at the office, these options draw on subtle festive tones while staying polished and professional. \n\nThe first look offers a clean, classic feel with a crisp white striped kurta paired with grey formal trousers and black dress shoes. For a touch of color, the second outfit highlights an olive green kurta balanced by sharp black trousers, while the third choice embraces festive warmth with a rust kurta set against tailored beige chinos. Each combination keeps the styling dignified and workplace-ready without requiring an overwhelming mix of shades.",
+    "retrieval": {
+      "dimensions": 768,
+      "method": "firestore-vector",
+      "model": "gemini-embedding-2",
+      "candidates": 54,
+      "semantic": true
+    },
+    "assessment": "gemini",
+    "incrementalRenderingAssertionPassedInInitialRun": true,
+    "desktopAxe": [],
+    "mobileAxe": [],
+    "mobile": {
+      "width": 393,
+      "documentWidth": 393
+    },
+    "failures": []
+  },
+  "deployment": {
+    "flairify-web": {
+      "revision": "flairify-web-00014-hdq",
+      "source_image": "us-central1-docker.pkg.dev/data-workshops/flairify/frontend:af389d05-6590-4163-b406-f7d395b33134",
+      "http_status": 200
+    },
+    "flairify-api": {
+      "revision": "flairify-api-00019-k8b",
+      "source_image": "us-central1-docker.pkg.dev/data-workshops/flairify/backend:ecc75b4f-d77e-423e-b049-047c50de7e91",
+      "http_status": 200
+    },
+    "flairify-worker": {
+      "revision": "flairify-worker-00038-7wr",
+      "source_image": "us-central1-docker.pkg.dev/data-workshops/flairify/backend:ecc75b4f-d77e-423e-b049-047c50de7e91",
+      "http_status": 403
+    }
+  },
+  "cleanup": {
+    "temporary_firebase_account_removed": true,
+    "owner_records_removed": 14,
+    "remaining_owner_records": 0,
+    "qa_media_removed": 0
+  }
+}
