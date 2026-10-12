@@ -1,0 +1,267 @@
+{
+  "url": "https://flairify-web-7kxckvikva-uc.a.run.app",
+  "checks": [
+    {
+      "request": "An understated outfit for Independence Day at the office, under ₹5,000.",
+      "text": "I put together three understated options tailored for office celebrations. \n\nA white striped kurta paired with grey trousers offers a classic, crisp feel, while the rust khadi kurta brings in a warm festive nod balanced by tailored black trousers. If you prefer a smart-casual western silhouette, the green striped shirt with dark grey trousers keeps the celebratory tone subtle and professional. \n\nWhich direction feels right for your workplace?",
+      "conversationId": "5656ed4a49734f538dd411ffcdf33467",
+      "historyMessages": 2,
+      "textEvents": null,
+      "seconds": null,
+      "observedWordCounts": null,
+      "retrieval": null,
+      "capture": "Restored from authenticated conversation API after browser capture error",
+      "outfits": [
+        {
+          "id": "947091d0190f499fa0bc369eda0703f9",
+          "title": "Fabindia Men Striped White Kurta",
+          "total": 2797,
+          "products": [
+            {
+              "id": "sample-fashion-30784",
+              "name": "Fabindia Men Striped White Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26164",
+              "name": "John Miller Men Striped Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-59435",
+              "name": "Arrow Men Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "e166961f0bc04f4f89e17b312d468f26",
+          "title": "Fabindia Men Rust Khadi Kurta",
+          "total": 2597,
+          "products": [
+            {
+              "id": "sample-fashion-30779",
+              "name": "Fabindia Men Rust Khadi Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-10257",
+              "name": "John Miller Men Solid Type Black Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-10268",
+              "name": "Clarks Men Hang Work Leather Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "9d444ecf6ecb41aaba870bc5e43d7305",
+          "title": "Fabindia Men Striped Green Shirt",
+          "total": 3097,
+          "products": [
+            {
+              "id": "sample-fashion-30805",
+              "name": "Fabindia Men Striped Green Shirt",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-10633",
+              "name": "Carlton London Men Formal Brown Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "request": "Keep the shirt and trousers, but swap the shoes.",
+      "seconds": 13.361,
+      "text": "I kept the rust khadi kurta and black tailored trousers exactly as they were, bringing in alternative black formal shoe options to finish the look.\n\nThe Buckaroo black formal shoes offer a sharp, structured silhouette that grounds the ethnic top nicely, while the Arrow black formal shoes provide a sleek, understated finish. Personally, I prefer the Buckaroo pair here—the shape adds just enough polish to balance the relaxed texture of the khadi kurta. \n\nHow do these look to you?",
+      "conversationId": "5656ed4a49734f538dd411ffcdf33467",
+      "historyMessages": 4,
+      "textEvents": 6,
+      "observedWordCounts": [
+        2,
+        18,
+        37,
+        57,
+        76,
+        79
+      ],
+      "retrieval": {
+        "method": "firestore-vector",
+        "model": "gemini-embedding-2",
+        "dimensions": 768,
+        "candidates": 23,
+        "category_queries": 1,
+        "query_version": "category-context-v2",
+        "semantic": true
+      },
+      "outfits": [
+        {
+          "id": "57663cf6aafc49a797553cc63182f588",
+          "title": "Buckaroo Men Flores Black Formal Shoes",
+          "total": 2897,
+          "products": [
+            {
+              "id": "sample-fashion-30779",
+              "name": "Fabindia Men Rust Khadi Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-10257",
+              "name": "John Miller Men Solid Type Black Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-9036",
+              "name": "Buckaroo Men Flores Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "75d89bf244ed4698a9b1d8a88ab4ccc8",
+          "title": "Arrow Men Formal Black Shoe",
+          "total": 2697,
+          "products": [
+            {
+              "id": "sample-fashion-30779",
+              "name": "Fabindia Men Rust Khadi Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-10257",
+              "name": "John Miller Men Solid Type Black Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-23247",
+              "name": "Arrow Men Formal Black Shoe",
+              "category": "shoes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "request": "Why does this version work for the office?",
+      "seconds": 7.442,
+      "text": "This version strikes the right balance between cultural celebration and everyday corporate decorum. \n\nThe rust khadi kurta brings in an earthy, festive warmth that subtly nods to the saffron palette without feeling like a costume. Pairing it with tailored black formal trousers and structured Buckaroo shoes instantly anchors the ethnic top in a professional silhouette, keeping the overall impression polished, clean, and respectful of an office setting.",
+      "conversationId": "5656ed4a49734f538dd411ffcdf33467",
+      "historyMessages": 6,
+      "textEvents": 4,
+      "observedWordCounts": [
+        13,
+        34,
+        55,
+        67
+      ],
+      "retrieval": null,
+      "outfits": []
+    }
+  ],
+  "newImageGeneration": false,
+  "initialCaptureIssue": "Chromium response.text could not retrieve a cancelled terminal SSE body. The reply was saved and displayed successfully. Resumed the same account and conversation; subsequent capture observes a cloned browser response.",
+  "refreshRestoredFirstTurn": true,
+  "replacedShoes": true,
+  "discussionDidNotSearch": true,
+  "desktopAxe": [],
+  "mobileLayout": {
+    "viewport": 393,
+    "document": 393
+  },
+  "mobileAxe": [],
+  "reducedMotion": true,
+  "refreshRestoredCompleteConversation": true,
+  "browserErrors": [],
+  "completedAt": "2026-10-12T18:38:27.999Z",
+  "keptExactTopAndTrousers": true,
+  "localVerification": {
+    "backendTests": 115,
+    "frontendLogicTests": 21,
+    "desktopMobileJourneys": 24,
+    "typescript": "passed",
+    "productionBuild": "passed"
+  },
+  "services": [
+    {
+      "service": "flairify-api",
+      "ready": "flairify-api-00021-rz4",
+      "created": "flairify-api-00021-rz4",
+      "url": "https://flairify-api-7kxckvikva-uc.a.run.app",
+      "image": "us-central1-docker.pkg.dev/data-workshops/flairify/backend:89e499db-af82-41fe-a01e-5a74d0a2ef7b",
+      "traffic": [
+        {
+          "latestRevision": true,
+          "percent": 100,
+          "revisionName": "flairify-api-00021-rz4"
+        }
+      ],
+      "httpStatus": 200
+    },
+    {
+      "service": "flairify-worker",
+      "ready": "flairify-worker-00042-mx7",
+      "created": "flairify-worker-00042-mx7",
+      "url": "https://flairify-worker-7kxckvikva-uc.a.run.app",
+      "image": "us-central1-docker.pkg.dev/data-workshops/flairify/backend:89e499db-af82-41fe-a01e-5a74d0a2ef7b",
+      "traffic": [
+        {
+          "latestRevision": true,
+          "percent": 100,
+          "revisionName": "flairify-worker-00042-mx7"
+        }
+      ],
+      "httpStatus": 403
+    },
+    {
+      "service": "flairify-web",
+      "ready": "flairify-web-00016-mj7",
+      "created": "flairify-web-00016-mj7",
+      "url": "https://flairify-web-7kxckvikva-uc.a.run.app",
+      "image": "us-central1-docker.pkg.dev/data-workshops/flairify/frontend:446fcff7-d836-414f-80fe-9e0601b37f06",
+      "traffic": [
+        {
+          "latestRevision": true,
+          "percent": 100,
+          "revisionName": "flairify-web-00016-mj7"
+        }
+      ],
+      "httpStatus": 200
+    }
+  ],
+  "sources": {
+    "frontend": "308df7db195142e3001aa35a8c903ea0503558d3",
+    "backend": "2c00fd4a5c0976c149d2b2d212fc3fcf123eb3da"
+  },
+  "cloudBuilds": {
+    "frontend": {
+      "id": "446fcff7-d836-414f-80fe-9e0601b37f06",
+      "status": "SUCCESS"
+    },
+    "backend": {
+      "id": "89e499db-af82-41fe-a01e-5a74d0a2ef7b",
+      "status": "SUCCESS"
+    }
+  },
+  "limitations": [
+    "Single browser run; no general recommendation relevance benchmark or latency percentile.",
+    "Catalogue is explicitly labeled sample data.",
+    "First turn streaming count and duration were not recovered after a browser capture error.",
+    "No new image/video output and no graph-assisted usefulness measurement in this release."
+  ],
+  "cleanup": {
+    "temporary_firebase_account_removed": true,
+    "owner_records_removed": 67,
+    "remaining_owner_records": 0,
+    "qa_media_removed": 0
+  }
+}
