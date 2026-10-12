@@ -106,7 +106,9 @@ def nearest(
     clothing_size=None,
     shoe_size=None,
     categories=KINDS,
-    limit=8,
+    limit=16,
+    category_vectors=None,
+    exclude_ids=(),
 ):
     db = store()
     if not db.cloud:
@@ -128,7 +130,7 @@ def nearest(
         )
         semantic = query.find_nearest(
             vector_field="embedding",
-            query_vector=Vector(vector),
+            query_vector=Vector((category_vectors or {}).get(category, vector)),
             distance_measure=DistanceMeasure.COSINE,
             limit=limit,
             distance_result_field="distance",
@@ -141,7 +143,7 @@ def nearest(
 
     with ThreadPoolExecutor(max_workers=4) as pool:
         groups = list(pool.map(category_candidates, categories))
-    ids = list(dict.fromkeys(row["id"] for group in groups for row in group))
+    ids = list(dict.fromkeys(row["id"] for group in groups for row in group if row["id"] not in exclude_ids))
     similarity = {
         row["id"]: max(0.0, 1.0 - float(row["distance"]))
         for group in groups

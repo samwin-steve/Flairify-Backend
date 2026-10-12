@@ -4,6 +4,7 @@ import asyncio
 import hashlib
 import json
 import logging
+import re
 import secrets
 import time
 
@@ -15,7 +16,13 @@ from ..models import Conversation, Message, now
 from ..store import store
 from ..utils.errors import chat_failure
 from ..utils.events import sse
-from . import recommendations
+from . import conversation_context, recommendations
+
+
+def re_search_request(message):
+    return re.search(
+        r"\b(show|find|suggest|recommend|swap|replace|different|variation)\b", message, re.IGNORECASE
+    )
 
 
 def prepare(principal, request):
@@ -24,8 +31,9 @@ def prepare(principal, request):
     if not profile.get("onboarding_complete"):
         raise HTTPException(409, "Save your shopping preferences before your first chat")
     key = request.request_id or secrets.token_hex(16)
+    excluded = {"request_id"} | ({"reference_outfit_id"} if request.reference_outfit_id is None else set())
     digest = hashlib.sha256(
-        json.dumps(request.model_dump(exclude={"request_id"}), sort_keys=True).encode()
+        json.dumps(request.model_dump(exclude=excluded), sort_keys=True).encode()
     ).hexdigest()
     previous_turn = store().get("chat_turns", owner, key)
     if previous_turn and previous_turn["hash"] != digest:
@@ -46,6 +54,8 @@ def prepare(principal, request):
     )
     if request.conversation_id and not store().get("conversations", owner, request.conversation_id):
         raise HTTPException(404, "Conversation not found")
+    if request.reference_outfit_id:
+        conversation_context.focus(conversation, request)
     prior_reply = next((m for m in conversation.messages if m.id == key + "-assistant"), None)
     if prior_reply:
         return {
@@ -100,9 +110,20 @@ async def execute(principal, request, turn, emit):
 
             result = await run(principal, request, conversation, emit)
         else:
-            result = await asyncio.to_thread(
-                recommendations.recommend, principal, request, conversation.intent
-            )
+            if conversation_context.DISCUSS.search(request.message) and not re_search_request(
+                request.message
+            ):
+                result = await asyncio.to_thread(
+                    conversation_context.discussion, principal, request, conversation
+                )
+            else:
+                result = await asyncio.to_thread(
+                    recommendations.recommend,
+                    principal,
+                    request,
+                    conversation.intent,
+                    conversation=conversation,
+                )
             await emit(
                 "outfits",
                 {

@@ -62,3 +62,29 @@ def embed(text, *, query=False):
     if not norm:
         raise ValueError("Empty embedding returned by Vertex AI")
     return [x / norm for x in values]
+
+
+# In-process only, bounded and short-lived. Keys contain hashes, never customer text.
+# Catalogue facts/availability are NOT cached and are re-read for every response.
+import time
+from collections import OrderedDict
+from threading import Lock
+
+_query_cache = OrderedDict()
+_query_lock = Lock()
+
+
+def cached_query(owner, text):
+    key = (owner, space(), digest(text))
+    with _query_lock:
+        hit = _query_cache.get(key)
+        if hit and hit[0] > time.monotonic():
+            _query_cache.move_to_end(key)
+            return hit[1]
+    value = embed(text, query=True)
+    with _query_lock:
+        _query_cache[key] = (time.monotonic() + 600, value)
+        _query_cache.move_to_end(key)
+        while len(_query_cache) > 128:
+            _query_cache.popitem(last=False)
+    return value

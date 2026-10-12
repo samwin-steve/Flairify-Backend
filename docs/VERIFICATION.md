@@ -1,6 +1,16 @@
 # Verification — 12 October 2026
 
-## Latest release: generated preview and Fitting Room checkout
+## Latest release: conversational stylist and targeted variations
+
+**115 backend tests and 21 frontend logic tests passed**, with TypeScript and a production Next.js build. Browser verification covers automatic chat restoration, discussion without duplicate recommendations, explicit look selection, preserving a selected look's shirt/trousers while replacing only shoes, menu keyboard behavior, new-chat reset, reduced-motion support and the existing shopping/generation journeys. Mobile/desktop screenshots were inspected; tested Axe rules and overflow checks passed for the new conversation journey. The preference journey's selector was updated to wait for the new response because restored historical cards are now present.
+
+A three-turn operator probe ran the changed code against actual Vertex AI Gemini, Google ADK, Gemini Embedding 2 and Firestore. Independence Day office recommendations returned three different main garments at ₹2,797, ₹2,697 and ₹3,697, searching four categories and reading 51 candidates. “I like the second look. Keep the shirt and trousers, but swap the shoes” preserved the exact green shirt and grey trousers, returned two different replacement shoes at totals ₹2,897 and ₹2,597, and searched only shoes (23 candidates). A subsequent explanation returned no new outfit cards and performed no semantic retrieval. Each turn delivered four real text events. Observed complete service-call times were 42.936s, 28.279s and 13.195s, including local-to-cloud persistence overhead; these are single observations, not service-level guarantees or a controlled latency comparison. All 67 temporary owner records were removed. No image/video generation was requested. See [collected real-service results](live-dialogue-results.json).
+
+The first operator attempt failed before a model call because the test harness replaced the Gen AI Client type before ADK schema construction. The harness was corrected to supply Google credentials without replacing the type, then the full three-turn check passed. This was a harness problem, not a fabricated successful model response.
+
+These checks establish conversation continuity, slot preservation, bounded retrieval and current budget/stock enforcement. Broad recommendation relevance, user satisfaction and graph-assisted uplift remain unmeasured. BigQuery Graph remains available for optional wardrobe pairing; this catalogue-only probe did not query it.
+
+## Previous release: generated preview and Fitting Room checkout
 
 **106 backend tests, 21 frontend logic tests and 22 desktop/mobile Playwright journeys passed.** TypeScript and production Next.js compilation passed. Completed preview cards display only the generated image; the original photo is neither rendered nor fetched by the preview card. Reference management remains available separately. Buy opens checkout for all available new products from the original recommendation, even when fewer were selected for generation; owned items are excluded.
 

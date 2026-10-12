@@ -5,6 +5,7 @@ import uuid
 
 from google.adk.agents import LlmAgent
 from google.adk.agents.run_config import RunConfig, StreamingMode
+from google.adk.events import Event
 from google.adk.models.google_llm import Gemini
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -12,26 +13,39 @@ from google.genai import types
 
 from ..config import settings
 from ..prompts.stylist import STYLIST
-from ..services import ai
+from ..services import ai, conversation_context
 from ..store import store
 from .tools import StylistTools
 
 
 async def run(principal, request, conversation, emit):
     cfg = settings()
-    bound = StylistTools(principal, request, conversation.intent, emit)
+    bound = StylistTools(principal, request, conversation.intent, emit, conversation)
     # One isolated ADK execution per turn. Firestore conversation/intent is the
     # durable source of history; no singleton in-memory state shared across users.
     sessions = InMemorySessionService()
     session = await sessions.create_session(
         app_name="flairify", user_id=principal.uid, session_id=uuid.uuid4().hex
     )
+    for message in conversation.messages[-12:]:
+        await sessions.append_event(
+            session=session,
+            event=Event(
+                author="user" if message.role == "user" else "flairify_stylist",
+                invocation_id="history-" + message.id,
+                content=types.Content(
+                    role="user" if message.role == "user" else "model",
+                    parts=[types.Part.from_text(text=message.content[:3000])],
+                ),
+            ),
+        )
     provider = ai.client(gemini=True, timeout=40000)
     agent = LlmAgent(
         name="flairify_stylist",
         model=Gemini(model=cfg.gemini_model, client=provider),
         instruction=STYLIST,
         tools=[
+            bound.discuss_current_looks,
             bound.get_confirmed_wardrobe,
             bound.find_outfit_candidates,
             bound.get_product_details,
@@ -65,10 +79,7 @@ async def run(principal, request, conversation, emit):
                 )
             },
             "wardrobe_override": request.include_wardrobe,
-            "previous_request": conversation.intent,
-            "recent_messages": [
-                {"role": m.role, "content": m.content[:2000]} for m in conversation.messages[-6:]
-            ],
+            "conversation": conversation_context.context(conversation, request),
             "message": request.message,
         },
         ensure_ascii=False,
@@ -91,9 +102,12 @@ async def run(principal, request, conversation, emit):
                 await emit("text", {"delta": chunk})
         if bound.result is None:
             # Never trust unsupported free-form claims when the model skipped retrieval.
-            await bound.find_outfit_candidates(
-                request.message, conversation.intent.get("occasion", "Everyday")
-            )
+            if conversation_context.DISCUSS.search(request.message):
+                await bound.discuss_current_looks()
+            else:
+                await bound.find_outfit_candidates(
+                    request.message, conversation.intent.get("occasion", "Everyday")
+                )
         if not text:
             text = bound.result["text"]
             await emit("text", {"delta": text})

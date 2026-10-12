@@ -3,16 +3,30 @@
 import asyncio
 
 from ..models import ChatRequest
-from ..services import recommendations
+from ..services import conversation_context, recommendations
 from ..services.inventory import available
 from ..store import store
 
 
 class StylistTools:
-    def __init__(self, principal, request: ChatRequest, previous, emit):
+    def __init__(self, principal, request: ChatRequest, previous, emit, conversation=None):
         self.principal, self.request, self.previous, self.emit = principal, request, previous, emit
+        self.conversation = conversation
         self.result = None
         self._candidate_lock = asyncio.Lock()
+
+    async def discuss_current_looks(self) -> dict:
+        """Ground an explanation, comparison, greeting or clarification in this conversation without making new recommendations."""
+        async with self._candidate_lock:
+            if self.result is None:
+                self.result = await asyncio.to_thread(
+                    conversation_context.discussion, self.principal, self.request, self.conversation
+                )
+        return {
+            "looks": self.result.get("discussed_looks", []),
+            "active_brief": self.previous,
+            "instruction": "Answer the customer's question naturally. No new outfit cards were created. Never claim new search, stock or size checks.",
+        }
 
     async def get_confirmed_wardrobe(self) -> dict:
         """Read the current customer's confirmed owned garments."""
@@ -43,12 +57,18 @@ class StylistTools:
         preferred_types: list[str] | None = None,
         avoid_types: list[str] | None = None,
         dress_code: str = "everyday",
+        reference_outfit_id: str | None = None,
+        change_categories: list[str] | None = None,
+        refine: bool = False,
     ) -> dict:
         """Retrieve semantic catalogue matches, then validate complete outfits against owned clothes, sizes, stock and total budget."""
         async with self._candidate_lock:
             if self.result is None:
                 await self.emit("status", {"message": "Finding suitable pieces for your occasion…"})
                 intent = {
+                    "reference_outfit_id": reference_outfit_id,
+                    "change_categories": change_categories or [],
+                    "refine": refine,
                     "query": query[:2000],
                     "occasion": occasion[:150],
                     "budget": budget,
@@ -68,6 +88,7 @@ class StylistTools:
                     self.request,
                     self.previous,
                     interpreted=intent,
+                    conversation=self.conversation,
                 )
                 await self.emit(
                     "outfits",

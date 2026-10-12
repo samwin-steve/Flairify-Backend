@@ -83,7 +83,7 @@ def test_firestore_search_is_bounded_and_scoped(client, monkeypatch):
     assert next(f.value for f in filters if f.field_path == "facets") == repository.facet(
         "jacket", "women", "bandra", "M"
     )
-    assert query.find_nearest.call_args.kwargs["limit"] == 8
+    assert query.find_nearest.call_args.kwargs["limit"] == 16
     query.order_by.return_value.limit.assert_called_once_with(2)
 
 

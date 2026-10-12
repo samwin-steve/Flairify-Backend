@@ -13,6 +13,8 @@ The graph is populated by asynchronous `graph_sync` Cloud Tasks after checked ou
 - `app/rag/embeddings.py`: document/query formatting, Google model invocation, model/version/dimension hash, normalization and daily quota.
 - `app/rag/repository.py`: atomic vector publication and owner-scoped Firestore KNN queries.
 - `app/rag/retrieval.py`: retrieval boundary; honest local/demo attribute baseline.
+- `app/rag/query_plan.py`: category-specific queries grounded in the occasion and retained garments.
+- `app/services/conversation_context.py`: own-conversation look references, ordinal resolution, grounded discussion and replacement slots.
 - `app/rag/wardrobe_graph.py`: parameterized BigQuery Graph traversal, coverage evidence and idempotent owner snapshot synchronization. One compact table holds complete looks; BigQuery views expose typed graph nodes and edges, so each update requires one atomic MERGE rather than many separate writes.
 - `app/agents/stylist.py`: Google ADK `LlmAgent`, `Runner`, Gemini and streamed partial events.
 - `app/agents/tools.py`: read-only tools bound to the verified customer: confirmed wardrobe, semantic outfit candidates, retrieved product details and current variant availability.
@@ -21,9 +23,9 @@ The graph is populated by asynchronous `graph_sync` Cloud Tasks after checked ou
 - `app/services/chat.py`: durable conversations, request deduplication, per-customer turn lock, error handling and streaming lifecycle.
 - `app/utils/events.py`: SSE framing.
 
-ADK interprets the current message and recent conversation, then calls `find_outfit_candidates`. That tool embeds the query once, queries category shortlists, rereads current products and constructs complete combinations from confirmed owned items and available products. ADK explains the checked results. Product cards always come from backend records, never model-generated JSON. The agent has no purchase, generation, arbitrary URL, SQL, shell or preference-write tool.
+ADK interprets the current message and role-based conversation history, then chooses discussion or `find_outfit_candidates`. Category-specific semantic queries include the occasion and retained garment context. An outfit searches four relevant categories by default; a shoe replacement searches shoes only. Retrieval uses up to 16 vector hits per category, or 32 for variations, plus two affordable alternatives. A bounded 128-entry, 10-minute in-process cache reuses query vectors by catalogue owner, model space and text hash. Product facts are never cached by this mechanism. Serving records are reread before constructing and validating combinations. ADK explains the checked results. Product cards always come from backend records, never model-generated JSON. The agent has no purchase, generation, arbitrary URL, SQL, shell or preference-write tool.
 
-The ADK session is isolated to one execution. The application conversation and active intent in owner-scoped Firestore are durable; six recent messages are supplied for context each turn. Transient ADK tool events are not a second persistent conversation store. Long-term preferences still require consent. The existing non-streaming `/api/chat` route runs the same ADK flow.
+The ADK session is isolated to one execution. The application conversation and active intent in owner-scoped Firestore are durable; the last 12 messages are replayed as ADK user/model events, with compact latest/selected look records, the active brief and up to 12 earlier customer requests as grounding. Transient ADK tool events are not a second persistent conversation store. Long-term preferences still require consent. The existing non-streaming `/api/chat` route runs the same ADK flow.
 
 ## Indexing
 
@@ -68,3 +70,13 @@ Wrapped Vertex AI capacity errors (429) display a clear busy/retry message; dead
 Measured deployment results are recorded separately in `VERIFICATION.md`; semantic relevance uplift and graph ranking uplift require a labeled evaluation set and are not claimed.
 
 A live test of the longer Customer-to-Product traversal hit BigQuery internal error 80038528. The shorter two-edge traversal avoids that path. BigQuery SDK automatic job resubmission is explicitly disabled to keep error handling and cost bounds effective.
+
+## Conversation refinement
+
+`ChatRequest.reference_outfit_id` is optional and must belong to the authenticated customer's current conversation. **Refine this look** sends it explicitly; the service also resolves first/second/third look references. Replacing shoes locks the rest of that look, rereads their current availability and excludes the old shoe product. General variations change the main piece; broad different-options requests can build fresh outfits. A missing retained size or item returns no replacement rather than secretly swapping the garment. Multi-slot edits use a beam capped at 96 partial combinations. Whole-outfit Gemini assessment and final budget/stock checks remain mandatory in the live recommendation path (with the existing explicit assessment fallback).
+
+`discuss_current_looks` supports explanations and comparisons using retrieved product facts, without generating more cards or querying embeddings. The latest look remains available after discussion-only messages. The browser restores the last selected conversation after refresh and can open all previous chats; New conversation starts independently. Only the selected conversation ID is stored in localStorage. Messages remain in owner-scoped Firestore. Signing in clears the previous session's visible history and query cache before loading the authenticated customer's history.
+
+The new moving pink/lilac background, response word animation and message transitions respect reduced-motion preferences. Completed outfit cards appear after the streamed reply, so they do not displace the text while it arrives. The wardrobe mode is a keyboard-accessible composer menu. No voice control is displayed without a functioning recording feature.
+
+ADK session event contracts were checked against [Google's session documentation](https://adk.dev/sessions/session/). Gemini Embedding 2 keeps the documented [asymmetric query/document instructions](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/embeddings/get-multimodal-embeddings); no embedding-model migration or reindex is required for this query-side change.

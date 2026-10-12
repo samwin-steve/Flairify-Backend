@@ -253,6 +253,7 @@ class SavedLook(Model):
 
 
 class ChatRequest(Model):
+    reference_outfit_id: str | None = Field(default=None, max_length=100)
     include_wardrobe: bool | None = None
     request_id: str | None = Field(default=None, min_length=8, max_length=100, pattern=r"^[\w-]+$")
     department: Literal["all", "women", "men", "unisex"] | None = None

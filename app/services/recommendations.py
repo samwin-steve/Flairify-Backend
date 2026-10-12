@@ -3,10 +3,10 @@ import re
 
 from ..config import settings
 from ..models import CompatibilityAssessment, Outfit, WardrobeItem
-from ..rag import wardrobe_graph
+from ..rag import query_plan, wardrobe_graph
 from ..rag.retrieval import candidates
 from ..store import store
-from . import styling
+from . import conversation_context, styling
 from .inventory import available
 
 
@@ -17,7 +17,9 @@ def get_confirmed_wardrobe(owner):
 def parse_intent(message, previous, default_budget):
     text = message.lower()
     budget = previous.get("budget", default_budget)
-    match = re.search(r"(?:₹\s*|rs\.?\s*|inr\s*|under\s+|budget\s+(?:of\s+)?)([\d,]+)", text)
+    match = re.search(
+        r"(?:₹\s*|\brs\.?\s*|\binr\s*|\bunder\s+|\bup to\s+|\bbudget\s+(?:of\s+)?)(\d[\d,]*)", text
+    )
     if match:
         budget = min(1000000, int(match.group(1).replace(",", "")))
     cheaper = "cheaper" in text or "less expensive" in text
@@ -61,7 +63,7 @@ def assess_outfit_compatibility(owned, products, occasion):
     return min(score, 1), reason, complete
 
 
-def recommend(principal, request, previous, *, interpreted=None):
+def recommend(principal, request, previous, *, interpreted=None, conversation=None):
     owner = principal.uid
     profile = store().get("profiles", owner, "me") or {}
     include_owned = (
@@ -83,7 +85,23 @@ def recommend(principal, request, previous, *, interpreted=None):
             ceiling, intent.get("budget", ceiling), request.budget if request.budget is not None else ceiling
         ),
     )
-    intent.update(styling.brief(request.message, previous, interpreted))
+    refinement = conversation_context.refinement(conversation, request, interpreted) if conversation else None
+    interpretation = {**(interpreted or {}), "refine": bool(refinement)}
+    intent.update(styling.brief(request.message, previous, interpretation))
+    if refinement:
+        intent["occasion"] = refinement["look"]["occasion"]
+        intent["requested_category"] = refinement["change_categories"][0]
+        intent["single_item"] = not refinement["look"]["complete"]
+        intent["different"] = True
+        if re.search(
+            r"\b(white|green|orange|blue|black|red|pink|purple|beige|navy)\b", request.message, re.IGNORECASE
+        ):
+            intent["palette_category"] = refinement["change_categories"][0]
+        if intent.get("required_type") and not re.search(
+            styling.CATEGORY_WORDS[intent["requested_category"]], intent["required_type"]
+        ):
+            intent["required_type"] = None
+        intent["reference_outfit_id"] = refinement["look"]["id"]
     intent["include_wardrobe"] = include_owned
     size = request.clothing_size or profile.get("clothing_size", "")
     shoe_size = request.shoe_size or profile.get("shoe_size", "")
@@ -119,6 +137,13 @@ def recommend(principal, request, previous, *, interpreted=None):
             " ".join(intent["preferred_types"]),
         ]
     )
+    recent = set(previous.get("shown_product_ids", previous.get("last_product_ids", [])))
+    excluded = (
+        {p["id"] for p in refinement["look"]["products"] if p["category"] in refinement["change_categories"]}
+        if refinement
+        else set()
+    )
+    categories, category_queries = query_plan.build(intent, refinement)
     catalogue, retrieval = candidates(
         principal.catalog_owner,
         query,
@@ -127,9 +152,23 @@ def recommend(principal, request, previous, *, interpreted=None):
         store_id=store_id,
         clothing_size=size,
         shoe_size=shoe_size,
+        categories=categories,
+        category_queries=category_queries,
+        exclude_ids=excluded,
+        deeper=bool(refinement or intent["different"]),
     )
-    recent = set(previous.get("shown_product_ids", previous.get("last_product_ids", [])))
     target = intent.get("requested_category")
+    # Retained products bypass vector ranking but never current size/stock checks.
+    if refinement:
+        retrieved_ids = {p["id"] for p in catalogue}
+        for original in refinement["look"]["products"]:
+            if (
+                original["id"] not in retrieved_ids
+                and original["category"] not in refinement["change_categories"]
+            ):
+                current = store().get("products", principal.catalog_owner, original["id"])
+                if current and current.get("indexed"):
+                    catalogue.append(current)
     eligible = []
     for product in catalogue:
         if not product.get("active", True) or not styling.suitable(product, intent):
@@ -175,9 +214,25 @@ def recommend(principal, request, previous, *, interpreted=None):
         return value + (1.25 if is_owned else 0) + min(0.3, 0.05 * graph["counts"].get(piece["id"], 0))
 
     def choices(category, new_only=False):
+        if refinement and category not in refinement["change_categories"]:
+            original = next(
+                (
+                    p
+                    for p in refinement["look"]["products"] + refinement["look"]["owned"]
+                    if p["category"] == category
+                ),
+                None,
+            )
+            if original:
+                kept = [(p, False) for p in eligible if p["id"] == original["id"]]
+                kept += [(w, True) for w in suitable_owned if w["id"] == original["id"]]
+                return kept
         new = [(p, False) for p in eligible if p["category"] == category]
         if intent["different"] and category == (target or "top"):
-            new = [(p, o) for p, o in new if p["id"] not in recent]
+            unseen = [(p, o) for p, o in new if p["id"] not in recent]
+            # Never repeat the item being replaced. Reuse older supporting choices only
+            # when the bounded catalogue has no unseen alternative.
+            new = unseen or ([(p, o) for p, o in new if p["id"] not in excluded] if refinement else [])
         rows = new + ([] if new_only else [(w, True) for w in suitable_owned if w["category"] == category])
         if intent.get("keep_shirt") and include_owned and category == "top":
             kept = [r for r in rows if r[1] and r[0]["id"] in previous.get("last_owned_ids", [])]
@@ -186,7 +241,38 @@ def recommend(principal, request, previous, *, interpreted=None):
         return sorted(rows, key=lambda r: (-rank(*r), r[0]["id"]))[:8]
 
     combinations = []
-    if intent["single_item"] and target:
+    if refinement:
+        slots = list(
+            dict.fromkeys(
+                [p["category"] for p in refinement["look"]["products"] + refinement["look"]["owned"]]
+                + refinement["change_categories"]
+            )
+        )
+        # A bounded beam prevents multi-slot edits from expanding exponentially.
+        combinations = [[]]
+        for category in slots:
+            expanded = [
+                rows + [piece]
+                for rows in combinations
+                for piece in choices(category, category in refinement["change_categories"])
+            ]
+            expanded = [
+                rows
+                for rows in expanded
+                if sum(p["price"] for p, owned in rows if not owned) <= intent["budget"]
+            ]
+            expanded.sort(key=lambda rows: -sum(rank(p, owned) for p, owned in rows))
+            counts = {}
+            combinations = []
+            for rows in expanded:
+                anchor = next((p["id"] for p, _ in rows if p["category"] == target), None)
+                if anchor is not None and counts.get(anchor, 0) >= 12:
+                    continue
+                combinations.append(rows)
+                counts[anchor] = counts.get(anchor, 0) + 1
+                if len(combinations) >= 96:
+                    break
+    elif intent["single_item"] and target:
         combinations = [[p] for p in choices(target, True)]
     else:
         # Optional layers are added only when requested. No compulsory jacket or accessory.
@@ -308,18 +394,31 @@ def recommend(principal, request, previous, *, interpreted=None):
             valid.append(data)
     if valid and owned and not principal.demo:
         wardrobe_graph.schedule(owner)
-    intent["last_product_ids"] = [p["id"] for o in valid for p in o["products"]]
+    intent["last_outfit_ids"] = [o["id"] for o in valid] or previous.get("last_outfit_ids", [])
+    intent["focus_outfit_id"] = (
+        valid[0]["id"] if refinement and valid else previous.get("focus_outfit_id") if refinement else None
+    )
+    intent["last_product_ids"] = [p["id"] for o in valid for p in o["products"]] or previous.get(
+        "last_product_ids", []
+    )
     intent["shown_product_ids"] = list(
         dict.fromkeys(previous.get("shown_product_ids", []) + intent["last_product_ids"])
     )[-100:]
-    intent["last_owned_ids"] = [w["id"] for o in valid for w in o["owned"]]
+    intent["last_owned_ids"] = [w["id"] for o in valid for w in o["owned"]] or previous.get(
+        "last_owned_ids", []
+    )
     if valid:
-        text = f"Here are {len(valid)} distinct options for {intent['occasion'].lower()}, using your saved shopping preferences. "
-        text += (
-            "Wardrobe pairing is on; only suitable owned pieces are included."
-            if include_owned
-            else "These are catalogue pieces; wardrobe pairing is off."
-        )
+        if refinement:
+            changed = ", ".join(refinement["change_categories"])
+            text = (
+                f"I've kept the rest of your look and found {len(valid)} {'alternative' if len(valid) == 1 else 'alternatives'} for the {changed}. "
+                + valid[0]["explanation"]
+            )
+        else:
+            text = (
+                f"Here are {len(valid)} different directions for {intent['occasion'].lower()}. "
+                + valid[0]["explanation"]
+            )
     else:
         context = f"clothing {size} and EU {shoe_size}"
         text = f"I found no matching {target or 'complete combination'} suitable for {intent['occasion'].lower()} in {context} within ₹{intent['budget']:,}. "

@@ -1,0 +1,465 @@
+{
+  "kind": "local changed code against live Google services",
+  "turns": [
+    {
+      "message": "An outfit for Independence Day at the office, under \u20b95,000. Keep it understated.",
+      "text": "I've put together three understated options that honour the occasion while staying completely workplace-appropriate. \n\nMy personal favourite is the crisp white striped kurta paired with grey formal trousers and black shoes\u2014it feels traditional yet sharp and restrained. If you prefer a touch of green, the striped shirt or printed olive kurta paired with neutral trousers offer great smart-casual alternatives. Let me know which direction appeals to you, or if you'd like to tweak any pieces!",
+      "intent": {
+        "budget": 5000,
+        "occasion": "Independence Day at the office",
+        "query": "understated white or subtle green kurta or smart shirt with trousers for Independence Day office",
+        "relaxed": false,
+        "cheaper": false,
+        "another_jacket": false,
+        "keep_shirt": false,
+        "jacket_coverage": false,
+        "change_categories": [],
+        "refine": false,
+        "palette": [
+          "white",
+          "green",
+          "orange"
+        ],
+        "preferred_types": [
+          "kurta",
+          "kurti",
+          "shirt",
+          "trousers",
+          "chinos"
+        ],
+        "avoid_types": [
+          "trainers",
+          "shorts",
+          "t-shirt"
+        ],
+        "dress_code": "office celebration",
+        "different": false,
+        "single_item": false,
+        "include_wardrobe": false,
+        "department": "men",
+        "last_outfit_ids": [
+          "99735dd893c24630a1b1d6a25e28964a",
+          "d5ae4561a38e40b2bddaf76d825d77d3",
+          "ca3c908d44514610b18a08e41a08d66a"
+        ],
+        "focus_outfit_id": null,
+        "last_product_ids": [
+          "sample-fashion-30784",
+          "sample-fashion-26164",
+          "sample-fashion-59435",
+          "sample-fashion-30805",
+          "sample-fashion-26163",
+          "sample-fashion-23247",
+          "sample-fashion-32197",
+          "sample-fashion-27614",
+          "sample-fashion-10633"
+        ],
+        "shown_product_ids": [
+          "sample-fashion-30784",
+          "sample-fashion-26164",
+          "sample-fashion-59435",
+          "sample-fashion-30805",
+          "sample-fashion-26163",
+          "sample-fashion-23247",
+          "sample-fashion-32197",
+          "sample-fashion-27614",
+          "sample-fashion-10633"
+        ],
+        "last_owned_ids": []
+      },
+      "retrieval": {
+        "method": "firestore-vector",
+        "model": "gemini-embedding-2",
+        "dimensions": 768,
+        "candidates": 51,
+        "category_queries": 4,
+        "query_version": "category-context-v2",
+        "semantic": true
+      },
+      "assessment_method": "gemini",
+      "outfits": [
+        {
+          "id": "99735dd893c24630a1b1d6a25e28964a",
+          "occasion": "Independence Day at the office",
+          "total": 2797,
+          "products": [
+            {
+              "id": "sample-fashion-30784",
+              "name": "Fabindia Men Striped White Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26164",
+              "name": "John Miller Men Striped Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-59435",
+              "name": "Arrow Men Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "d5ae4561a38e40b2bddaf76d825d77d3",
+          "occasion": "Independence Day at the office",
+          "total": 2697,
+          "products": [
+            {
+              "id": "sample-fashion-30805",
+              "name": "Fabindia Men Striped Green Shirt",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-23247",
+              "name": "Arrow Men Formal Black Shoe",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "ca3c908d44514610b18a08e41a08d66a",
+          "occasion": "Independence Day at the office",
+          "total": 3697,
+          "products": [
+            {
+              "id": "sample-fashion-32197",
+              "name": "Fabindia Men Printed Olive Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-27614",
+              "name": "Scullers Men Beige Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-10633",
+              "name": "Carlton London Men Formal Brown Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        }
+      ],
+      "elapsed": 42.936,
+      "events": [
+        {
+          "kind": "start",
+          "at": 9.555
+        },
+        {
+          "kind": "status",
+          "at": 9.555
+        },
+        {
+          "kind": "status",
+          "at": 14.877
+        },
+        {
+          "kind": "outfits",
+          "at": 38.225
+        },
+        {
+          "kind": "status",
+          "at": 38.226
+        },
+        {
+          "kind": "text",
+          "at": 39.825
+        },
+        {
+          "kind": "text",
+          "at": 39.966
+        },
+        {
+          "kind": "text",
+          "at": 40.222
+        },
+        {
+          "kind": "text",
+          "at": 40.426
+        },
+        {
+          "kind": "done",
+          "at": 42.021
+        }
+      ],
+      "message_count": 2
+    },
+    {
+      "message": "I like the second look. Keep the shirt and trousers, but swap the shoes.",
+      "text": "I kept the green striped shirt and dark grey trousers and brought in two alternative pairs of formal shoes. \n\nI personally lean towards the Clarks leather formal shoes\u2014their clean, classic silhouette anchors the textured shirt seamlessly for a polished office setting. The Buckaroo pair offers another sharp, comfortable option if you prefer a slightly different profile. How do these feel to you?",
+      "intent": {
+        "budget": 5000,
+        "occasion": "Independence Day at the office",
+        "query": "smart formal shoes or loafers to pair with green striped shirt and dark grey trousers",
+        "relaxed": false,
+        "cheaper": false,
+        "another_jacket": false,
+        "keep_shirt": false,
+        "jacket_coverage": false,
+        "reference_outfit_id": "d5ae4561a38e40b2bddaf76d825d77d3",
+        "change_categories": [
+          "shoes"
+        ],
+        "refine": true,
+        "palette": [
+          "white",
+          "green",
+          "orange"
+        ],
+        "preferred_types": [
+          "shoes",
+          "formal shoes",
+          "loafers"
+        ],
+        "avoid_types": [
+          "trainers",
+          "sneakers"
+        ],
+        "dress_code": "office celebration",
+        "single_item": false,
+        "requested_category": "shoes",
+        "required_type": null,
+        "different": true,
+        "include_wardrobe": false,
+        "department": "men",
+        "last_outfit_ids": [
+          "17d524b337864d49b46f218024d181b6",
+          "c9b36732334c4ce28aab0cbaaa66a247"
+        ],
+        "focus_outfit_id": "17d524b337864d49b46f218024d181b6",
+        "last_product_ids": [
+          "sample-fashion-30805",
+          "sample-fashion-26163",
+          "sample-fashion-9036",
+          "sample-fashion-30805",
+          "sample-fashion-26163",
+          "sample-fashion-10268"
+        ],
+        "shown_product_ids": [
+          "sample-fashion-30784",
+          "sample-fashion-26164",
+          "sample-fashion-59435",
+          "sample-fashion-30805",
+          "sample-fashion-26163",
+          "sample-fashion-23247",
+          "sample-fashion-32197",
+          "sample-fashion-27614",
+          "sample-fashion-10633",
+          "sample-fashion-9036",
+          "sample-fashion-10268"
+        ],
+        "last_owned_ids": []
+      },
+      "retrieval": {
+        "method": "firestore-vector",
+        "model": "gemini-embedding-2",
+        "dimensions": 768,
+        "candidates": 23,
+        "category_queries": 1,
+        "query_version": "category-context-v2",
+        "semantic": true
+      },
+      "assessment_method": "gemini",
+      "outfits": [
+        {
+          "id": "17d524b337864d49b46f218024d181b6",
+          "occasion": "Independence Day at the office",
+          "total": 2897,
+          "products": [
+            {
+              "id": "sample-fashion-30805",
+              "name": "Fabindia Men Striped Green Shirt",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-9036",
+              "name": "Buckaroo Men Flores Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "c9b36732334c4ce28aab0cbaaa66a247",
+          "occasion": "Independence Day at the office",
+          "total": 2597,
+          "products": [
+            {
+              "id": "sample-fashion-30805",
+              "name": "Fabindia Men Striped Green Shirt",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-10268",
+              "name": "Clarks Men Hang Work Leather Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        }
+      ],
+      "elapsed": 28.279,
+      "events": [
+        {
+          "kind": "start",
+          "at": 5.578
+        },
+        {
+          "kind": "status",
+          "at": 5.578
+        },
+        {
+          "kind": "status",
+          "at": 8.984
+        },
+        {
+          "kind": "outfits",
+          "at": 23.725
+        },
+        {
+          "kind": "status",
+          "at": 23.725
+        },
+        {
+          "kind": "text",
+          "at": 25.348
+        },
+        {
+          "kind": "text",
+          "at": 25.516
+        },
+        {
+          "kind": "text",
+          "at": 25.718
+        },
+        {
+          "kind": "text",
+          "at": 25.792
+        },
+        {
+          "kind": "done",
+          "at": 27.363
+        }
+      ],
+      "message_count": 4
+    },
+    {
+      "message": "Why does this version work for the office?",
+      "text": "This look strikes the right balance between celebrating the occasion and maintaining professional decorum. The subtle green stripes nod to Independence Day in an understated way, while the tailored dark grey trousers and structured Buckaroo black formal shoes keep the overall impression sharp and workplace-ready. It feels intentional and polished without being overly ceremonial.",
+      "intent": {
+        "shown_product_ids": [
+          "sample-fashion-30784",
+          "sample-fashion-26164",
+          "sample-fashion-59435",
+          "sample-fashion-30805",
+          "sample-fashion-26163",
+          "sample-fashion-23247",
+          "sample-fashion-32197",
+          "sample-fashion-27614",
+          "sample-fashion-10633",
+          "sample-fashion-9036",
+          "sample-fashion-10268"
+        ],
+        "relaxed": false,
+        "focus_outfit_id": "17d524b337864d49b46f218024d181b6",
+        "query": "smart formal shoes or loafers to pair with green striped shirt and dark grey trousers",
+        "different": true,
+        "cheaper": false,
+        "jacket_coverage": false,
+        "department": "men",
+        "keep_shirt": false,
+        "another_jacket": false,
+        "required_type": null,
+        "requested_category": "shoes",
+        "preferred_types": [
+          "shoes",
+          "formal shoes",
+          "loafers"
+        ],
+        "palette": [
+          "white",
+          "green",
+          "orange"
+        ],
+        "dress_code": "office celebration",
+        "include_wardrobe": false,
+        "refine": true,
+        "last_product_ids": [
+          "sample-fashion-30805",
+          "sample-fashion-26163",
+          "sample-fashion-9036",
+          "sample-fashion-30805",
+          "sample-fashion-26163",
+          "sample-fashion-10268"
+        ],
+        "last_outfit_ids": [
+          "17d524b337864d49b46f218024d181b6",
+          "c9b36732334c4ce28aab0cbaaa66a247"
+        ],
+        "single_item": false,
+        "reference_outfit_id": "d5ae4561a38e40b2bddaf76d825d77d3",
+        "occasion": "Independence Day at the office",
+        "budget": 5000,
+        "last_owned_ids": [],
+        "change_categories": [
+          "shoes"
+        ],
+        "avoid_types": [
+          "trainers",
+          "sneakers"
+        ]
+      },
+      "retrieval": null,
+      "assessment_method": null,
+      "outfits": [],
+      "elapsed": 13.195,
+      "events": [
+        {
+          "kind": "start",
+          "at": 6.159
+        },
+        {
+          "kind": "status",
+          "at": 6.159
+        },
+        {
+          "kind": "text",
+          "at": 10.594
+        },
+        {
+          "kind": "text",
+          "at": 10.677
+        },
+        {
+          "kind": "text",
+          "at": 10.801
+        },
+        {
+          "kind": "text",
+          "at": 10.976
+        },
+        {
+          "kind": "done",
+          "at": 12.225
+        }
+      ],
+      "message_count": 6
+    }
+  ],
+  "temporary_owner_records_removed": 67,
+  "new_image_or_video_generated": false
+}

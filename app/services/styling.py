@@ -62,8 +62,12 @@ def quality_issue(row):
 def brief(message, previous, interpreted):
     text = message.lower()
     followup = bool(
-        re.search(r"\b(cheaper|relaxed|another|different|more options|other options|keep my|instead)\b", text)
+        re.search(
+            r"\b(cheaper|relaxed|another|different|more options|other options|keep|instead|variation|version|same|like|love|swap|replace|change)\b",
+            text,
+        )
     )
+    followup = followup or bool((interpreted or {}).get("refine"))
     result = {
         k: previous.get(k)
         for k in (
@@ -106,12 +110,13 @@ def brief(message, previous, interpreted):
                 "sneakers",
             )
             if re.search(r"\b" + t + r"s?\b", text)
+            and not re.search(r"\b(?:no|not|without|avoid)\s+" + t + r"s?\b", text)
         ),
         None,
     )
     if explicit_type and "keep my" not in text:
         result["required_type"] = explicit_type
-    elif not followup:
+    elif not followup or (category and category != previous.get("requested_category")):
         result["required_type"] = None
     result.setdefault("palette", [])
     result.setdefault("preferred_types", [])
@@ -147,12 +152,25 @@ def brief(message, previous, interpreted):
             result["preferred_types"] = ["kurta", "kurti", "dress"]
     explicit_palette = [
         c
-        for c in ("white", "green", "orange", "blue", "black", "red", "pink", "purple", "beige")
+        for c in ("white", "green", "orange", "blue", "black", "red", "pink", "purple", "beige", "navy")
         if re.search(r"\b" + c + r"\b", text)
     ]
     if explicit_palette:
         result["palette"] = explicit_palette
-    result["different"] = bool(re.search(r"\b(another|different|other options|more options)\b", text))
+    result["avoid_types"] = list(
+        dict.fromkeys(
+            result["avoid_types"]
+            + re.findall(
+                r"\b(?:no|not|without|avoid)\s+(jeans|sneakers|heels|leather|stripes|checks|jackets|blazers)\b",
+                text,
+            )
+        )
+    )
+    result["different"] = bool(
+        re.search(
+            r"\b(another|different|other options|more options|variation|version|swap|replace|instead)\b", text
+        )
+    )
     result["single_item"] = bool(result.get("requested_category")) and not bool(
         re.search(r"\b(outfits?|looks?|combination|trip)\b", text)
     )
@@ -235,7 +253,16 @@ def compatible(pieces, intent):
     if len(cats) != len(set(cats)) or ("dress" in cats and ("top" in cats or "bottom" in cats)):
         return False
     primary = [p for p in pieces if p["category"] in ("top", "dress", "jacket")]
-    if intent.get("palette") and primary and not any(colours(p) & set(intent["palette"]) for p in primary):
+    palette_pieces = (
+        [p for p in pieces if p["category"] == intent["palette_category"]]
+        if intent.get("palette_category")
+        else primary
+    )
+    if (
+        intent.get("palette")
+        and palette_pieces
+        and not any(colours(p) & set(intent["palette"]) for p in palette_pieces)
+    ):
         return False
     if "office" in intent.get("dress_code", ""):
         # One restrained accent family, not an orange/green costume. Neutral
