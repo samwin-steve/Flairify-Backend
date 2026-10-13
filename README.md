@@ -55,7 +55,7 @@ The sample catalogue contains **200 options** (90 men’s, 91 women’s, 19 unis
 
 190 new archive photographs include eight image references from the requested Myntra fashion CSV and 182 from Param Aggarwal’s fashion image dataset. Provenance and publisher-declared licenses are recorded in `fixtures/catalogue-sources.json`, `fixtures/image-credits.json`, and [catalogue documentation](docs/CATALOGUE.md). Photographed clothing, footwear, bags and accessories support illustrative Google Gemini previews; items without supported original photographs stay disabled. No sample listing is a current retailer offer.
 
-With photo-processing consent, a full-body upload automatically queues Gemini garment extraction and becomes a usable private preview reference. Wardrobe uploads start extraction after explicit person selection. Detections remain drafts until ownership is confirmed. Each detected garment also queues a private Gemini shop-style image, with the original evidence crop retained, AI labeling, retry and an original-only option. Image failure does not block wardrobe review. Try-on can start directly from Inventory using a reference or existing wardrobe photo; completed previews show source and generated images, and support download, regeneration and deletion.
+With photo-processing consent, a full-body upload automatically queues Gemini garment extraction and becomes a usable private preview reference. Wardrobe uploads start extraction after explicit person selection. Detections remain drafts until ownership is confirmed. Each detected garment also queues a private Gemini shop-style image, with the original evidence crop retained, AI labeling, retry and an original-only option. Image failure does not block wardrobe review. Try-on can start directly from Inventory using a reference or existing wardrobe photo; completed previews show the generated image, and support download, regeneration and deletion.
 
 ## Seller Studio and orders
 
@@ -84,7 +84,7 @@ See [SEMANTIC_RAG.md](docs/SEMANTIC_RAG.md) for the Gemini Embedding 2 / Firesto
 
 ## Voice stylist
 
-**Talk** starts a native Google Gemini Live conversation with spoken replies, live transcripts and the same grounded recommendation tools. Voice retains saved shopping preferences and conversation context, supports outfit refinements, and offers mute/end controls. Transcripts are saved; audio is not stored by Flairify. See [voice setup, security and limits](docs/VOICE_STYLIST.md). Voice requires a signed-in account and an explicitly configured Vertex Live model; credential-free demo chat remains available as text.
+**Talk** starts a native Google Gemini Live conversation with spoken replies, live transcripts and the same grounded recommendation tools. Voice retains saved shopping preferences and conversation context, supports outfit refinements, garment selection by name and explicit spoken “See it on me” requests, and offers mute/end controls. Selected pieces are checked against retrieved records and current stock, then queued through the shared Google try-on service. Previews open in Fitting Room while voice remains connected. Repeated voice requests return the same job; transient browser connection loss gets one bounded recovery attempt. Transcripts are saved; audio is not stored by Flairify. See [voice setup, security and limits](docs/VOICE_STYLIST.md). Voice requires a signed-in account and an explicitly configured Vertex Live model; credential-free demo chat remains available as text.
 
 ## Occasion-aware recommendations
 

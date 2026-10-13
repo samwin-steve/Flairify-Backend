@@ -1,6 +1,20 @@
 # Verification — 13 October 2026
 
-## Latest release: voice availability after sign-in
+## Latest release: spoken garment selection, previews and mobile navigation
+
+**132 backend tests, 25 frontend logic tests, TypeScript and production builds pass.** Across the full browser run and focused reruns, all **42 distinct desktop/mobile journeys** pass. The first run exposed two tests that still clicked the removed mobile bottom bar; both now use the hamburger menu. The final 20 voice/navigation/onboarding checks passed together, including desktop hamburger visibility, mobile viewport use, selected checkboxes, manual selection updates, reconnecting with the same chat, keeping voice during Fitting Room generation, showing the completed preview/Buy action, and no recovery after End. Local voice transport and image responses are explicit fixtures.
+
+Backend tests exercise the exact Vishudh kurta / Cobblerz sandals names, combining them through the shared try-on service, deduplication after reloading a conversation, unknown/ambiguous/foreign names, slot conflicts, clear/remove, stock and reference-photo rechecks, safe retrieval timeouts and blocking generation after an invalid selection. Existing tests cover consent, image failures, owner isolation and cancellation. New modules pass focused Ruff checks; the repository-wide lint command still finds pre-existing issues outside the changed modules.
+
+Both Cloud Builds succeeded: backend `8d2f8c4a-c669-4e87-9fe6-217c31e3ea2f` (source `52ff9ed`) and frontend `dd104cd1-238d-4bff-b2bd-085113b35624` (source `fdca938`). API `flairify-api-00024-66n`, private worker `flairify-worker-00048-btf`, and web `flairify-web-00020-qhc` were ready. Delayed duplicate builds, including an obsolete frontend commit, were cancelled; no model or application quota was increased.
+
+### Real deployed check
+
+A temporary Firebase account used an existing licensed sample portrait and a controlled prior conversation containing the two actual current catalogue products. Three Google-synthesized spoken utterances went through the real browser capture worklet to Vertex Gemini Live. The agent selected both named products without generating, recovered from a forced WebSocket disconnect with selections retained, then queued one real Google Gemini image-editing preview. A repeated spoken generation request returned the same job. Native reply audio totalled 1,197,608 bytes. The image job succeeded with both selected product names, and the generated image and Buy action loaded after refresh. End stopped microphone tracks. The 393px mobile check had no horizontal overflow or bottom navigation, and its tested Axe rules had zero violations. Screenshots were visually inspected.
+
+These checks establish one working selection-to-preview example and bounded connection recovery, not a human recommendation-relevance score or guaranteed likeness/fit. Physical phone microphones, noisy speech, arbitrary language/accent accuracy and all network interruptions remain unmeasured. See [collected live evidence](live-voice-actions-results.json). The temporary Firebase account, ten owner records and two media objects were removed; no owner records remained. Web/API health returned 200, and the private worker returned its expected unauthenticated 403.
+
+## Previous release: voice availability after sign-in
 
 Reproduced the reported unavailable error on the deployed frontend by delaying actual capability responses during Firebase restoration: the signed-in server reported voice enabled, but the client blocked Talk using guest/pending configuration without making a voice request. The frontend now waits for authentication, separates guest/account capability caches and uses the authenticated voice-ticket endpoint as authority. Demo Talk also opens sign-in correctly.
 
