@@ -42,6 +42,12 @@ def visual_only(result):
             result.uncertainty
             + ["Material composition and performance are not established by the photograph."]
         )[:8]
+    # Also clean partial qualifiers left by older staged captions.
+    result.name = re.sub(
+        r"\b(?:faux|genuine|imitation)\b|(?<!\w)-look\b", "", result.name, flags=re.IGNORECASE
+    )
+    result.name = re.sub(r"(?<!\w)-(?=\w)", "", result.name)
+    result.name = re.sub(r"\s+", " ", result.name).strip()
     return result
 
 

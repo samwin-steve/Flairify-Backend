@@ -99,6 +99,9 @@ def test_generated_listing_text_cannot_become_retailer_material_evidence():
         ("Black Leather-Look Long Coat", "Black Long Coat"),
         ("Maroon Faux Fur Coat", "Maroon Coat"),
         ("Dark Brown Faux Leather Tote Bag", "Dark Brown Tote Bag"),
+        ("Black -Look Long Coat", "Black Long Coat"),
+        ("Mint Green -Trimmed Peplum Gown", "Mint Green Trimmed Peplum Gown"),
+        ("Dark Brown Faux Tote Bag", "Dark Brown Tote Bag"),
     ],
 )
 def test_material_cleanup_does_not_leave_broken_title_fragments(name, expected):
