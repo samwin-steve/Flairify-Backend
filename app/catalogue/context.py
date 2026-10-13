@@ -87,11 +87,17 @@ def pairing_bonus(pieces):
 
 
 def assessment_context(product):
-    return [
-        {k: t[k] for k in ("field", "value", "confidence", "source")}
-        for t in search_tags(product)
-        if t["field"] not in {"category"}
-    ]
+    if "enrichment" not in product:
+        return product.get("styling_context", {})
+    # Compact source/field/value groups avoid repeating the audit record in every
+    # outfit, conversation message and Gemini tool response.
+    groups = {}
+    for tag in search_tags(product):
+        if tag["field"] != "category":
+            groups.setdefault(tag["source"], {}).setdefault(tag["field"], {})[tag["value"]] = tag[
+                "confidence"
+            ]
+    return groups
 
 
 def appearance_words(product):

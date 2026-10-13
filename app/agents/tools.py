@@ -133,7 +133,10 @@ class StylistTools:
             return {"error": "Product is not in the validated shortlist"}
         latest = await asyncio.to_thread(store().get, "products", self.principal.catalog_owner, product_id)
         return (
-            {k: latest.get(k) for k in ("id", "name", "category", "attributes", "price")}
+            {
+                **{k: latest.get(k) for k in ("id", "name", "category", "attributes", "price")},
+                "styling_hypotheses": assessment_context(latest),
+            }
             if latest
             else {"error": "Product unavailable"}
         )

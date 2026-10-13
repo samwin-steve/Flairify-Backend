@@ -168,6 +168,11 @@ def search(owner, q="", budget=1000000, category=None, limit=None):
         rows = attribute_search(owner, q, budget, category)
     else:
         from ..rag.retrieval import candidates
+        from . import styling
 
         rows, _ = candidates(owner, q, budget, category=category)
+        intent = {"query": q, **styling.brief(q, {}, {})}
+        rows = sorted(
+            rows, key=lambda p: (-styling.relevance(p, intent, p.get("_semantic_score", 0)), p["id"])
+        )
     return [p for p in rows if not quality_issue(p)][:limit]

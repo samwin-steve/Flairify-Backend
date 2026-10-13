@@ -310,3 +310,40 @@ def test_provider_uses_actual_photo_and_structured_google_schema(client, monkeyp
     assert sent["contents"][0].inline_data.data == b"photo-bytes"
     assert sent["config"].response_schema is ProviderAnalysis
     assert result.tags
+
+
+def test_inventory_results_are_ranked_by_context_not_category_query_order(client, monkeypatch):
+    from app.rag import retrieval
+
+    casual, office = listing(), listing()
+    casual.update(id="casual", name="Plain everyday shirt")
+    office.update(id="office", name="Plain everyday shirt")
+    casual["enrichment"] = metadata(casual, [tag("occasion", "casual_outing")])
+    office["enrichment"] = metadata(
+        office, [tag("occasion", "office"), tag("outfit_template", "office_ready")]
+    )
+    monkeypatch.setattr(retrieval, "candidates", lambda *a, **kw: ([casual, office], {}))
+    assert inventory.search("retailer", "office meetings")[0]["id"] == "office"
+
+
+def test_saved_looks_keep_compact_styling_context_not_audit_records(client, onboarded):
+    from app.auth import Principal
+    from app.models import ChatRequest
+    from app.services import recommendations
+
+    data, _ = onboarded
+    owner = data["user_id"]
+    for p in store().list("products", owner):
+        p["enrichment"] = metadata(p)
+        store().put("products", owner, p["id"], p)
+    result = recommendations.recommend(
+        Principal(owner, demo=True), ChatRequest(message="Office outfit under 5000"), {}
+    )
+    assert result["outfits"]
+    for look in result["outfits"]:
+        for product in look["products"]:
+            assert "enrichment" not in product
+            assert product["styling_context"]["styling_inference"]["occasion"]["office"] == 0.9
+            assert context.assessment_context(product) == product["styling_context"]
+        saved = store().get("outfits", owner, look["id"])
+        assert all("enrichment" not in p for p in saved["products"])

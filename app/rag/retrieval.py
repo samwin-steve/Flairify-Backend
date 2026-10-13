@@ -57,7 +57,7 @@ def candidates(
             "dimensions": len(vector),
             "candidates": len(rows),
             "category_queries": len(kinds),
-            "query_version": "category-context-v2",
+            "query_version": "category-context-v3-enriched",
             "semantic": True,
         }
     except HTTPException:

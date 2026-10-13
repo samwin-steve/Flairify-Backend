@@ -365,7 +365,13 @@ def recommend(principal, request, previous, *, interpreted=None, conversation=No
                 title=primary["name"],
                 occasion=intent["occasion"],
                 owned=[WardrobeItem.model_validate(w) for w in option["owned"]],
-                products=current,
+                products=[
+                    {
+                        **{k: v for k, v in p.items() if k != "enrichment"},
+                        "styling_context": styling.catalogue_context.assessment_context(p),
+                    }
+                    for p in current
+                ],
                 total=total,
                 explanation=reason,
                 complete=complete,
