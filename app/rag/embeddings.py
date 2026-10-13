@@ -9,6 +9,7 @@ from google.genai import types
 
 from ..auth import quota
 from ..config import settings
+from ..catalogue.enrichment import search_metadata, seller_facts
 
 TEXT_VERSION = "retail-v1"
 
@@ -25,12 +26,13 @@ def enabled(owner):
 
 
 def document(product):
-    facts = {k: product.get(k, "") for k in ("name", "brand", "description", "category", "attributes")}
-    facts["colours"] = sorted({v["colour"] for v in product["variants"]})
+    facts = seller_facts(product)
+    facts["styling_metadata"] = search_metadata(product)
+    facts["document_version"] = "enriched-retail-v1"
     # Price and stock are structured filters, not semantic identity. Their edits reuse the vector.
     text = f"title: {product['name']} | text: " + json.dumps(facts, sort_keys=True, ensure_ascii=False)
     # Bound provider input even when seller-supplied attribute maps are verbose.
-    return text.encode("utf-8")[:8000].decode("utf-8", errors="ignore")
+    return text.encode("utf-8")[:12000].decode("utf-8", errors="ignore")
 
 
 def digest(text):

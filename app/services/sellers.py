@@ -19,6 +19,12 @@ def prepare_product(p, product):
         bool(old and old.get("sample")) or product.sample or p.demo or product.image.startswith("/images/")
     )
     product.ai_attributes = (old or {}).get("ai_attributes", {})
+    # Enrichment is server-owned. An editor cannot supply or inflate AI confidence.
+    from ..catalogue.schema import Enrichment
+
+    product.enrichment = (
+        Enrichment.model_validate(old["enrichment"]) if old and old.get("enrichment") else None
+    )
     product.indexed = False
     product.content_hash = ""
     product.updated_at = now()

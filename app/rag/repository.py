@@ -10,6 +10,7 @@ from google.cloud.firestore_v1.vector import Vector
 
 from ..models import now
 from ..store import store
+from ..catalogue.enrichment import search_metadata
 from .embeddings import space
 
 KINDS = ("top", "bottom", "dress", "jacket", "shoes", "bag", "accessory")
@@ -64,6 +65,8 @@ def publish(owner, product, row, product_digest):
         "price": product["price"],
         "facets": facets(product),
         "active": product.get("active", True),
+        "metadata_version": (product.get("enrichment") or {}).get("schema_version"),
+        "metadata_input_hash": (product.get("enrichment") or {}).get("input_hash"),
     }
 
     def marked(current):
@@ -77,7 +80,11 @@ def publish(owner, product, row, product_digest):
         def write(tx):
             snap = product_ref.get(transaction=tx)
             current = snap.to_dict()["data"] if snap.exists else None
-            if not current or product_hash(current) != product_digest:
+            if (
+                not current
+                or product_hash(current) != product_digest
+                or search_metadata(current) != search_metadata(product)
+            ):
                 return False
             if row["active"]:
                 tx.set(vector_ref, {**row, "embedding": Vector(row["embedding"])})
@@ -89,7 +96,11 @@ def publish(owner, product, row, product_digest):
         return write(db.db.transaction())
     with db.lock:
         current = db.get("products", owner, product["id"])
-        if not current or product_hash(current) != product_digest:
+        if (
+            not current
+            or product_hash(current) != product_digest
+            or search_metadata(current) != search_metadata(product)
+        ):
             return False
         db.put("vectors", owner, product["id"], row)
         db.put("products", owner, product["id"], marked(current))

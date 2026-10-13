@@ -54,7 +54,7 @@ def test_graph_unavailable_does_not_claim_evidence(client, monkeypatch):
     assert wardrobe_graph.coverage("a", [], ["p"], "Work")["status"] == "unavailable"
 
 
-def test_index_job_checkpoints_every_five_records(client, session, monkeypatch):
+def test_index_job_checkpoints_every_two_records(client, session, monkeypatch):
     from app.services import indexing
 
     data, _ = session
@@ -66,6 +66,9 @@ def test_index_job_checkpoints_every_five_records(client, session, monkeypatch):
             "indexed": len(ids),
             "embeddings_generated": len(ids),
             "embeddings_reused": 0,
+            "enriched": 0,
+            "enrichment_reused": 0,
+            "errors": [],
             "requested": len(ids),
         }
 
@@ -77,5 +80,5 @@ def test_index_job_checkpoints_every_five_records(client, session, monkeypatch):
         "checkpoint-test",
     )
     saved = store().get("jobs", data["user_id"], record["id"])
-    assert list(map(len, chunks)) == [5, 5, 2]
+    assert list(map(len, chunks)) == [2] * 6
     assert saved["status"] == "succeeded" and saved["result"]["indexed"] == 12

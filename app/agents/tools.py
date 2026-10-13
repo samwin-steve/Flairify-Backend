@@ -2,6 +2,8 @@
 
 import asyncio
 
+from ..catalogue.context import assessment_context
+
 from ..models import ChatRequest
 from ..services import conversation_context, recommendations
 from ..services.inventory import available
@@ -110,7 +112,11 @@ class StylistTools:
                         {k: g.get(k) for k in ("id", "name", "category", "colour")} for g in o["owned"]
                     ],
                     "products": [
-                        {k: p.get(k) for k in ("id", "name", "category", "attributes")} for p in o["products"]
+                        {
+                            **{k: p.get(k) for k in ("id", "name", "category", "attributes")},
+                            "styling_hypotheses": assessment_context(p),
+                        }
+                        for p in o["products"]
                     ],
                     "explanation": o["explanation"],
                     "complete": o["complete"],

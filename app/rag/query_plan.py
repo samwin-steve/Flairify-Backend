@@ -1,5 +1,7 @@
 """Category-specific retrieval keeps supporting pieces aligned with the whole look."""
 
+from ..catalogue.context import query_context
+
 LABELS = {
     "top": "shirts tops kurtas",
     "bottom": "trousers chinos jeans skirts",
@@ -18,7 +20,7 @@ def build(intent, refinement=None):
         categories += (target,)
     if refinement:
         categories = tuple(refinement["change_categories"])
-    context = f"{intent['occasion']}. Dress code: {intent['dress_code']}. {intent['query']}"
+    context = f"{intent['occasion']}. Dress code: {intent['dress_code']}. {intent['query']}. {query_context(intent)}"
     queries = {}
     for category in categories:
         palette = " ".join(intent.get("palette", []))

@@ -151,7 +151,11 @@ def parse_import(raw, filename):
 
 
 def product_hash(p):
-    data = {k: v for k, v in p.items() if k not in ("updated_at", "content_hash", "indexed", "ai_attributes")}
+    data = {
+        k: v
+        for k, v in p.items()
+        if k not in ("updated_at", "content_hash", "indexed", "ai_attributes", "enrichment")
+    }
     return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
 

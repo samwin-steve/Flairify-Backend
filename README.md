@@ -95,3 +95,7 @@ Saved shopping settings replace the repeated chat selectors. Catalogue-only reco
 `GET /api/jobs/{id}/shopping` resolves the authenticated customer’s completed try-on to current inventory. Recommendation previews offer every new product in their stored look; owned garments are excluded. Standalone previews resolve their selected products, with support for older single-product previews. Unavailable listings are reported separately. `source=fitting_room` orders require `preview_job_id`; quote and placement validate the customer, job completion, allowed product IDs, current variants, stock and prices. Orders retain the preview reference and remain idempotent.
 
 Customer-facing actions say **Buy** and **Order placed**. Orders remain saved without payment or fulfillment. Legacy API fields (`mock`, `mock_placed`, `acknowledge_mock`) remain for compatibility and are not displayed as interface labels.
+
+## Automated catalogue metadata
+
+New and edited listings now run through evidence-checked Gemini photo enrichment before semantic indexing. Seller Studio exposes the resulting styling details, confidence, unknown fields and validation notes. See [catalogue enrichment](docs/CATALOGUE_ENRICHMENT.md) for the schema, automatic updates, safe bulk backfill and version migrations.

@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field
 
 from ..config import settings
 from . import ai
+from ..catalogue import context as catalogue_context
+from ..catalogue.enrichment import seller_facts
 
 CATEGORY_WORDS = {
     "top": r"\b(shirts?|t-shirts?|tees?|tops?|kurtas?|kurtis?|blouses?|polos?)\b",
@@ -25,7 +27,9 @@ def words(row):
     return (
         " ".join(str(row.get(k, "")) for k in ("name", "category", "colour", "pattern", "details")).lower()
         + " "
-        + json.dumps(row.get("attributes", {})).lower()
+        + json.dumps(seller_facts(row)["attributes"]).lower()
+        + " "
+        + catalogue_context.appearance_words(row)
     )
 
 
@@ -208,7 +212,7 @@ def suitable(row, intent):
 def relevance(row, intent, semantic=0):
     text, palette = words(row), set(intent.get("palette", []))
     colour = colours(row)
-    score = 1.0 + 2.0 * semantic
+    score = 1.0 + 2.0 * semantic + catalogue_context.relevance(row, intent)
     # Also honor exact names/brands in the bounded shortlist (and deterministic demo).
     terms = set(re.findall(r"[a-z]+", intent.get("query", "").lower())) - {
         "show",
@@ -333,6 +337,7 @@ def assess_shortlist(options, intent, enabled):
                     "category": p["category"],
                     "colour": list(colours(p)),
                     "attributes": p.get("attributes", {}),
+                    "styling_hypotheses": catalogue_context.assessment_context(p),
                     "owned": bool(p.get("confirmed")),
                 }
                 for p in o["owned"] + o["products"]

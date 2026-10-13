@@ -305,6 +305,7 @@ def recommend(principal, request, previous, *, interpreted=None, conversation=No
         )
         key = ":".join(sorted(("o" if o else "p") + p["id"] for p, o in combination))
         rating = sum(rank(p, o) for p, o in combination) / len(combination)
+        rating += styling.catalogue_context.pairing_bonus(used_owned + purchases)
         # A changed request must not inherit price-first ranking. Relevance leads; price is a tie break.
         options.append(
             {

@@ -439,7 +439,10 @@ def catalog(
         inventory.seed_catalog(p.catalog_owner)
     return {
         "products": [
-            {**product, "try_on_supported": try_on.supports(product)}
+            {
+                **{k: v for k, v in product.items() if k != "enrichment"},
+                "try_on_supported": try_on.supports(product),
+            }
             for product in inventory.search(p.catalog_owner, q, budget, category)
         ]
     }
@@ -688,13 +691,49 @@ def approve_seller(key: str, decision: str, p: Principal = Depends(admin)):
 
 @app.get("/api/admin/catalog")
 def admin_catalog(p: Principal = Depends(merchant)):
+    from .catalogue.enrichment import current, enabled
+
+    products = [r for r in store().list("products", p.catalog_owner) if sellers.can_manage(p, r)]
     return {
-        "products": [r for r in store().list("products", p.catalog_owner) if sellers.can_manage(p, r)],
+        "products": [{k: v for k, v in r.items() if k != "enrichment"} for r in products],
+        "enrichment_states": {
+            r["id"]: (
+                r["enrichment"]["status"]
+                if current(r)
+                else "failed"
+                if (r.get("enrichment") or {}).get("status") == "failed"
+                else "pending"
+                if enabled(p.catalog_owner)
+                else "unavailable"
+            )
+            for r in products
+        },
         "stores": store().list("stores", p.catalog_owner),
         "editable_store_ids": [
             r["id"] for r in store().list("stores", p.catalog_owner) if sellers.can_manage(p, r)
         ],
     }
+
+
+@app.get("/api/admin/products/{key}/metadata")
+def product_metadata(key: str, p: Principal = Depends(merchant)):
+    from .catalogue.enrichment import current
+
+    row = require_record("products", p.catalog_owner, key)
+    if not sellers.can_manage(p, row):
+        raise HTTPException(403, "You can review only your own listings")
+    return {"current": current(row), "enrichment": row.get("enrichment")}
+
+
+@app.post("/api/admin/products/{key}/reindex")
+def reindex_product(key: str, p: Principal = Depends(merchant)):
+    row = require_record("products", p.catalog_owner, key)
+    if not sellers.can_manage(p, row):
+        raise HTTPException(403, "You can refresh only your own listings")
+    quota(p.uid, "catalog-reindex", 10)
+    return jobs.create(
+        p.uid, "index", {"catalog_owner": p.catalog_owner, "product_ids": [key]}, secrets.token_hex(16)
+    )
 
 
 @app.post("/api/admin/import")

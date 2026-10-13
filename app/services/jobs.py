@@ -118,24 +118,60 @@ def process(owner, key):
 
             payload = job["payload"]
             ids = payload["product_ids"]
-            cursor = payload.get("index_cursor", 0)
-            progress(f"Indexing catalogue: {cursor} of {len(ids)} processed")
-            chunk = index_products(payload["catalog_owner"], ids[cursor : cursor + 5])
-            cursor = min(cursor + 5, len(ids))
+            pending = payload.get("index_pending", ids[payload.get("index_cursor", 0) :])
+            progress(f"Enriching catalogue: {len(ids) - len(pending)} of {len(ids)} processed")
+            # Two concurrent bounded provider calls stay inside the 180-second worker lease.
+            batch = pending[:2]
+            chunk = index_products(payload["catalog_owner"], batch)
+            attempts = dict(payload.get("index_attempts", {}))
+            retry, exhausted = [], []
+            for error in chunk["errors"]:
+                item = error["product_id"]
+                attempts[item] = attempts.get(item, 0) + 1
+                if attempts[item] < 3:
+                    retry.append(item)
+                else:
+                    exhausted.append(error)
+            remaining = pending[len(batch) :] + retry
             result = {**chunk, "requested": len(ids)}
-            for field in ("indexed", "embeddings_generated", "embeddings_reused"):
+            for field in (
+                "indexed",
+                "enriched",
+                "enrichment_reused",
+                "embeddings_generated",
+                "embeddings_reused",
+            ):
                 result[field] = payload.get("index_totals", {}).get(field, 0) + chunk[field]
-            if cursor < len(ids):
+            result["errors"] = payload.get("index_totals", {}).get("errors", []) + exhausted
+            result["processed"] = len(ids) - len(remaining)
+            if remaining:
                 update(
                     owner,
                     key,
                     status="queued",
                     lease_until=0,
                     attempts=0,
-                    stage=f"Indexing catalogue: {cursor} of {len(ids)} processed",
-                    payload={**payload, "index_cursor": cursor, "index_totals": result},
+                    stage=f"Enriching catalogue: {result['processed']} of {len(ids)} processed",
+                    result=result,
+                    payload={
+                        **payload,
+                        "index_pending": remaining,
+                        "index_attempts": attempts,
+                        "index_totals": result,
+                    },
                 )
-                enqueue(owner, key)
+                enqueue(owner, key, delay=60 if retry else 0)
+                return
+            if result["errors"]:
+                update(
+                    owner,
+                    key,
+                    status="failed",
+                    stage="Some listings need attention",
+                    result=result,
+                    error=f"{len(result['errors'])} listings failed after three attempts. Retry enrichment to resume.",
+                    lease_until=0,
+                )
                 return
         else:
             result = avatars.generate()

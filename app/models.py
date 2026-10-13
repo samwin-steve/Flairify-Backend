@@ -5,6 +5,8 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from .catalogue.schema import Enrichment
+
 
 def uid():
     return uuid4().hex
@@ -136,6 +138,7 @@ class Product(Model):
     variants: list[ProductVariant] = Field(default_factory=list, max_length=50)
     attributes: dict[str, str] = Field(default_factory=dict)
     ai_attributes: dict[str, str] = Field(default_factory=dict)
+    enrichment: Enrichment | None = None
     product_url: str | None = None
     delivery: list[str] = Field(default_factory=list, max_length=10)
     sample: bool = False

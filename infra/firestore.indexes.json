@@ -90,6 +90,16 @@
       "collectionGroup": "flairify_vectors",
       "fieldPath": "description",
       "indexes": []
+    },
+    {
+      "collectionGroup": "flairify_products",
+      "fieldPath": "data.enrichment",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "flairify_catalogue_analysis",
+      "fieldPath": "data",
+      "indexes": []
     }
   ]
 }

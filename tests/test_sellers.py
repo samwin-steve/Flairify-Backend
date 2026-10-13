@@ -58,6 +58,8 @@ def test_seller_create_upload_index_ownership_and_mock_inbox(signed):
     assert c.post("/api/admin/products", json=product).status_code == 409
     who[0] = Principal("seller-b", seller=True)
     assert c.get("/api/admin/catalog").json()["products"] == []
+    assert c.get("/api/admin/products/" + product["id"] + "/metadata").status_code == 403
+    assert c.post("/api/admin/products/" + product["id"] + "/reindex").status_code == 403
     assert c.put("/api/admin/products/" + product["id"], json=product).status_code == 403
     forged = {**product, "id": "forged-image"}
     forged["variants"][0]["stock"][0]["store_id"] = "b-store"
@@ -71,6 +73,7 @@ def test_seller_create_upload_index_ownership_and_mock_inbox(signed):
     )
     who[0] = Principal("customer")
     assert c.post("/api/admin/products", json=product).status_code == 403
+    assert c.get("/api/admin/products/" + product["id"] + "/metadata").status_code == 403
     data = {
         "items": [
             {

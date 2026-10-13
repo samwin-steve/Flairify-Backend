@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     embedding_location: str = "global"
     embedding_dimensions: int = Field(default=768, ge=128, le=2048)
     max_daily_embeddings: int = 1500
+    enable_catalogue_enrichment: bool = True
+    max_daily_catalogue_enrichments: int = Field(default=600, ge=1, le=10000)
     try_on_model: str = ""
     image_edit_model: str = ""
     image_edit_location: str = "global"
