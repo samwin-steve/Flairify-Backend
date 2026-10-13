@@ -1,6 +1,24 @@
 # Verification — 13 October 2026
 
-## Latest release: native Gemini Live voice stylist
+## Latest release: account-entry preferences and new chats
+
+**25 frontend logic tests, 34 desktop/mobile Playwright journeys, TypeScript and the production Next.js build passed.** Shopping preferences now gate account entry, including restored Firebase/demo sessions and legacy profiles missing a required size. Returning customers with complete settings skip setup. Photos remain optional, and preferences remain editable in Profile. The setup form has readable step-label contrast and mobile columns that stay within the viewport.
+
+New chat is visible above the conversation on desktop/mobile, clears the draft and look selection, detaches a pending text or voice response, and persists a fresh state through refresh. Previous conversations remain available explicitly in history. Browser tests cover delayed history loading, stale completed responses, a late voice event, separate persisted conversations, legacy/incomplete setup, Profile readback, tested Axe rules and horizontal overflow. Text/voice late-event cases use clearly identified transport fixtures; normal demo conversation and preference tests use the real local APIs.
+
+The first broader run exposed old Fitting Room fixtures that bypassed account setup; the fixtures now save sizes before entering the app. A later rerun exhausted the isolated local demo-account quota after repeated test runs; the final 34 checks passed on a fresh local SQLite dataset with paid AI disabled. Production quotas were not changed. The backend runtime is unchanged in this release; its 126 tests were verified in the preceding voice release and were not rerun for frontend-only behavior.
+
+### Deployed verification
+
+The normal main-push Cloud Build **`e87b627d-a659-4b53-866c-67e357071738`** succeeded and deployed frontend source **`c41bfa4`** as **`flairify-web-00018-sgf`**, serving all traffic. The build listing was initially delayed; a duplicate manually requested build was cancelled before starting. Backend revision `flairify-api-00023-f82` remains unchanged. Web/API health returned 200; the private worker returned its expected unauthenticated 403.
+
+A temporary Firebase customer registered and completed setup on the deployed site. Incomplete-account refresh returned to preferences; completed-account refresh and later sign-in went straight into the app. Saved M/EU39/men/Bandra settings remained editable. Two real Gemini greetings persisted as separate conversations, with the original two messages unchanged. New chat cleared the draft and survived refresh; selecting an earlier conversation restored it after refresh. Mobile history navigation, desktop/mobile tested Axe rules and 393px/320px chat widths passed. The 393px setup form had no horizontal overflow. Screenshots were visually inspected, and the final browser recorded no JavaScript errors.
+
+The first registration check used an overly short five-second assertion while the profile was still loading; verification resumed with the same account and a 30-second wait. One live chat request timed out and correctly restored its draft with an error; one retry succeeded. Successful greeting calls took 7.881s and 4.970s in this run, excluding the failed request; these are individual observations, not latency guarantees. A contrast scan during the message entrance animation was repeated after opacity reached 1, without another model call. No images, videos, voice sessions or purchases were generated in this release check. See [collected deployed checks](live-entry-deployed-results.json).
+
+The temporary Firebase account and its eight owner-scoped records were deleted after verification. No owner records or QA media remained. No real customer settings or production quotas were changed.
+
+## Previous release: native Gemini Live voice stylist
 
 **126 backend tests, 25 frontend logic tests and 28 desktop/mobile Playwright journeys passed**, along with TypeScript and the production Next.js build. New tests cover single-use voice tickets, Firebase/demo gating, cross-user conversation denial, exact WebSocket origins, shared chat leases, malformed PCM, quota bounds, saved interrupted turns, roleless native audio events, tool acknowledgement/result assembly, readable transcripts, resampling and playback cancellation. Browser voice tests use a clearly simulated provider stream with real browser capture, and verify permission denial, mute/end, history, reduced motion and accessibility. The initial wider browser run lacked the local admin fixture key; it was rerun with the required isolated setup. The final 28 all passed. A mobile preference shortcut hidden by the first layout was restored before the successful final run.
 

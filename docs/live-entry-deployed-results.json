@@ -1,0 +1,72 @@
+{
+  "url": "https://flairify-web-7kxckvikva-uc.a.run.app",
+  "checks": [
+    {
+      "request": "Hi! Just say hello for now; I will ask for clothes later.",
+      "seconds": 7.881,
+      "conversationId": "e7d455225a3c484d96ecf053364aaf81",
+      "messages": 2,
+      "text": "Hello! It's lovely to meet you. Whenever you're ready to start styling, just let me know what occasion or vibe you have in mind."
+    },
+    {
+      "request": "Hello again! This is a fresh chat. Please just greet me, no clothes search yet.",
+      "seconds": 4.97,
+      "conversationId": "8f842d940b6840c6b5364306c7b09459",
+      "messages": 2,
+      "text": "Hello! Wonderful to see you again. Whenever you're ready, let me know what event or vibe we're styling for today!"
+    }
+  ],
+  "newImageGeneration": false,
+  "setupBeforeApplication": true,
+  "incompleteRefreshReturnsSetup": true,
+  "setupDesktopAxe": [],
+  "setupMobileAxe": [],
+  "setupMobileWidth": {
+    "viewport": 393,
+    "document": 393
+  },
+  "savedPreferences": true,
+  "completedRefreshSkipsSetup": true,
+  "newChatSurvivesRefresh": true,
+  "liveReplyTimeoutObserved": true,
+  "separatePersistedConversations": true,
+  "chosenHistoryRestores": true,
+  "desktopAxe": [],
+  "mobileHistoryNavigation": true,
+  "mobileAxe": [],
+  "mobileWidth": {
+    "viewport": 393,
+    "document": 393
+  },
+  "smallMobileWidth": {
+    "viewport": 320,
+    "document": 320
+  },
+  "settingsRemainEditable": true,
+  "returningLoginSkipsSetupAndKeepsHistory": true,
+  "browserErrors": [],
+  "completedAt": "2026-10-13T07:13:12.023Z",
+  "deployment": {
+    "source": "c41bfa4",
+    "build": "e87b627d-a659-4b53-866c-67e357071738",
+    "frontendRevision": "flairify-web-00018-sgf",
+    "apiRevisionUnchanged": "flairify-api-00023-f82"
+  },
+  "localChecks": {
+    "vitest": 25,
+    "playwright": 34,
+    "typecheck": "passed",
+    "productionBuild": "passed"
+  },
+  "verificationNotes": [
+    "Initial registration assertion allowed only five seconds; resumed on the same temporary account with 30 seconds.",
+    "One live Gemini turn timed out and restored the draft; one retry succeeded.",
+    "Axe scans wait for the message entrance animation to finish."
+  ],
+  "cleanup": {
+    "temporary_firebase_account_removed": true,
+    "owner_records_removed": 8,
+    "remaining_owner_records": 0,
+    "qa_media_removed": 0
+  }
+}
