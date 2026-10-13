@@ -220,3 +220,23 @@ The deployed signed-in check used a fresh temporary Firebase account and the lic
 Final deployed verification passed after both Cloud Builds completed successfully: private source/reference photos loaded, checked/unchecked background preferences persisted, desktop and mobile Profile scans each returned zero tested Axe violations, the 393-pixel viewport had a 393-pixel document width, and deleting the reference removed associated wardrobe records/media. See [live multi-preview results](live-multi-preview-results.json). No new multi-piece image was generated or rated because the existing image allowance was exhausted.
 
 The temporary Firebase account was deleted after verification; its nine remaining owner-scoped records were removed and no residual media remained. Frontend revision `flairify-web-00012-2bm`, API `flairify-api-00015-rsk`, worker `flairify-worker-00030-gj4` were ready. The existing shared image counter was left unchanged.
+
+## Customer interface cleanup — 13 October 2026
+
+Frontend source `6bb611d` and backend source `1ca066d` remove presentation badges and redundant explanations across the shopping interface. Inventory provenance remains internal and documented; no retailer connection, stock, payment or generated-media capability was added by removing labels. Completed previews use current UI copy even when older result metadata contains obsolete sample labels.
+
+Validation: 132 backend tests, 25 frontend logic tests, production compilation and 42 distinct desktop/mobile journeys passed (41 in the full run; the desktop fitting-room refresh test passed after fixing a test-helper readiness race, with both fitting-room variants rerun). Live Chromium checks covered Stylist, Inventory, My Wardrobe, Saved Looks, Fitting Room, My Orders, Profile and the Seller Studio access screen at 1440px and Pixel 7 widths. No demo/sample/mock badges, horizontal overflow or browser errors were observed; tested Axe WCAG A/AA rules reported zero violations on Stylist, Inventory and Profile. No paid model calls were made. Both temporary guest accounts and their 410 records including sessions were removed after setup validation and the live check. See [collected live interface results](live-interface-copy-results.json).
+
+Cloud Build `2c263675-77e7-434a-b2fb-f937f079db87` and `14e3d0ac-6985-48f3-8d00-9a5ec8f89126` succeeded. Verified revisions were `flairify-web-00021-vv9`, `flairify-api-00025-5xg` and `flairify-worker-00050-z7f`.
+
+## Voice navigation — 13 October 2026
+
+Frontend source `292819d` and backend source `33b90f4` add an allowlisted ADK navigation tool, local back/origin history and duplicate-event protection. Opening another page retains the voice call, selected garments and active conversation. The automatic preview transition uses the same history. Navigation never grants permissions or itself purchases, changes preferences or generates media.
+
+Validation: 145 backend tests (including 13 navigation cases), 28 frontend logic tests, production compilation and 20 targeted desktop/mobile browser journeys passed. The browser checks exercise preview-to-Stylist return, all customer page destinations, current selection retention, duplicate/invalid navigation events and the same active connection across screen changes. The broader 42-journey copy release was verified immediately before this change.
+
+Real deployed Gemini Live verification accepted seven natural-language navigation requests: open Fitting Room, back to styles, open my closet, take me back, open the shop, go to Profile, and return where we started. Every destination matched and each screen appeared. The test used text input over the authenticated Live WebSocket, a silent simulated microphone, real Google tool calls and 1,246,590 native audio bytes. It used one connection, saved 16 messages, created zero image jobs and stopped microphone tracks on End. This verifies live natural-language routing and audio output; physical-device speech recognition was not newly tested. See [collected real-service results](live-voice-navigation-results.json).
+
+Cloud Build `e992e9f8-fd2b-4117-90f0-fac8f44f4e3e` and `50666844-9ce3-4104-a7e0-fe234e5f350c` succeeded. All traffic was verified on `flairify-web-00022-mt2`, `flairify-api-00026-hw6` and `flairify-worker-00052-clt`.
+
+The temporary Firebase test account and four owner-scoped records were removed afterward; zero QA owner records or media remained. Shared daily quotas were retained.

@@ -1,0 +1,55 @@
+{
+  "url": "https://flairify-web-7kxckvikva-uc.a.run.app",
+  "input": "Natural-language text over authenticated Live WebSocket; silent simulated microphone; real Google native audio and tools",
+  "checks": [
+    {
+      "request": "Can you open the fitting room? I only want to see my saved previews, not create a new one.",
+      "requestedDestination": "fitting",
+      "actualDestination": "fitting",
+      "passed": true
+    },
+    {
+      "request": "Can you take me back to styles?",
+      "requestedDestination": "stylist",
+      "actualDestination": "stylist",
+      "passed": true
+    },
+    {
+      "request": "Open my closet please.",
+      "requestedDestination": "wardrobe",
+      "actualDestination": "wardrobe",
+      "passed": true
+    },
+    {
+      "request": "Take me back.",
+      "requestedDestination": "back",
+      "actualDestination": "back",
+      "passed": true
+    },
+    {
+      "request": "Take me to the shop page so I can browse the inventory.",
+      "requestedDestination": "inventory",
+      "actualDestination": "inventory",
+      "passed": true
+    },
+    {
+      "request": "Go to my profile please.",
+      "requestedDestination": "profile",
+      "actualDestination": "profile",
+      "passed": true
+    },
+    {
+      "request": "Take me back where we started.",
+      "requestedDestination": "origin",
+      "actualDestination": "origin",
+      "passed": true
+    }
+  ],
+  "paidImageCalls": 0,
+  "audioBytes": 1246590,
+  "connections": 1,
+  "microphoneStopped": true,
+  "savedMessages": 16,
+  "passed": true,
+  "completedAt": "2026-10-13T16:59:25.728Z"
+}

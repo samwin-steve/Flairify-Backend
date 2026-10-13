@@ -1,0 +1,41 @@
+{
+  "baseURL": "https://flairify-web-7kxckvikva-uc.a.run.app",
+  "checkedAt": "2026-10-13T16:46:47.693Z",
+  "results": [
+    {
+      "mode": "desktop",
+      "pages": [
+        "Stylist",
+        "Inventory",
+        "My Wardrobe",
+        "Saved Looks",
+        "Fitting Room",
+        "My Orders",
+        "Profile",
+        "Seller Studio"
+      ],
+      "no_demo_badges": true,
+      "no_horizontal_overflow": true,
+      "axe_violations": 0,
+      "browser_errors": []
+    },
+    {
+      "mode": "mobile",
+      "pages": [
+        "Stylist",
+        "Inventory",
+        "My Wardrobe",
+        "Saved Looks",
+        "Fitting Room",
+        "My Orders",
+        "Profile",
+        "Seller Studio"
+      ],
+      "no_demo_badges": true,
+      "no_horizontal_overflow": true,
+      "axe_violations": 0,
+      "browser_errors": []
+    }
+  ],
+  "paid_model_calls": 0
+}
