@@ -1,3 +1,7 @@
+# Latest catalogue update — 14 October 2026
+
+See [catalogue enrichment verification](CATALOGUE_ENRICHMENT_RESULTS.md) for the completed 200-product backfill, live incremental indexing and four real streamed conversation checks. See [photo import](PHOTO_CATALOGUE_IMPORT.md) for the separate Drive collection and private draft workflow.
+
 # Verification — 13 October 2026
 
 ## Latest release: no daily voice-session cap and reliable return navigation

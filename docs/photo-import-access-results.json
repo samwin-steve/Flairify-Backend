@@ -1,0 +1,20 @@
+{
+  "customer": {
+    "drafts_excluded_from_catalogue": true,
+    "draft_image_http_status": 404,
+    "metadata_http_status": 403
+  },
+  "owner": {
+    "private_draft_visible": true,
+    "actual_photo_served": true,
+    "image_bytes": 21168,
+    "metadata_current": true,
+    "published": false
+  },
+  "health": {
+    "web": 200,
+    "api": 200,
+    "private_worker": 403
+  },
+  "cleanup": "Temporary account and owner grant removed"
+}

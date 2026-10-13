@@ -1,0 +1,447 @@
+[
+  {
+    "message": "Suggest a subtle kurta outfit for Independence Day at the office with flats, under \u20b95,000.",
+    "text": "I\u2019ve put together an understated look centered on an embroidered green kurta, pairing it with neutral beige leggings for an elegant, work-appropriate nod to Independence Day. The brown leather flats ground the outfit nicely while keeping things practical for a full day at the office. How does this direction feel to you, or would you like to explore an ivory or saffron touch instead?",
+    "events": [
+      {
+        "type": "start",
+        "seconds": 16.73
+      },
+      {
+        "type": "status",
+        "seconds": 16.73
+      },
+      {
+        "type": "status",
+        "seconds": 19.36
+      },
+      {
+        "type": "outfits",
+        "seconds": 24.97
+      },
+      {
+        "type": "status",
+        "seconds": 24.97
+      },
+      {
+        "type": "text",
+        "seconds": 25.85
+      },
+      {
+        "type": "text",
+        "seconds": 26.02
+      },
+      {
+        "type": "text",
+        "seconds": 26.28
+      },
+      {
+        "type": "text",
+        "seconds": 26.48
+      },
+      {
+        "type": "text",
+        "seconds": 26.5
+      },
+      {
+        "type": "done",
+        "seconds": 26.84
+      }
+    ],
+    "seconds": 28.82,
+    "retrieval": {
+      "method": "firestore-vector",
+      "model": "gemini-embedding-2",
+      "dimensions": 768,
+      "candidates": 65,
+      "category_queries": 4,
+      "query_version": "category-context-v3-enriched",
+      "semantic": true
+    },
+    "outfits": [
+      {
+        "id": "e863982c3a3a4bd99f968de148ba4c3d",
+        "total": 2597,
+        "reason": "Features a green embroidered kurta paired with neutral beige leggings and brown flats. The palette appropriately incorporates green for Independence Day in a tasteful, restrained ethnic silhouette well-suited for an office environment.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-20099",
+            "name": "Diva Women Embroided Green Kurta",
+            "category": "top"
+          },
+          {
+            "id": "sample-fashion-12155",
+            "name": "Aurelia Women Solid Beige Leggings",
+            "category": "bottom"
+          },
+          {
+            "id": "sample-fashion-2886",
+            "name": "Catwalk Women Leather Brown Flats",
+            "category": "shoes"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "message": "Keep the clothes in the first look and show different flats.",
+    "text": "I kept the green embroidered kurta and beige leggings, then swapped the footwear to give you a few distinct options. I personally lean toward the copper-toned flat sandals\u2014the warm metallic touch feels subtly festive for the occasion while remaining refined for the office. If you prefer a simpler finish, the classic brown or black-and-gold strap sandals are great alternatives.",
+    "events": [
+      {
+        "type": "start",
+        "seconds": 0.82
+      },
+      {
+        "type": "status",
+        "seconds": 0.82
+      },
+      {
+        "type": "status",
+        "seconds": 2.28
+      },
+      {
+        "type": "outfits",
+        "seconds": 9.36
+      },
+      {
+        "type": "status",
+        "seconds": 9.37
+      },
+      {
+        "type": "text",
+        "seconds": 10.29
+      },
+      {
+        "type": "text",
+        "seconds": 10.39
+      },
+      {
+        "type": "text",
+        "seconds": 10.67
+      },
+      {
+        "type": "text",
+        "seconds": 10.8
+      },
+      {
+        "type": "text",
+        "seconds": 10.85
+      },
+      {
+        "type": "done",
+        "seconds": 11.44
+      }
+    ],
+    "seconds": 18.26,
+    "retrieval": {
+      "method": "firestore-vector",
+      "model": "gemini-embedding-2",
+      "dimensions": 768,
+      "candidates": 19,
+      "category_queries": 1,
+      "query_version": "category-context-v3-enriched",
+      "semantic": true
+    },
+    "outfits": [
+      {
+        "id": "d0f5f3b1c2fe4daaa9200cb5c8ba833e",
+        "total": 2397,
+        "reason": "The green embroidered kurta and beige leggings meet the subtle theme, paired appropriately with smart casual brown flat sandals suitable for everyday office wear.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-20099",
+            "name": "Diva Women Embroided Green Kurta",
+            "category": "top"
+          },
+          {
+            "id": "sample-fashion-12155",
+            "name": "Aurelia Women Solid Beige Leggings",
+            "category": "bottom"
+          },
+          {
+            "id": "sample-fashion-33697",
+            "name": "Cobblerz Women Brown Sandals",
+            "category": "shoes"
+          }
+        ]
+      },
+      {
+        "id": "80efd5919cc1459c971fc1b7ea9a3985",
+        "total": 2697,
+        "reason": "The green kurta and beige leggings provide a clean ethnic base, complemented by copper-toned flat sandals for a balanced work-appropriate outfit.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-20099",
+            "name": "Diva Women Embroided Green Kurta",
+            "category": "top"
+          },
+          {
+            "id": "sample-fashion-12155",
+            "name": "Aurelia Women Solid Beige Leggings",
+            "category": "bottom"
+          },
+          {
+            "id": "sample-fashion-47530",
+            "name": "Portia Women Copper-Toned & Brown Sandals",
+            "category": "shoes"
+          }
+        ]
+      },
+      {
+        "id": "e8ce6e6abb3f45e89779df91e6438a53",
+        "total": 2897,
+        "reason": "The black and gold toned flat sandals coordinate well with the embroidered green kurta and beige leggings for an office setting.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-20099",
+            "name": "Diva Women Embroided Green Kurta",
+            "category": "top"
+          },
+          {
+            "id": "sample-fashion-12155",
+            "name": "Aurelia Women Solid Beige Leggings",
+            "category": "bottom"
+          },
+          {
+            "id": "sample-fashion-59051",
+            "name": "Carlton London Women Black & Gold Toned Flats",
+            "category": "shoes"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "message": "Suggest a wedding guest outfit for an evening celebration under \u20b95,000.",
+    "text": "I\u2019ve put together three celebratory evening looks for you. I especially love the embroidered green kurta paired with neutral leggings and metallic gold sandals\u2014it feels wonderfully festive and polished for an evening wedding. If you fancy a modern fusion feel instead, the jewel-tone blue pleated dress with those same gold sandals makes a striking statement. Which direction feels more like your style?",
+    "events": [
+      {
+        "type": "start",
+        "seconds": 0.74
+      },
+      {
+        "type": "status",
+        "seconds": 0.74
+      },
+      {
+        "type": "status",
+        "seconds": 2.6
+      },
+      {
+        "type": "outfits",
+        "seconds": 12.65
+      },
+      {
+        "type": "status",
+        "seconds": 12.65
+      },
+      {
+        "type": "text",
+        "seconds": 13.51
+      },
+      {
+        "type": "text",
+        "seconds": 13.67
+      },
+      {
+        "type": "text",
+        "seconds": 13.87
+      },
+      {
+        "type": "text",
+        "seconds": 14.17
+      },
+      {
+        "type": "done",
+        "seconds": 14.72
+      }
+    ],
+    "seconds": 18.0,
+    "retrieval": {
+      "method": "firestore-vector",
+      "model": "gemini-embedding-2",
+      "dimensions": 768,
+      "candidates": 64,
+      "category_queries": 4,
+      "query_version": "category-context-v3-enriched",
+      "semantic": true
+    },
+    "outfits": [
+      {
+        "id": "1645a348737d455c8a6ecc93722906a5",
+        "total": 2797,
+        "reason": "The embroidered green ethnic kurta pairs harmoniously with neutral beige leggings and metallic gold embellished sandals, delivering an appropriate, cohesive ethnic look for an evening festive wedding celebration.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-20099",
+            "name": "Diva Women Embroided Green Kurta",
+            "category": "top"
+          },
+          {
+            "id": "sample-fashion-12155",
+            "name": "Aurelia Women Solid Beige Leggings",
+            "category": "bottom"
+          },
+          {
+            "id": "sample-fashion-26180",
+            "name": "Rocia Women Gold Casual Sandals",
+            "category": "shoes"
+          }
+        ]
+      },
+      {
+        "id": "e2c6bb0e01cd4d658244db93738dfde2",
+        "total": 2498,
+        "reason": "The pleated, embellished jewel-tone blue dress paired with embellished gold sandals provides an elegant evening fusion look suitable for a festive wedding celebration.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-46271",
+            "name": "109F Blue A-Line Dress",
+            "category": "dress"
+          },
+          {
+            "id": "sample-fashion-26180",
+            "name": "Rocia Women Gold Casual Sandals",
+            "category": "shoes"
+          }
+        ]
+      },
+      {
+        "id": "6cf65b71cac24d89a4c3487afc543d68",
+        "total": 2398,
+        "reason": "The bright pink halter dress with gathered and draped details provides a stylish party silhouette, working with gold sandals as a modern fusion evening option.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-33225",
+            "name": "Sepia Women Pink Dress",
+            "category": "dress"
+          },
+          {
+            "id": "sample-fashion-26180",
+            "name": "Rocia Women Gold Casual Sandals",
+            "category": "shoes"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "message": "I am going to Mumbai for work for three days. I want to look put together, will be walking a lot, and have \u20b95,000. Suggest versatile clothes and flat shoes.",
+    "text": "I\u2019ve put together two sharp, walkable options that fit right into Mumbai's fast pace. \n\nI really like the first look\u2014the classic blue Arrow collared shirt pairs so nicely with the warm orange trousers, and the Catwalk flat leather sandals will keep you comfortable on your feet all day. If you prefer deeper tones, the second option pairs a crisp purple short-sleeve shirt with directoire blue trousers and versatile black flats. \n\nWhich direction feels closer to what you had in mind?",
+    "events": [
+      {
+        "type": "start",
+        "seconds": 0.6
+      },
+      {
+        "type": "status",
+        "seconds": 0.6
+      },
+      {
+        "type": "status",
+        "seconds": 2.31
+      },
+      {
+        "type": "outfits",
+        "seconds": 8.7
+      },
+      {
+        "type": "status",
+        "seconds": 8.7
+      },
+      {
+        "type": "text",
+        "seconds": 9.57
+      },
+      {
+        "type": "text",
+        "seconds": 9.76
+      },
+      {
+        "type": "text",
+        "seconds": 10.04
+      },
+      {
+        "type": "text",
+        "seconds": 10.25
+      },
+      {
+        "type": "text",
+        "seconds": 10.38
+      },
+      {
+        "type": "text",
+        "seconds": 10.56
+      },
+      {
+        "type": "done",
+        "seconds": 10.94
+      }
+    ],
+    "seconds": 13.4,
+    "retrieval": {
+      "method": "firestore-vector",
+      "model": "gemini-embedding-2",
+      "dimensions": 768,
+      "candidates": 65,
+      "category_queries": 4,
+      "query_version": "category-context-v3-enriched",
+      "semantic": true
+    },
+    "outfits": [
+      {
+        "id": "2bb07199bd9641df994cf106e08bc631",
+        "total": 2997,
+        "reason": "The Arrow blue collared shirt paired with ONLY tapered orange trousers creates a smart casual business silhouette. Catwalk flat brown leather sandals provide walkable comfort suitable for a Mumbai work trip.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-26369",
+            "name": "Arrow Woman Blue Shirt",
+            "category": "top"
+          },
+          {
+            "id": "sample-fashion-32564",
+            "name": "ONLY Women Orange Trousers",
+            "category": "bottom"
+          },
+          {
+            "id": "sample-fashion-2886",
+            "name": "Catwalk Women Leather Brown Flats",
+            "category": "shoes"
+          }
+        ]
+      },
+      {
+        "id": "9005afe42a784db299bfdb1aedd78993",
+        "total": 3697,
+        "reason": "The Jealous 21 purple short-sleeve shirt with blue belted trousers aligns well with a smart casual office dress code, complemented by Carlton London flat sandals suitable for walking.",
+        "source": "gemini",
+        "products": [
+          {
+            "id": "sample-fashion-26960",
+            "name": "Jealous 21 Women Purple Shirt",
+            "category": "top"
+          },
+          {
+            "id": "sample-fashion-32563",
+            "name": "ONLY Women directoire blue Trousers",
+            "category": "bottom"
+          },
+          {
+            "id": "sample-fashion-59051",
+            "name": "Carlton London Women Black & Gold Toned Flats",
+            "category": "shoes"
+          }
+        ]
+      }
+    ]
+  }
+]

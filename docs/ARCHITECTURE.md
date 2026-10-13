@@ -15,6 +15,8 @@ flowchart LR
   W --> FS
   W --> S
   W --> V[Vertex AI: configurable Gemini, VTO, Veo]
+  W --> E[Validated product metadata and Embedding 2]
+  E --> FS
   W -->|Checked outfit projection| Q[(BigQuery WardrobeGraph)]
   A -->|Prior whole-outfit coverage| Q
 ```
@@ -52,11 +54,11 @@ Firestore serves semantic candidates using Gemini Embedding 2. The actual BigQue
 
 ## UI
 
-Light pink palette, serif headings and compact sans-serif controls. Desktop has navigation / conversation / outfit notebook. Small screens use bottom navigation, a sticky composer and dialogs for details. Radix handles modal focus trapping and Escape. React Hook Form + Zod validate style basics; TanStack Query maintains server state and job polling. The AR lab loads an original CC0 mannequin through model-viewer, checks AR availability and retains normal 3D controls when AR is unavailable.
+Light pink palette, serif headings and compact sans-serif controls. Desktop has navigation / conversation / outfit notebook. Small screens use a navigation drawer, a sticky composer and dialogs for details. Radix handles modal focus trapping and Escape. React Hook Form + Zod validate style basics; TanStack Query maintains server state and job polling. The AR lab loads an original CC0 mannequin through model-viewer, checks AR availability and retains normal 3D controls when AR is unavailable.
 
 ## Seller listings and mock orders
 
-Seller Studio validates uploaded product images and server-assigned seller ownership. Adding or editing a listing queues the existing index worker. Only indexed, active records enter inventory search; shortlisted recommendations still recheck serving stock and total cost. Requested new tops/bottoms can replace owned base pieces, and requested accessories can join complete combinations. Availability does not imply that every listing will be recommended.
+Seller Studio validates uploaded product images and server-assigned seller ownership. Adding, importing or editing a listing queues Gemini photo/text enrichment followed by semantic indexing. Structured tags, confidence, evidence, unknown fields and validation issues remain separate from seller facts. Seller Studio offers a protected metadata review and retry view. The worker checkpoints two listings at a time and reuses unchanged analysis; see CATALOGUE_ENRICHMENT.md for the schema and migration flow. Only indexed, active records enter inventory search; shortlisted recommendations still recheck serving stock and total cost. Requested new tops/bottoms can replace owned base pieces, and requested accessories can join complete combinations. Availability does not imply that every listing will be recommended.
 
 Mock checkout is available before wardrobe onboarding. `OrderQuoteRequest` and `PlaceOrderRequest` reject extra client facts and validate variant/store/quantity selections. The server reads current products and stock, aggregates repeated lines, calculates INR totals, and validates the acknowledged total again on placement. Stylist checkout must reference a customer-owned outfit and only its new product IDs. The model cannot place an order.
 

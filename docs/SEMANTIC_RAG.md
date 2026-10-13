@@ -10,6 +10,8 @@ The graph is populated by asynchronous `graph_sync` Cloud Tasks after checked ou
 
 ## Modules and flow
 
+- `app/catalogue/`: versioned photo/text enrichment, controlled taxonomy, evidence validation, content cache and contextual reranking.
+- `app/prompts/catalogue.py`: instructions for catalogue photo analysis with explicit unknowns.
 - `app/rag/embeddings.py`: document/query formatting, Google model invocation, model/version/dimension hash, normalization and daily quota.
 - `app/rag/repository.py`: atomic vector publication and owner-scoped Firestore KNN queries.
 - `app/rag/retrieval.py`: retrieval boundary; honest local/demo attribute baseline.
@@ -29,11 +31,11 @@ The ADK session is isolated to one execution. The application conversation and a
 
 ## Indexing
 
-Seller add, edit and import already enqueue Cloud Tasks. Each index task processes at most five products and checkpoints before requeuing, keeping requests within the worker timeout. Only changed semantic text calls the embedding model. Text includes name, brand, description, category, retailer attributes (colour, styles, department and supplied details) and variant colours. Stock, price and size are structured filters; their edits refresh filters and reuse the vector. AI suggestions are not promoted into retailer facts.
+Seller add, edit and import enqueue Cloud Tasks. Each task processes at most two products concurrently and checkpoints before requeuing. The worker first analyzes product photos and supplied facts with Gemini, validates structured tags and evidence, then embeds high-confidence metadata alongside relevant seller facts. Original listings remain unchanged. Failed listings receive up to three attempts without restarting successful listings. Stock, price and size remain structured filters; their edits reuse metadata and vectors. See [Catalogue enrichment](CATALOGUE_ENRICHMENT.md) for validation, caching, schema versions and the bulk backfill command.
 
 `flairify_vectors` stores catalogue owner, product ID, semantic hash, model space, timestamp, price, active flag, eligibility facets and a native Firestore Vector. Publication transactionally checks that the product has not changed during embedding and writes the indexed flag with its matching projection. Concurrent stale jobs cannot publish over a newer edit. Edited products are temporarily unindexed until their new projection is ready. Inactive products have their projection removed.
 
-Each category returns at most eight nearest candidates plus two affordable alternatives. Filtering happens before KNN: owner, model space, category, department, supplied store, size, positive projected stock and individual price ceiling. At most 70 product point reads feed outfit construction; no full catalogue scan occurs for online recommendations. Prices, availability and the combined purchase cost are checked again on serving records. This is a bounded shortlist, not exhaustive enumeration of every possible wardrobe combination. Empty-query inventory browsing and admin/migration listing still list products; they are separate from recommendation retrieval.
+Each category returns up to 16 nearest candidates (32 for variations) plus two affordable alternatives. Filtering happens before KNN: owner, model space, category, department, supplied store, size, positive projected stock and individual price ceiling. Bounded product point reads feed outfit construction; no full catalogue scan occurs for online recommendations. Prices, availability and the combined purchase cost are checked again on serving records. This is a bounded shortlist, not exhaustive enumeration of every possible wardrobe combination. Empty-query inventory browsing and admin/migration listing still list products; they are separate from recommendation retrieval.
 
 No embeddings are fabricated without credentials. Anonymous demo catalogues retain an explicitly identified deterministic attribute baseline and never consume paid AI. A live embedding/index failure returns a clear unavailable error rather than silently scanning the catalogue.
 
@@ -46,7 +48,7 @@ No embeddings are fabricated without credentials. Anonymous demo catalogues reta
 5. Run `python -m scripts.configure_graph` with operator ADC to create the actual property graph and dataset grants from `infra/wardrobe-graph.sql`. Grant the API/worker project `roles/bigquery.jobUser` (or use bootstrap with `ENABLE_BIGQUERY=true`). Set `ENABLE_BIGQUERY=true`, `BIGQUERY_DATASET=flairify`, `MAX_DAILY_GRAPH_QUERIES=300`. No reserved slots or GPU are created. Queries have a 100 MB billing limit and a 15-second job timeout; background graph writes have a 60-second job timeout. Runtime query failures omit graph evidence explicitly and keep semantic search usable. First-time users have no historical graph evidence until their first checked outfits have synchronized.
 6. Deploy API/worker and frontend with the repository Cloud Build triggers. Cloud Build sets the embedding model, dimensions and region explicitly. The old `flairify_search` projection is no longer queried; it may be removed in a separate migration after any rollback window.
 
-Changing dimensions or document schema requires a new model space, matching indexes and backfill before switching traffic. The model does **not** support legacy `task_type`; document and query task instructions are included in the input text instead. A failed provider call consumes an attempted-call quota unit, so retries cannot bypass the daily guard. Billing alerts are not spending caps.
+Changing the embedding model or dimensions requires a new vector space, matching indexes and a migration. Metadata document changes within the same model/dimension space use new content hashes and replace vectors incrementally; old vectors remain queryable during backfill. The model does **not** support legacy `task_type`; document and query task instructions are included in the input text instead. A failed provider call consumes an attempted-call quota unit, so retries cannot bypass the daily guard. Billing alerts are not spending caps.
 
 ## Streaming contract
 

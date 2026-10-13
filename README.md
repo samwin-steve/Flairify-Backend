@@ -99,3 +99,5 @@ Customer-facing actions say **Buy** and **Order placed**. Orders remain saved wi
 ## Automated catalogue metadata
 
 New and edited listings now run through evidence-checked Gemini photo enrichment before semantic indexing. Seller Studio exposes the resulting styling details, confidence, unknown fields and validation notes. See [catalogue enrichment](docs/CATALOGUE_ENRICHMENT.md) for the schema, automatic updates, safe bulk backfill and version migrations.
+
+The supplied Drive photo collection is imported through a private draft workflow with source references and Gemini garment crops. See [photo catalogue imports](docs/PHOTO_CATALOGUE_IMPORT.md) and [collected enrichment results](docs/CATALOGUE_ENRICHMENT_RESULTS.md).

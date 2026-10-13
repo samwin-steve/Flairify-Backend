@@ -1,0 +1,1371 @@
+{
+  "products": 200,
+  "current_metadata": 200,
+  "current_vectors": 200,
+  "seller_records_unchanged": 200,
+  "statuses": {
+    "complete": 199,
+    "needs_review": 1
+  },
+  "input_modes": {
+    "image_and_text": 195,
+    "text_only": 5
+  },
+  "schema_versions": {
+    "1": 200
+  },
+  "models": {
+    "gemini-3.8-flash": 200
+  },
+  "tag_count": 4708,
+  "searchable_tag_count": 4708,
+  "field_coverage": {
+    "accessory": 175,
+    "category": 200,
+    "complementary_colour": 483,
+    "design_detail": 383,
+    "fabric": 3,
+    "fit": 117,
+    "footwear": 267,
+    "layering": 97,
+    "matching_garment": 558,
+    "mix_and_match": 150,
+    "neckline": 82,
+    "occasion": 301,
+    "outfit_template": 274,
+    "pattern": 194,
+    "primary_colour": 188,
+    "print": 84,
+    "secondary_colour": 132,
+    "shade": 164,
+    "silhouette": 132,
+    "sleeve_length": 87,
+    "style": 223,
+    "subcategory": 170,
+    "weather": 244
+  },
+  "unknown_field_counts": {
+    "accessory": 72,
+    "breathability": 200,
+    "complementary_colour": 5,
+    "design_detail": 21,
+    "fabric": 197,
+    "fit": 83,
+    "footwear": 46,
+    "layering": 120,
+    "matching_garment": 7,
+    "mix_and_match": 87,
+    "neckline": 118,
+    "occasion": 19,
+    "outfit_template": 6,
+    "pattern": 20,
+    "primary_colour": 12,
+    "print": 123,
+    "secondary_colour": 90,
+    "shade": 54,
+    "silhouette": 87,
+    "sleeve_length": 113,
+    "stretch": 200,
+    "style": 54,
+    "subcategory": 43,
+    "weather": 34,
+    "weight": 200
+  },
+  "validation_issues": {
+    "occasion:unverified_seller_evidence": 82,
+    "subcategory:unverified_seller_evidence": 32,
+    "style:unknown_taxonomy_value": 53,
+    "style:unverified_seller_evidence": 30,
+    "style:unsupported_visual_claim": 19,
+    "layering:unsupported_visual_claim": 20,
+    "primary_colour:unverified_seller_evidence": 13,
+    "neckline:excess_or_conflicting_tags": 2,
+    "complementary_colour:unknown_taxonomy_value": 1,
+    "complementary_colour:unsupported_visual_claim": 4,
+    "footwear:unsupported_visual_claim": 6,
+    "occasion:unsupported_visual_claim": 1,
+    "outfit_template:unverified_seller_evidence": 2,
+    "shade:unverified_seller_evidence": 2,
+    "secondary_colour:unverified_seller_evidence": 1,
+    "category:unverified_seller_evidence": 21,
+    "shade:unsupported_fact_inference": 1,
+    "pattern:unverified_seller_evidence": 7,
+    "accessory:unsupported_visual_claim": 5,
+    "neckline:unverified_seller_evidence": 2,
+    "matching_garment:unknown_taxonomy_value": 2,
+    "fabric:physical_claim_without_seller_evidence": 1,
+    "layering:unknown_taxonomy_value": 2,
+    "primary_colour:excess_or_conflicting_tags": 4,
+    "category:unsupported_fact_inference": 1,
+    "matching_garment:unsupported_visual_claim": 1,
+    "silhouette:unverified_seller_evidence": 2,
+    "design_detail:unverified_seller_evidence": 2,
+    "shade:unknown_taxonomy_value": 1,
+    "category:image_cannot_support_tag": 1,
+    "complementary_colour:image_cannot_support_tag": 1,
+    "footwear:image_cannot_support_tag": 1,
+    "image_product_mismatch": 1,
+    "matching_garment:image_cannot_support_tag": 1,
+    "occasion:image_cannot_support_tag": 1,
+    "outfit_template:image_cannot_support_tag": 1,
+    "shade:image_cannot_support_tag": 1,
+    "style:image_cannot_support_tag": 1,
+    "weather:image_cannot_support_tag": 1,
+    "weather:excess_or_conflicting_tags": 2
+  },
+  "needs_review": [
+    {
+      "id": "sample-fashion-40009",
+      "name": "Park Avenue Men Black & Green Frame Sunglasses",
+      "notes": [
+        "Seller metadata states category 'top' and description 'Green Tunics.', but the title and image clearly show sunglasses."
+      ]
+    }
+  ],
+  "analysis_seconds": {
+    "mean": 13.64,
+    "median": 13.36,
+    "p95": 17.22
+  },
+  "successful_analysis_tokens": {
+    "prompt_token_count": 645711,
+    "candidates_token_count": 352031,
+    "thoughts_token_count": 0
+  },
+  "jobs": [
+    {
+      "id": "709ded852117754bdc2491423b711563",
+      "created_at": "2026-10-13T18:25:46.284065+00:00",
+      "updated_at": "2026-10-13T18:39:13.386004+00:00",
+      "status": "succeeded",
+      "result": {
+        "embeddings_generated": 100,
+        "embeddings_reused": 0,
+        "indexed": 100,
+        "method": "gemini-embedding-2 / Firestore",
+        "enrichment_reused": 0,
+        "processed": 100,
+        "requested": 100,
+        "enriched": 100,
+        "errors": []
+      }
+    },
+    {
+      "id": "47927224a157c17c4a56bdd8d7c16a77",
+      "created_at": "2026-10-13T18:25:50.503463+00:00",
+      "updated_at": "2026-10-13T18:39:31.233771+00:00",
+      "status": "succeeded",
+      "result": {
+        "embeddings_reused": 0,
+        "embeddings_generated": 100,
+        "indexed": 100,
+        "method": "gemini-embedding-2 / Firestore",
+        "enrichment_reused": 1,
+        "processed": 100,
+        "enriched": 99,
+        "requested": 100,
+        "errors": []
+      }
+    }
+  ],
+  "retrieval_observations": [
+    {
+      "query": "wedding guest festive embroidered kurta",
+      "before_top_8": [
+        {
+          "id": "sample-fashion-20099",
+          "name": "Diva Women Embroided Green Kurta",
+          "similarity": 0.7011545697919651
+        },
+        {
+          "id": "sample-fashion-28690",
+          "name": "W Women Printed Beige Kurta",
+          "similarity": 0.6773786064689025
+        },
+        {
+          "id": "sample-fashion-45856",
+          "name": "Vishudh Women Brown Kurta",
+          "similarity": 0.6649203182826738
+        },
+        {
+          "id": "sample-fashion-54588",
+          "name": "Sushilas Women Printed Green Kurta",
+          "similarity": 0.6632083544487943
+        },
+        {
+          "id": "sample-fashion-46247",
+          "name": "Fusion Beats Women Dark Pink Tunic",
+          "similarity": 0.6090895858721549
+        },
+        {
+          "id": "sample-fashion-46240",
+          "name": "Fusion Beats Women White Printed Tunic",
+          "similarity": 0.6074138664835105
+        },
+        {
+          "id": "sample-myntra-13719116",
+          "name": "Athena Chic Fuchsia Pink Power Shoulders Top",
+          "similarity": 0.6013194444320692
+        },
+        {
+          "id": "sample-fashion-46278",
+          "name": "109F Women Red & White Striped Tunic",
+          "similarity": 0.5919918743153435
+        }
+      ],
+      "after_vector_top_8": [
+        {
+          "id": "sample-fashion-20099",
+          "name": "Diva Women Embroided Green Kurta",
+          "similarity": 0.7181636328357293
+        },
+        {
+          "id": "sample-fashion-45856",
+          "name": "Vishudh Women Brown Kurta",
+          "similarity": 0.6754552113725752
+        },
+        {
+          "id": "sample-fashion-28690",
+          "name": "W Women Printed Beige Kurta",
+          "similarity": 0.6726554921885399
+        },
+        {
+          "id": "sample-fashion-54588",
+          "name": "Sushilas Women Printed Green Kurta",
+          "similarity": 0.6692903482810438
+        },
+        {
+          "id": "sample-fashion-46247",
+          "name": "Fusion Beats Women Dark Pink Tunic",
+          "similarity": 0.6485122730621002
+        },
+        {
+          "id": "sample-fashion-46240",
+          "name": "Fusion Beats Women White Printed Tunic",
+          "similarity": 0.6230469747526661
+        },
+        {
+          "id": "sample-fashion-33214",
+          "name": "Sepia Women Printed Black & Green Tunic",
+          "similarity": 0.604253989961016
+        },
+        {
+          "id": "sample-fashion-46278",
+          "name": "109F Women Red & White Striped Tunic",
+          "similarity": 0.6028664586516983
+        }
+      ],
+      "after_ranked_top_5": [
+        {
+          "id": "sample-fashion-20099",
+          "name": "Diva Women Embroided Green Kurta",
+          "metadata": {
+            "accessory": [
+              "jewellery",
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "purple",
+              "white"
+            ],
+            "design_detail": [
+              "buttons",
+              "slit"
+            ],
+            "fit": [
+              "regular"
+            ],
+            "footwear": [
+              "flats",
+              "sandals"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "leggings",
+              "trousers"
+            ],
+            "neckline": [
+              "scoop"
+            ],
+            "occasion": [
+              "casual_outing",
+              "festival"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "solid"
+            ],
+            "primary_colour": [
+              "green"
+            ],
+            "secondary_colour": [
+              "purple"
+            ],
+            "shade": [
+              "bright"
+            ],
+            "silhouette": [
+              "longline",
+              "straight"
+            ],
+            "sleeve_length": [
+              "cap"
+            ],
+            "style": [
+              "ethnic"
+            ],
+            "subcategory": [
+              "kurta"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-45856",
+          "name": "Vishudh Women Brown Kurta",
+          "metadata": {
+            "accessory": [
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "beige",
+              "brown"
+            ],
+            "design_detail": [
+              "contrast_trim",
+              "slit"
+            ],
+            "fit": [
+              "regular"
+            ],
+            "footwear": [
+              "flats",
+              "sandals"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "leggings",
+              "trousers"
+            ],
+            "mix_and_match": [
+              "tonal_pairing"
+            ],
+            "neckline": [
+              "v_neck"
+            ],
+            "occasion": [
+              "casual_outing",
+              "office"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "geometric"
+            ],
+            "primary_colour": [
+              "brown"
+            ],
+            "print": [
+              "ethnic"
+            ],
+            "secondary_colour": [
+              "yellow"
+            ],
+            "shade": [
+              "earthy"
+            ],
+            "silhouette": [
+              "straight"
+            ],
+            "sleeve_length": [
+              "short"
+            ],
+            "style": [
+              "ethnic"
+            ],
+            "subcategory": [
+              "kurta"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-28690",
+          "name": "W Women Printed Beige Kurta",
+          "metadata": {
+            "accessory": [
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "black",
+              "pink"
+            ],
+            "design_detail": [
+              "gathered"
+            ],
+            "fit": [
+              "relaxed"
+            ],
+            "footwear": [
+              "flats",
+              "sandals"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "leggings",
+              "trousers"
+            ],
+            "neckline": [
+              "scoop"
+            ],
+            "occasion": [
+              "casual_outing"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "geometric"
+            ],
+            "primary_colour": [
+              "beige"
+            ],
+            "print": [
+              "geometric"
+            ],
+            "secondary_colour": [
+              "grey",
+              "pink"
+            ],
+            "shade": [
+              "muted"
+            ],
+            "silhouette": [
+              "straight"
+            ],
+            "sleeve_length": [
+              "short"
+            ],
+            "style": [
+              "ethnic"
+            ],
+            "subcategory": [
+              "kurta"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-54588",
+          "name": "Sushilas Women Printed Green Kurta",
+          "metadata": {
+            "accessory": [
+              "jewellery",
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "beige",
+              "black"
+            ],
+            "design_detail": [
+              "contrast_trim",
+              "slit"
+            ],
+            "fit": [
+              "regular"
+            ],
+            "footwear": [
+              "flats",
+              "sandals"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "leggings",
+              "trousers"
+            ],
+            "neckline": [
+              "v_neck"
+            ],
+            "occasion": [
+              "casual_outing",
+              "office"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "floral"
+            ],
+            "primary_colour": [
+              "green"
+            ],
+            "print": [
+              "floral"
+            ],
+            "secondary_colour": [
+              "blue",
+              "red"
+            ],
+            "shade": [
+              "earthy"
+            ],
+            "silhouette": [
+              "straight"
+            ],
+            "sleeve_length": [
+              "three_quarter"
+            ],
+            "style": [
+              "ethnic"
+            ],
+            "weather": [
+              "transitional",
+              "warm_weather"
+            ]
+          }
+        }
+      ],
+      "seconds": 5.22,
+      "retrieval": {
+        "method": "firestore-vector",
+        "model": "gemini-embedding-2",
+        "dimensions": 768,
+        "candidates": 16,
+        "category_queries": 1,
+        "query_version": "category-context-v3-enriched",
+        "semantic": true
+      }
+    },
+    {
+      "query": "minimalist office shirt meetings",
+      "before_top_8": [
+        {
+          "id": "sample-fashion-26369",
+          "name": "Arrow Woman Blue Shirt",
+          "similarity": 0.6226261103036281
+        },
+        {
+          "id": "sample-myntra-13719116",
+          "name": "Athena Chic Fuchsia Pink Power Shoulders Top",
+          "similarity": 0.6108581793325609
+        },
+        {
+          "id": "sample-fashion-26960",
+          "name": "Jealous 21 Women Purple Shirt",
+          "similarity": 0.6082453820600301
+        },
+        {
+          "id": "sample-fashion-26958",
+          "name": "Jealous 21 Women Teal Shirt",
+          "similarity": 0.6041810262840163
+        },
+        {
+          "id": "sample-myntra-11697268",
+          "name": "Roadster Women White Solid Round Neck Boxy Cropped Top",
+          "similarity": 0.6040532410111507
+        },
+        {
+          "id": "sample-fashion-25527",
+          "name": "Wrangler Women Stella Green Shirt",
+          "similarity": 0.5993554331085611
+        },
+        {
+          "id": "sample-fashion-9835",
+          "name": "Little Miss Women Printed Grey T-shirt",
+          "similarity": 0.598377008884573
+        },
+        {
+          "id": "sample-fashion-58513",
+          "name": "Tonga Women Maroon Top",
+          "similarity": 0.5950372997822705
+        }
+      ],
+      "after_vector_top_8": [
+        {
+          "id": "sample-fashion-26369",
+          "name": "Arrow Woman Blue Shirt",
+          "similarity": 0.6624499965632497
+        },
+        {
+          "id": "sample-fashion-26960",
+          "name": "Jealous 21 Women Purple Shirt",
+          "similarity": 0.6368105047547568
+        },
+        {
+          "id": "sample-fashion-25527",
+          "name": "Wrangler Women Stella Green Shirt",
+          "similarity": 0.6354940112518701
+        },
+        {
+          "id": "sample-fashion-26958",
+          "name": "Jealous 21 Women Teal Shirt",
+          "similarity": 0.6197238813121667
+        },
+        {
+          "id": "sample-myntra-12222036",
+          "name": "SASSAFRAS Black High Neck Cropped Top",
+          "similarity": 0.6117328780378355
+        },
+        {
+          "id": "sample-myntra-13719116",
+          "name": "Athena Chic Fuchsia Pink Power Shoulders Top",
+          "similarity": 0.6035993248725686
+        },
+        {
+          "id": "sample-fashion-9835",
+          "name": "Little Miss Women Printed Grey T-shirt",
+          "similarity": 0.6014678578466225
+        },
+        {
+          "id": "sample-fashion-58513",
+          "name": "Tonga Women Maroon Top",
+          "similarity": 0.6007208053129537
+        }
+      ],
+      "after_ranked_top_5": [
+        {
+          "id": "sample-fashion-26369",
+          "name": "Arrow Woman Blue Shirt",
+          "metadata": {
+            "accessory": [
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "beige",
+              "black",
+              "white"
+            ],
+            "design_detail": [
+              "buttons",
+              "ruffles"
+            ],
+            "fit": [
+              "slim"
+            ],
+            "footwear": [
+              "flats",
+              "heels"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "blazer",
+              "jeans",
+              "skirt",
+              "trousers"
+            ],
+            "neckline": [
+              "collar"
+            ],
+            "occasion": [
+              "casual_outing",
+              "office"
+            ],
+            "outfit_template": [
+              "office_ready",
+              "weekend_casual"
+            ],
+            "pattern": [
+              "solid"
+            ],
+            "primary_colour": [
+              "blue"
+            ],
+            "shade": [
+              "jewel_tone"
+            ],
+            "silhouette": [
+              "structured"
+            ],
+            "sleeve_length": [
+              "cap"
+            ],
+            "style": [
+              "romantic",
+              "smart_casual"
+            ],
+            "subcategory": [
+              "shirt"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-26960",
+          "name": "Jealous 21 Women Purple Shirt",
+          "metadata": {
+            "accessory": [
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "blue",
+              "white"
+            ],
+            "design_detail": [
+              "buttons",
+              "gathered"
+            ],
+            "fit": [
+              "slim"
+            ],
+            "footwear": [
+              "flats",
+              "sneakers"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "jeans",
+              "trousers"
+            ],
+            "neckline": [
+              "collar"
+            ],
+            "occasion": [
+              "casual_outing"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "solid"
+            ],
+            "primary_colour": [
+              "purple"
+            ],
+            "shade": [
+              "dark"
+            ],
+            "sleeve_length": [
+              "short"
+            ],
+            "style": [
+              "smart_casual"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-25527",
+          "name": "Wrangler Women Stella Green Shirt",
+          "metadata": {
+            "accessory": [
+              "sunglasses",
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "beige",
+              "navy",
+              "white"
+            ],
+            "design_detail": [
+              "buttons",
+              "cuffed",
+              "pockets"
+            ],
+            "fit": [
+              "regular"
+            ],
+            "footwear": [
+              "loafers",
+              "sneakers"
+            ],
+            "matching_garment": [
+              "chinos",
+              "jeans",
+              "shorts"
+            ],
+            "mix_and_match": [
+              "capsule_friendly"
+            ],
+            "neckline": [
+              "collar"
+            ],
+            "occasion": [
+              "casual_outing",
+              "travel"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "striped"
+            ],
+            "primary_colour": [
+              "green"
+            ],
+            "secondary_colour": [
+              "white"
+            ],
+            "shade": [
+              "light"
+            ],
+            "silhouette": [
+              "straight"
+            ],
+            "sleeve_length": [
+              "elbow"
+            ],
+            "style": [
+              "preppy",
+              "smart_casual"
+            ],
+            "subcategory": [
+              "shirt"
+            ],
+            "weather": [
+              "transitional",
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-26958",
+          "name": "Jealous 21 Women Teal Shirt",
+          "metadata": {
+            "accessory": [
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "navy",
+              "white"
+            ],
+            "design_detail": [
+              "buttons",
+              "gathered"
+            ],
+            "fit": [
+              "slim"
+            ],
+            "footwear": [
+              "flats",
+              "sandals"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "jeans",
+              "shorts"
+            ],
+            "neckline": [
+              "collar"
+            ],
+            "occasion": [
+              "casual_outing"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "solid"
+            ],
+            "primary_colour": [
+              "blue"
+            ],
+            "secondary_colour": [
+              "green"
+            ],
+            "shade": [
+              "jewel_tone"
+            ],
+            "sleeve_length": [
+              "short"
+            ],
+            "subcategory": [
+              "shirt"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        }
+      ],
+      "seconds": 4.27,
+      "retrieval": {
+        "method": "firestore-vector",
+        "model": "gemini-embedding-2",
+        "dimensions": 768,
+        "candidates": 17,
+        "category_queries": 1,
+        "query_version": "category-context-v3-enriched",
+        "semantic": true
+      }
+    },
+    {
+      "query": "casual vacation travel outfit",
+      "before_top_8": [
+        {
+          "id": "sample-fashion-58513",
+          "name": "Tonga Women Maroon Top",
+          "similarity": 0.626668766539327
+        },
+        {
+          "id": "sample-fashion-21174",
+          "name": "s.Oliver Women Stripes Beige Top",
+          "similarity": 0.6254934473406026
+        },
+        {
+          "id": "sample-fashion-49653",
+          "name": "Mineral Women Green Top",
+          "similarity": 0.6252338995618233
+        },
+        {
+          "id": "sample-myntra-11697268",
+          "name": "Roadster Women White Solid Round Neck Boxy Cropped Top",
+          "similarity": 0.6234859146081276
+        },
+        {
+          "id": "sample-fashion-26958",
+          "name": "Jealous 21 Women Teal Shirt",
+          "similarity": 0.6230095332781022
+        },
+        {
+          "id": "sample-fashion-46240",
+          "name": "Fusion Beats Women White Printed Tunic",
+          "similarity": 0.6214911587461596
+        },
+        {
+          "id": "sample-fashion-3954",
+          "name": "Jealous 21 Women's Pink T-shirt",
+          "similarity": 0.61842749352004
+        },
+        {
+          "id": "sample-fashion-46278",
+          "name": "109F Women Red & White Striped Tunic",
+          "similarity": 0.6174135759164676
+        }
+      ],
+      "after_vector_top_8": [
+        {
+          "id": "sample-fashion-49653",
+          "name": "Mineral Women Green Top",
+          "similarity": 0.6514077951225749
+        },
+        {
+          "id": "sample-fashion-46278",
+          "name": "109F Women Red & White Striped Tunic",
+          "similarity": 0.633880943461868
+        },
+        {
+          "id": "sample-fashion-25527",
+          "name": "Wrangler Women Stella Green Shirt",
+          "similarity": 0.6252500097537523
+        },
+        {
+          "id": "sample-fashion-3954",
+          "name": "Jealous 21 Women's Pink T-shirt",
+          "similarity": 0.6248632461564456
+        },
+        {
+          "id": "sample-fashion-9835",
+          "name": "Little Miss Women Printed Grey T-shirt",
+          "similarity": 0.6245878449125474
+        },
+        {
+          "id": "sample-fashion-58513",
+          "name": "Tonga Women Maroon Top",
+          "similarity": 0.6239631739626739
+        },
+        {
+          "id": "sample-fashion-26960",
+          "name": "Jealous 21 Women Purple Shirt",
+          "similarity": 0.6239093160305065
+        },
+        {
+          "id": "sample-fashion-21174",
+          "name": "s.Oliver Women Stripes Beige Top",
+          "similarity": 0.6200103286501271
+        }
+      ],
+      "after_ranked_top_5": [
+        {
+          "id": "sample-fashion-25527",
+          "name": "Wrangler Women Stella Green Shirt",
+          "metadata": {
+            "accessory": [
+              "sunglasses",
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "beige",
+              "navy",
+              "white"
+            ],
+            "design_detail": [
+              "buttons",
+              "cuffed",
+              "pockets"
+            ],
+            "fit": [
+              "regular"
+            ],
+            "footwear": [
+              "loafers",
+              "sneakers"
+            ],
+            "matching_garment": [
+              "chinos",
+              "jeans",
+              "shorts"
+            ],
+            "mix_and_match": [
+              "capsule_friendly"
+            ],
+            "neckline": [
+              "collar"
+            ],
+            "occasion": [
+              "casual_outing",
+              "travel"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "striped"
+            ],
+            "primary_colour": [
+              "green"
+            ],
+            "secondary_colour": [
+              "white"
+            ],
+            "shade": [
+              "light"
+            ],
+            "silhouette": [
+              "straight"
+            ],
+            "sleeve_length": [
+              "elbow"
+            ],
+            "style": [
+              "preppy",
+              "smart_casual"
+            ],
+            "subcategory": [
+              "shirt"
+            ],
+            "weather": [
+              "transitional",
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-3954",
+          "name": "Jealous 21 Women's Pink T-shirt",
+          "metadata": {
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "black",
+              "blue",
+              "white"
+            ],
+            "fit": [
+              "slim"
+            ],
+            "footwear": [
+              "sneakers"
+            ],
+            "layering": [
+              "base_layer"
+            ],
+            "matching_garment": [
+              "jacket",
+              "jeans",
+              "shorts"
+            ],
+            "mix_and_match": [
+              "statement_piece"
+            ],
+            "neckline": [
+              "scoop"
+            ],
+            "occasion": [
+              "casual_outing"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "graphic"
+            ],
+            "primary_colour": [
+              "pink"
+            ],
+            "shade": [
+              "bright"
+            ],
+            "silhouette": [
+              "straight"
+            ],
+            "sleeve_length": [
+              "short"
+            ],
+            "style": [
+              "streetwear"
+            ],
+            "subcategory": [
+              "t_shirt"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-58513",
+          "name": "Tonga Women Maroon Top",
+          "metadata": {
+            "accessory": [
+              "sunglasses"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "blue",
+              "white"
+            ],
+            "design_detail": [
+              "draping"
+            ],
+            "fit": [
+              "fitted"
+            ],
+            "footwear": [
+              "sandals"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "jeans",
+              "shorts"
+            ],
+            "neckline": [
+              "v_neck"
+            ],
+            "occasion": [
+              "casual_outing",
+              "travel"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "abstract"
+            ],
+            "primary_colour": [
+              "white"
+            ],
+            "print": [
+              "abstract"
+            ],
+            "silhouette": [
+              "wrap"
+            ],
+            "sleeve_length": [
+              "short"
+            ],
+            "subcategory": [
+              "blouse"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-26960",
+          "name": "Jealous 21 Women Purple Shirt",
+          "metadata": {
+            "accessory": [
+              "tote"
+            ],
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "blue",
+              "white"
+            ],
+            "design_detail": [
+              "buttons",
+              "gathered"
+            ],
+            "fit": [
+              "slim"
+            ],
+            "footwear": [
+              "flats",
+              "sneakers"
+            ],
+            "layering": [
+              "standalone"
+            ],
+            "matching_garment": [
+              "jeans",
+              "trousers"
+            ],
+            "neckline": [
+              "collar"
+            ],
+            "occasion": [
+              "casual_outing"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "solid"
+            ],
+            "primary_colour": [
+              "purple"
+            ],
+            "shade": [
+              "dark"
+            ],
+            "sleeve_length": [
+              "short"
+            ],
+            "style": [
+              "smart_casual"
+            ],
+            "weather": [
+              "warm_weather"
+            ]
+          }
+        },
+        {
+          "id": "sample-fashion-21174",
+          "name": "s.Oliver Women Stripes Beige Top",
+          "metadata": {
+            "category": [
+              "top"
+            ],
+            "complementary_colour": [
+              "blue",
+              "white"
+            ],
+            "design_detail": [
+              "buttons"
+            ],
+            "fit": [
+              "slim"
+            ],
+            "footwear": [
+              "sneakers"
+            ],
+            "layering": [
+              "base_layer",
+              "standalone"
+            ],
+            "matching_garment": [
+              "cardigan",
+              "jacket",
+              "jeans"
+            ],
+            "mix_and_match": [
+              "capsule_friendly",
+              "neutral_foundation"
+            ],
+            "neckline": [
+              "v_neck"
+            ],
+            "occasion": [
+              "casual_outing",
+              "travel"
+            ],
+            "outfit_template": [
+              "weekend_casual"
+            ],
+            "pattern": [
+              "solid"
+            ],
+            "primary_colour": [
+              "beige"
+            ],
+            "shade": [
+              "muted"
+            ],
+            "sleeve_length": [
+              "long"
+            ],
+            "subcategory": [
+              "t_shirt"
+            ],
+            "weather": [
+              "cool_weather",
+              "transitional"
+            ]
+          }
+        }
+      ],
+      "seconds": 6.85,
+      "retrieval": {
+        "method": "firestore-vector",
+        "model": "gemini-embedding-2",
+        "dimensions": 768,
+        "candidates": 18,
+        "category_queries": 1,
+        "query_version": "category-context-v3-enriched",
+        "semantic": true
+      }
+    }
+  ]
+}

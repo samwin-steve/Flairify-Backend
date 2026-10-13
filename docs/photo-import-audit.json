@@ -1,0 +1,65 @@
+{
+  "source_folders": 15,
+  "downloaded_images": 367,
+  "imported_drafts": 365,
+  "held_images": [
+    {
+      "folder": "japanese-inspired",
+      "file": "outfit-047.png",
+      "reason": [
+        "layered garments in identical fabric make single garment separation ambiguous",
+        "lower half obscured by seated pose and overlapping fabrics"
+      ]
+    },
+    {
+      "folder": "reform-zara",
+      "file": "outfit-031.jpg",
+      "reason": [
+        "complex layered styling obscuring garment structure",
+        "unclear whether overlay is an independent dress or accessory"
+      ]
+    }
+  ],
+  "total_catalogue_records": 565,
+  "original_seller_records_unchanged": 200,
+  "new_published_products": 0,
+  "new_search_vectors": 0,
+  "existing_search_vectors": 200,
+  "verified_stored_media_objects": 730,
+  "public_bucket_image_http_status": 403,
+  "enrichment_statuses": {
+    "complete": 365
+  },
+  "tag_count": 8871,
+  "category_counts": {
+    "top": 63,
+    "jacket": 90,
+    "bag": 50,
+    "dress": 51,
+    "shoes": 58,
+    "bottom": 53
+  },
+  "folder_counts": {
+    "festive-fits": 41,
+    "japanese-inspired": 63,
+    "womens-bags": 30,
+    "evening-dresses": 30,
+    "womens-footwear": 30,
+    "reform-zara": 35,
+    "mens-footwear": 24,
+    "zara-srpls-ss26-man": 18,
+    "zara-benito-antonio": 36,
+    "mens-bags": 20,
+    "zara-srpls-ss26-woman": 22,
+    "hm-summer-2025-drop-ii": 3,
+    "mens-wedding-outfits": 7,
+    "hm-studio-essentials-ss26": 3,
+    "mens-wedding-shoes": 3
+  },
+  "model_counts": {
+    "gemini-3.8-flash": 365
+  },
+  "unsupported_physical_metadata_tags": 0,
+  "failed_or_stale_metadata": 0,
+  "measurement_note": "Garment candidates were selected by Gemini. 24 crops were visually inspected; this is not a measured detection accuracy or duplicate-recall benchmark."
+}

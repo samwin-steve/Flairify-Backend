@@ -1,0 +1,53 @@
+{
+  "new_product": {
+    "automatic_image_analysis": true,
+    "tags": 29,
+    "job": {
+      "processed": 1,
+      "errors": [],
+      "embeddings_generated": 1,
+      "method": "gemini-embedding-2 / Firestore",
+      "enriched": 1,
+      "embeddings_reused": 0,
+      "indexed": 1,
+      "enrichment_reused": 0,
+      "requested": 1
+    }
+  },
+  "stock_price_edit": {
+    "analysis_reused": true,
+    "vector_reused": true,
+    "price_refreshed": true,
+    "job": {
+      "processed": 1,
+      "errors": [],
+      "embeddings_generated": 0,
+      "method": "gemini-embedding-2 / Firestore",
+      "indexed": 1,
+      "embeddings_reused": 1,
+      "enriched": 0,
+      "enrichment_reused": 1,
+      "requested": 1
+    }
+  },
+  "semantic_edit": {
+    "analysis_refreshed": true,
+    "vector_refreshed": true,
+    "searchable": true,
+    "job": {
+      "processed": 1,
+      "errors": [],
+      "embeddings_generated": 1,
+      "method": "gemini-embedding-2 / Firestore",
+      "enriched": 1,
+      "embeddings_reused": 0,
+      "indexed": 1,
+      "enrichment_reused": 0,
+      "requested": 1
+    }
+  },
+  "cleanup": {
+    "account_removed": true,
+    "temporary_listing_and_media_removed": true
+  }
+}
