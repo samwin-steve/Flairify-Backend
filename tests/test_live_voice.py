@@ -190,6 +190,37 @@ def test_voice_greeting_does_not_clear_selected_look(client, onboarded):
     asyncio.run(check())
 
 
+def test_native_transcript_spacing_preserves_words_initials_and_prices(client, onboarded):
+    from google.adk.events import Event
+    from google.genai import types
+
+    from app.agents.live_stylist import LiveStylist
+
+    async def noop(*args):
+        pass
+
+    async def check():
+        state = LiveStylist(
+            {"uid": onboarded[0]["user_id"], "request": {}}, Conversation(), {}, noop, noop
+        )
+        transcript = "Let me look.I've found it.The U.S. Polo shirt is ₹999.50."
+        for finished in (False, True):
+            await state.receive_event(
+                Event(
+                    author="flairify_voice_stylist",
+                    output_transcription=types.Transcription(text=transcript, finished=finished),
+                )
+            )
+            assert state.output_text == "Let me look. I've found it. The U.S. Polo shirt is ₹999.50."
+        await state.finish()
+        assert (
+            state.conversation.messages[-1].content
+            == "Let me look. I've found it. The U.S. Polo shirt is ₹999.50."
+        )
+
+    asyncio.run(check())
+
+
 def test_live_events_keep_tool_acknowledgement_and_recommendation_in_one_turn(client, onboarded):
     from google.adk.events import Event
     from google.genai import types

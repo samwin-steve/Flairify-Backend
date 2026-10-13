@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import re
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -346,6 +347,11 @@ class LiveStylist:
                 self.output_prefix
                 + (" " if self.output_prefix and self.output_segment else "")
                 + self.output_segment
+            )
+            # Native transcription can concatenate the pre-tool sentence and the
+            # answer without a space. Keep words, initials and decimals unchanged.
+            self.output_text = re.sub(
+                r"(?<=[a-z0-9][.!?])(?=(?:[A-Z][a-z]|I['’]))", " ", self.output_text
             )
             await self.emit("transcript", {"role": "assistant", "text": self.output_text})
         if event.content and event.author == "flairify_voice_stylist":
