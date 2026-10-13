@@ -39,7 +39,7 @@ gcloud builds submit --config cloudbuild.yaml --project data-workshops --region 
   --gcs-source-staging-dir gs://data-workshops-flairify-build/source
 ```
 
-Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and deploy their own service. Backend builds deploy the API and private worker together. Anonymous demo sessions keep paid AI off and public admin unlocking disabled. The deployed trigger enables bounded Gemini analysis, conversation and 2D image editing for verified Firebase accounts, alongside labeled sample catalogue facts. Production mode requires Firebase configuration, runtime IAM and approved model access.
+Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and deploy their own service. Backend builds deploy the API and private worker together. Anonymous demo sessions keep paid AI off and public admin unlocking disabled. The deployed trigger enables bounded Gemini analysis, conversation and 2D image editing for verified Firebase accounts, alongside fixture catalogue records. Production mode requires Firebase configuration, runtime IAM and approved model access.
 
 - [Architecture and data flow](docs/ARCHITECTURE.md)
 - [Integration configuration](docs/INTEGRATIONS.md)

@@ -15,5 +15,5 @@ def capabilities():
 
 def generate(*_):
     raise CapabilityUnavailable(
-        "Personalized 3D reconstruction is experimental and is not connected. The sample form is not you."
+        "Personalized 3D avatars are unavailable right now."
     )

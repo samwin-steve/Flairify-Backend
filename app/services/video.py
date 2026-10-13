@@ -8,7 +8,7 @@ from .try_on import CapabilityUnavailable
 def generate(owner, job, persist):
     cfg = settings()
     if not cfg.enable_paid_ai or not cfg.veo_model:
-        raise CapabilityUnavailable("Show in motion is not connected. No new video has been generated.")
+        raise CapabilityUnavailable("Motion previews are unavailable right now.")
     source = store().get("jobs", owner, job["payload"].get("source_job_id"))
     if (
         not source

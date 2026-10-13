@@ -38,7 +38,7 @@ def extract(owner, photo_ids, progress):
                     "category": "unknown",
                     "colour": "Unknown",
                     "pattern": "Unknown",
-                    "visible_details": "AI analysis is not connected. Enter the garment details and confirm ownership.",
+                    "visible_details": "Add garment details and confirm ownership.",
                     "box": {"x": 0, "y": 0, "width": 1, "height": 1},
                     "uncertainty": ["Manual review required; no automated garment detection has run."],
                 }

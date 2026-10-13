@@ -120,12 +120,12 @@ def unlock(data: AdminUnlock, p: Principal = Depends(principal), credentials=Dep
         raise HTTPException(403, "Use a Firebase account with an admin custom claim")
     expected = cfg.demo_admin_key
     if not expected or not secrets.compare_digest(data.key, expected):
-        raise HTTPException(403, "Enter the configured demo administrator key")
+        raise HTTPException(403, "Enter the administrator key")
     digest = hashlib.sha256(credentials.credentials.encode()).hexdigest()
     session = store().get("sessions", "system", digest)
     session["admin"] = True
     store().put("sessions", "system", digest, session)
-    return {"admin": True, "scope": "Only your isolated demo catalogue"}
+    return {"admin": True, "scope": "Your private catalogue"}
 
 
 @app.get("/api/profile")
@@ -156,7 +156,7 @@ def put_profile(profile: UserProfile, p: Principal = Depends(principal)):
 @app.post("/api/wardrobe/sample")
 def sample(p: Principal = Depends(principal)):
     if not p.demo:
-        raise HTTPException(403, "Sample wardrobe is only available in demo mode")
+        raise HTTPException(403, "Starter pieces are only available to guests")
     inventory.seed_wardrobe(p.uid)
     return {"items": store().list("wardrobe", p.uid)}
 
@@ -794,7 +794,7 @@ def sample_import(p: Principal = Depends(merchant)):
     return Response(
         (inventory.FIXTURES / "catalogue.json").read_bytes(),
         media_type="application/json",
-        headers={"Content-Disposition": 'attachment; filename="flairify-sample-catalogue.json"'},
+        headers={"Content-Disposition": 'attachment; filename="flairify-catalogue-template.json"'},
     )
 
 

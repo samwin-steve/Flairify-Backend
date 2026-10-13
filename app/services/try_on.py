@@ -77,12 +77,12 @@ def conflicts(a, b):
 
 def prepare(owner, payload):
     cfg = settings()
-    if not cfg.enable_paid_ai or owner.startswith("demo-"):
-        raise CapabilityUnavailable(
-            "Personalized generation is not connected in this demo. Sign in for Google AI previews; no image has been generated."
-        )
+    if owner.startswith("demo-"):
+        raise CapabilityUnavailable("Sign in to create a preview with your photo.")
+    if not cfg.enable_paid_ai:
+        raise CapabilityUnavailable("Image generation is unavailable right now.")
     if not cfg.image_edit_model and not cfg.try_on_model:
-        raise CapabilityUnavailable("Google image generation is not configured yet.")
+        raise CapabilityUnavailable("Image generation is unavailable right now.")
     profile = store().get("profiles", owner, "me") or {}
     if not profile.get("consent", {}).get("ai_photo_processing"):
         raise ValueError("Allow Google AI photo processing in Profile before requesting a preview.")
@@ -119,7 +119,7 @@ def prepare(owner, payload):
                 raise ValueError("This product variant is no longer available. Choose another item or size.")
             variant_id = available[0]["id"]
             if item.get("sample") and not cfg.allow_sample_try_on:
-                raise CapabilityUnavailable("Sample-product previews are not enabled.")
+                raise CapabilityUnavailable("Previews are unavailable for this item.")
         elif (
             not item.get("confirmed")
             or item["category"] not in EDITABLE
@@ -294,9 +294,7 @@ def generate(owner, payload):
         "provider": provider_name,
         "model": cfg.image_edit_model or cfg.try_on_model,
         "sample_product": sample,
-        "label": "AI-generated 2D style preview · "
-        + ("Sample catalogue garments · " if sample else "")
-        + "Not an exact fit prediction",
+        "label": "AI-generated preview · Appearance and fit may vary.",
         "review_required": True,
         "preservation_check": "Review face likeness, background and every selected garment before accepting.",
     }

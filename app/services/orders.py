@@ -121,7 +121,7 @@ def quote(p, request):
         "mock": True,
         "payment_status": "not_required",
         "fulfillment_status": "not_scheduled",
-        "notice": "No payment is required. Placed orders are saved to My Orders.",
+        "notice": "Your order has been saved.",
     }
 
 

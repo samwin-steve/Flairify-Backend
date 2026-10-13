@@ -154,7 +154,7 @@ def test_honest_generation_and_dedup(client, onboarded):
     assert j["id"] == other["id"]
     final = next(x for x in client.get("/api/jobs", headers=h).json()["jobs"] if x["id"] == j["id"])
     assert final["status"] == "failed" and final["result"] is None
-    assert "not connected" in final["error"]
+    assert final["error"] == "Sign in to create a preview with your photo."
     assert (
         client.post(
             "/api/generate/video", headers=h, json={"source_job_id": j["id"], "request_key": "video-test-key"}

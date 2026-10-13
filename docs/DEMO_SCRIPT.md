@@ -1,6 +1,6 @@
 # Three-minute Flairify demo
 
-Use a signed-in demonstration account and a photo you are authorized to process. Pre-stage one completed preview because live provider timing varies. Inventory prices, stock and stores remain clearly labeled samples.
+Use a signed-in demonstration account and a photo you are authorized to process. Pre-stage one completed preview because live provider timing varies. Inventory prices, stock and stores are demonstration fixtures, documented here; customer-facing badges have been removed. Do not describe these as a live retailer connection during the presentation.
 
 **0:00–0:25 — The problem**
 “Shopping usually starts with a product. Flairify starts with what you already own. Share your wardrobe once. Find pieces that work with your life—and see the look on you.” Show the light pink home page and explain the distinction between a signed-in account and the credential-free sample demo.
@@ -15,7 +15,7 @@ Choose “Help me pack for Mumbai”: three working days, walking, ₹5,000. Sho
 On a stylist look, tick the garments to preview (initially none are selected) and click “See it on me.” Generation starts directly using the uploaded reference. Inventory’s “Try this on” also starts directly. Show the background checkbox in Profile: unchecked requests white, checked preserves the source setting. Open the pre-staged result while a new job runs: show the source beside the actual Google-generated image. Explain that face likeness and garment preservation require review and that this is not an exact fit prediction. Demonstrate download and refresh persistence. Videos are not enabled in this deployment; do not present the image as motion or AR.
 
 **2:30–2:45 — Experimental AR**
-Open the 3D / AR lab. Rotate the explicitly labeled CC0 sample mannequin. Personal reconstruction and garment fitting remain separate experimental tracks; the sample is not the customer. Unsupported devices retain normal 3D viewing.
+Open **3D viewer**. Rotate the **3D studio mannequin**, an original CC0 asset. Personal reconstruction and garment fitting remain separate experimental tracks; the sample is not the customer. Unsupported devices retain normal 3D viewing.
 
 **2:45–3:00 — Google Cloud and value**
 “Cloud Run serves the responsive app, API and private worker. Firestore keeps customer state; private Storage holds photos; Cloud Tasks manages jobs. Google Gemini on Vertex AI detects garments and creates 2D previews. The goal is useful purchases and more wear from clothes you already love.”

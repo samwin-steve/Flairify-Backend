@@ -48,7 +48,7 @@ def principal(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)
         if session and session["expires"] >= time.time():
             return Principal(session["uid"], session.get("admin", False), True)
         if not settings().allow_firebase_in_demo:
-            raise HTTPException(401, "Your demo session expired. Start a new demo.")
+            raise HTTPException(401, "Your session expired. Please sign in again.")
     try:
         import firebase_admin
         from firebase_admin import auth

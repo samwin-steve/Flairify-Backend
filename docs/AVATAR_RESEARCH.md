@@ -18,4 +18,4 @@ Separate development stages:
 3. **Garments:** obtain licensed, dimensioned 3D garment assets and validate fitting / collision. A retail photograph does not supply hidden geometry.
 4. **Rendering / AR:** export valid GLB, test scale, materials and mobile memory; use model-viewer and a normal 3D fallback.
 
-`frontend/public/models/flairify-form.glb` is an original procedural sample under CC0. It is deliberately a faceless mannequin, labeled as a sample and never described as the customer. It has no animation rig. AR device placement has not been tested on physical iOS/Android hardware. No personalized avatar endpoint reports success.
+`frontend/public/models/flairify-form.glb` is an original procedural sample under CC0. It is deliberately a faceless mannequin, named **3D studio mannequin** in the interface and never described as the customer. It has no animation rig. AR device placement has not been tested on physical iOS/Android hardware. No personalized avatar endpoint reports success.
