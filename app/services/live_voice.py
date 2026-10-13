@@ -147,6 +147,7 @@ async def voice_socket(ws: WebSocket):
         return
     await ws.accept()
     key = record = state = None
+    terminal = ("ended", {"message": "Your voice chat is saved. Tap Talk whenever you want to continue."})
     sender_lock = asyncio.Lock()
 
     async def emit(kind, data):
@@ -192,7 +193,21 @@ async def voice_socket(ws: WebSocket):
                     if control.get("type") == "mute":
                         state.mute()
                     elif control.get("type") == "text":
-                        await state.text(control.get("text", ""))
+                        try:
+                            await state.text(control.get("text", ""))
+                        except HTTPException as exc:
+                            await emit("notice", {"message": str(exc.detail)})
+                    elif control.get("type") == "selection":
+                        if state.tool_lock.locked():
+                            await emit(
+                                "notice", {"message": "Let me finish this step, then choose your pieces."}
+                            )
+                            continue
+                        result = await state.select_garments(
+                            control.get("pieces", []), replace_selection=True
+                        )
+                        if result.get("error"):
+                            await emit("notice", {"message": result["error"]})
                     elif control.get("type") == "ping":
                         await emit("pong", {})
 
@@ -207,17 +222,15 @@ async def voice_socket(ws: WebSocket):
                     task.cancel()
                 await asyncio.gather(*tasks, return_exceptions=True)
     except TimeoutError:
-        await emit(
-            "ended", {"message": "This voice session has ended. Your chat is saved; tap Talk to continue."}
+        terminal = (
+            "ended",
+            {"message": "This voice session has ended. Your chat is saved; tap Talk to continue."},
         )
     except WebSocketDisconnect:
         pass
     except Exception as exc:  # noqa: BLE001 - only a safe customer message leaves the transport
         logging.getLogger(__name__).warning("Voice session ended (%s)", type(exc).__name__)
-        try:
-            await emit("error", {"message": chat_failure(exc)})
-        except (RuntimeError, WebSocketDisconnect):
-            pass
+        terminal = ("error", {"message": chat_failure(exc)})
     finally:
         try:
             if state:
@@ -233,6 +246,10 @@ async def voice_socket(ws: WebSocket):
                     finally:
                         await asyncio.to_thread(store().delete, "voice_tickets", "system", key)
             finally:
+                try:
+                    await emit(*terminal)
+                except (RuntimeError, WebSocketDisconnect):
+                    pass
                 try:
                     await ws.close()
                 except (RuntimeError, WebSocketDisconnect):

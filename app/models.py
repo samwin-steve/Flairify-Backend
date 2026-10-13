@@ -215,6 +215,7 @@ class Message(Model):
     outfits: list[dict] = Field(default_factory=list)
     source: Literal["text", "voice"] = "text"
     interrupted: bool = False
+    preview_job_id: str | None = None
 
 
 class Conversation(Model):
@@ -222,6 +223,8 @@ class Conversation(Model):
     title: str = "A little outfit inspiration"
     messages: list[Message] = Field(default_factory=list)
     intent: dict = Field(default_factory=dict)
+    voice_selection: list[dict] = Field(default_factory=list, max_length=7)
+    voice_preview_job_id: str | None = None
     updated_at: str = Field(default_factory=now)
 
 
