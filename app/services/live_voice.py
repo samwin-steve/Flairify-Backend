@@ -11,7 +11,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
 
-from ..auth import Principal, principal, quota, require_record
+from ..auth import Principal, principal, require_record
 from ..config import settings
 from ..models import ChatRequest, Conversation
 from ..store import store
@@ -63,8 +63,6 @@ def create_ticket(p, request):
 
     store().mutate("chat_locks", p.uid, "active", acquire)
     try:
-        quota(p.uid, "voice-session", cfg.max_daily_voice_sessions, consume=False)
-        quota("live-ai", "voice-session", cfg.max_global_daily_voice_sessions, consume=False)
         store().put(
             "voice_tickets",
             "system",
@@ -112,8 +110,6 @@ def consume_ticket(ticket):
 
     try:
         store().mutate("chat_locks", uid, "active", extend)
-        quota(uid, "voice-session", settings().max_daily_voice_sessions)
-        quota("live-ai", "voice-session", settings().max_global_daily_voice_sessions)
     except Exception:
         release(uid, key)
         store().delete("voice_tickets", "system", key)

@@ -22,8 +22,6 @@ class Settings(BaseSettings):
     live_voice: str = "Aoede"
     live_api_url: str = ""
     max_live_seconds: int = Field(default=300, ge=30, le=600)
-    max_daily_voice_sessions: int = 6
-    max_global_daily_voice_sessions: int = 12
     embedding_model: str = "gemini-embedding-2"
     embedding_location: str = "global"
     embedding_dimensions: int = Field(default=768, ge=128, le=2048)

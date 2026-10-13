@@ -72,10 +72,22 @@ def test_voice_rejects_foreign_chat_and_unknown_reference(client, voice_user):
     assert client.post("/api/voice/sessions", json={"reference_outfit_id": "foreign-look"}).status_code == 422
 
 
-def test_voice_caps_paid_sessions(client, voice_user, monkeypatch):
-    monkeypatch.setattr(settings(), "max_global_daily_voice_sessions", 0)
-    assert client.post("/api/voice/sessions", json={}).status_code == 429
-    assert store().get("chat_locks", voice_user.uid, "active")["until"] == 0
+def test_voice_has_no_daily_session_cap_even_with_old_exhausted_counters(client, voice_user):
+    from app.services.chat import release
+
+    key = "voice-session:" + time.strftime("%Y-%m-%d", time.gmtime())
+    for owner in (voice_user.uid, "live-ai"):
+        store().put("quotas", owner, key, {"count": 10000})
+    # New calls and recovery use the same ticket flow. Neither reads nor charges
+    # the retired session counter; exclusive leases and single-use tickets remain.
+    for _ in range(14):
+        response = client.post("/api/voice/sessions", json={})
+        assert response.status_code == 200
+        ticket_key, record = consume_ticket(response.json()["ticket"])
+        release(record["uid"], ticket_key)
+        store().delete("voice_tickets", "system", ticket_key)
+    for owner in (voice_user.uid, "live-ai"):
+        assert store().get("quotas", owner, key) == {"count": 10000}
 
 
 def test_websocket_rejects_origin_and_invalid_ticket(client):

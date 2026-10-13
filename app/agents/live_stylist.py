@@ -236,6 +236,10 @@ class LiveStylist:
                     "error": "Choose a Flairify page or ask to go back.",
                     "pages": voice_navigation.DESTINATIONS,
                 }
+            # A named page in a clear customer command takes precedence over an
+            # imprecise model argument such as "back" for "back to Stylist".
+            explicit = voice_navigation.spoken_destination(self.input_text)
+            target = explicit or target
             # A retried tool invocation must not pop the browser's history twice.
             if target in self.navigation_events:
                 return self.navigation_events[target]
@@ -253,6 +257,13 @@ class LiveStylist:
     async def finish(self, interrupted=False, notify=True):
         if not (self.input_text.strip() or self.output_text.strip() or self.preview_job_id):
             return
+        # Sometimes Live speaks an acknowledgement without invoking the tool.
+        # Act only on a completed standalone customer command, never interim
+        # transcription, model output or an interrupted/abandoned utterance.
+        if not interrupted and not self.navigation_events:
+            target = voice_navigation.spoken_destination(self.input_text)
+            if target:
+                await self.navigate(target)
         result = (self.bound.result if self.bound else None) or {}
         outfits = result.get("outfits", [])
         if self.input_text.strip():
