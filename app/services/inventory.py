@@ -15,6 +15,38 @@ FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
 CATALOG_VERSION = "2026-10-expanded-200-v1"
 
 
+def image_visible(principal, key):
+    """Authorize a catalogue image with bounded queries instead of loading every listing."""
+    db = store()
+    image = "media:" + key
+    if db.cloud:
+        from google.cloud.firestore_v1.base_query import FieldFilter
+
+        query = (
+            db.db.collection("flairify_products")
+            .where(filter=FieldFilter("owner", "==", principal.catalog_owner))
+            .where(filter=FieldFilter("data.image", "==", image))
+        )
+        if principal.admin:
+            return next(query.select([]).limit(1).stream(), None) is not None
+        public = query.where(filter=FieldFilter("data.active", "==", True))
+        if next(public.select([]).limit(1).stream(), None) is not None:
+            return True
+        own = query.where(filter=FieldFilter("data.seller_id", "==", principal.uid))
+        return next(own.select([]).limit(1).stream(), None) is not None
+    with db.lock:
+        return (
+            db.db.execute(
+                "SELECT 1 FROM records WHERE kind='products' AND owner=? "
+                "AND json_extract(data, '$.image')=? "
+                "AND (? OR COALESCE(json_extract(data, '$.active'), 1) "
+                "OR json_extract(data, '$.seller_id')=?) LIMIT 1",
+                (principal.catalog_owner, image, principal.admin, principal.uid),
+            ).fetchone()
+            is not None
+        )
+
+
 @lru_cache(maxsize=1)
 def fixture_products():
     return {

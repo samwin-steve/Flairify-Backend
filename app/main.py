@@ -384,10 +384,7 @@ def get_media(key: str, p: Principal = Depends(principal)):
 def product_media(key: str, p: Principal = Depends(principal)):
     uploaded = store().get("media", p.catalog_owner, key) or {}
     own_upload = (p.admin or p.seller) and uploaded.get("uploader_id") == p.uid
-    listed = any(
-        v["image"] == "media:" + key and (v.get("active", True) or sellers.can_manage(p, v))
-        for v in store().list("products", p.catalog_owner)
-    )
+    listed = own_upload or inventory.image_visible(p, key)
     if not own_upload and not listed:
         history = store().list("orders", p.uid)
         if p.admin:
