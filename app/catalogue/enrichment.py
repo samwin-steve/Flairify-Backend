@@ -164,6 +164,20 @@ def validate(analysis, product, has_image):
     if has_image and analysis.image_quality == "unusable":
         issues.append("image_unusable")
     for tag in analysis.tags:
+        # Imported photo descriptions are generated observations, not retailer testimony.
+        # A quoted title may help identify the item but cannot establish composition.
+        if (
+            product.get("attributes", {}).get("description_source") == "gemini_visual"
+            and tag.source == "seller"
+            and seller_evidence(tag, facts)
+        ):
+            tag = tag.model_copy(
+                update={
+                    "source": "styling_inference" if tag.field in INFERRED else "visual",
+                    "source_field": "",
+                    "evidence": ("Image-derived listing: " + tag.evidence)[:220],
+                }
+            )
         issue = None
         if tag.value not in VOCAB[tag.field]:
             issue = "unknown_taxonomy_value"
@@ -188,15 +202,18 @@ def validate(analysis, product, has_image):
         existing = accepted.get((tag.field, tag.value))
         if not existing or existing.confidence < checked.confidence:
             accepted[tag.field, tag.value] = checked
-    # The supplied category remains authoritative even when the image disagrees.
-    if product["category"] in VOCAB["category"]:
+    # Retailer categories stay authoritative; a photo-import category is a visual hypothesis.
+    derived = product.get("attributes", {}).get("description_source") == "gemini_visual"
+    if product["category"] in VOCAB["category"] and (not derived or usable):
         accepted["category", product["category"]] = Tag(
             field="category",
             value=product["category"],
-            confidence=1,
-            source="seller",
-            evidence=product["category"],
-            source_field="category",
+            confidence=0.8 if derived else 1,
+            source="visual" if derived else "seller",
+            evidence="Primary garment category identified from the supplied photograph"
+            if derived
+            else product["category"],
+            source_field="" if derived else "category",
         )
     # Resolve contradictory single-value traits and bound generic occasion/style tagging.
     limits = {

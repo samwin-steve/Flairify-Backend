@@ -53,3 +53,41 @@ def test_image_does_not_establish_material_in_title_or_description():
     assert result.name == "Brown Bag"
     assert result.description == "Two zip pockets are visible."
     assert result.uncertainty
+
+
+def test_generated_listing_text_cannot_become_retailer_material_evidence():
+    from app.catalogue.enrichment import validate
+    from app.catalogue.schema import Analysis, Tag
+
+    product = {
+        "name": "Blue Cotton Shirt",
+        "category": "top",
+        "description": "",
+        "attributes": {"description_source": "gemini_visual"},
+        "variants": [],
+    }
+    result = Analysis(
+        image_quality="adequate",
+        image_matches_product=True,
+        tags=[
+            Tag(
+                field="primary_colour",
+                value="blue",
+                confidence=0.98,
+                source="seller",
+                evidence="Blue",
+                source_field="name",
+            ),
+            Tag(
+                field="fabric",
+                value="cotton",
+                confidence=0.98,
+                source="seller",
+                evidence="Cotton",
+                source_field="name",
+            ),
+        ],
+    )
+    tags, issues, unknown = validate(result, product, True)
+    assert len(tags) == 2 and all(t.source == "visual" and t.confidence <= 0.9 for t in tags)
+    assert "fabric" in unknown and "fabric:physical_claim_without_seller_evidence" in issues
