@@ -28,6 +28,10 @@ def prepare_product(p, product):
     product.indexed = False
     product.content_hash = ""
     product.updated_at = now()
+    if (old or {}).get("attributes", {}).get("catalogue_status") == "draft" and product.active:
+        if product.price <= 0 or not any(s.quantity > 0 for v in product.variants for s in v.stock):
+            raise HTTPException(422, "Set a price and available stock before publishing this draft")
+        product.attributes = {k: v for k, v in product.attributes.items() if k != "catalogue_status"}
     if not product.variants or not product.image:
         raise HTTPException(422, "Add a product photo and at least one size with stock information")
     known = {s["id"] for s in store().list("stores", p.catalog_owner) if can_manage(p, s)}

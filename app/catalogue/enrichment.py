@@ -267,9 +267,9 @@ def publish(owner, product, record):
     return store().mutate("products", owner, product["id"], merge)
 
 
-def ensure(owner, product):
+def ensure(owner, product, *, include_inactive=False):
     """Return current product and whether a new provider analysis was performed."""
-    if not enabled(owner) or not product.get("active", True):
+    if not enabled(owner) or (not product.get("active", True) and not include_inactive):
         return product, False
     if current(product):
         return product, False

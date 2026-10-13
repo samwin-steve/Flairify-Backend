@@ -128,6 +128,28 @@ def test_archive_hides_product_from_search_and_checkout(signed):
     assert c.post("/api/orders/quote", json=data).status_code == 409
 
 
+def test_draft_media_is_private_and_publication_needs_commercial_details(signed):
+    c, who = signed
+    product = create_product(c)
+    product.update(active=False, price=0, attributes={"catalogue_status": "draft"})
+    product["variants"][0]["stock"][0]["quantity"] = 0
+    assert c.put("/api/admin/products/" + product["id"], json=product).status_code == 200
+    image_url = "/api/catalog/media/" + product["image"][6:]
+    assert c.get(image_url).status_code == 200
+    for user in (Principal("customer"), Principal("seller-b", seller=True)):
+        who[0] = user
+        assert c.get(image_url).status_code == 404
+    who[0] = Principal("site-owner", admin=True)
+    assert c.get(image_url).status_code == 200
+    product["active"] = True
+    assert c.put("/api/admin/products/" + product["id"], json=product).status_code == 422
+    product["price"] = 1000
+    assert c.put("/api/admin/products/" + product["id"], json=product).status_code == 422
+    product["variants"][0]["stock"][0]["quantity"] = 3
+    assert c.put("/api/admin/products/" + product["id"], json=product).status_code == 200
+    assert "catalogue_status" not in store().get("products", "retailer", product["id"])["attributes"]
+
+
 def test_indexing_does_not_overwrite_concurrent_stock_edit(signed, monkeypatch):
     c, _ = signed
     create_product(c)
