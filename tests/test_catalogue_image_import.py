@@ -91,3 +91,16 @@ def test_generated_listing_text_cannot_become_retailer_material_evidence():
     tags, issues, unknown = validate(result, product, True)
     assert len(tags) == 2 and all(t.source == "visual" and t.confidence <= 0.9 for t in tags)
     assert "fabric" in unknown and "fabric:physical_claim_without_seller_evidence" in issues
+
+
+@pytest.mark.parametrize(
+    "name,expected",
+    [
+        ("Black Leather-Look Long Coat", "Black Long Coat"),
+        ("Maroon Faux Fur Coat", "Maroon Coat"),
+        ("Dark Brown Faux Leather Tote Bag", "Dark Brown Tote Bag"),
+    ],
+)
+def test_material_cleanup_does_not_leave_broken_title_fragments(name, expected):
+    value = PhotoListing.model_validate({**listing(), "name": name})
+    assert visual_only(value).name == expected

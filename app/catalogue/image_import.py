@@ -18,8 +18,9 @@ from ..services import ai, media
 
 VERSION = "1"
 UNVERIFIED_MATERIAL = re.compile(
-    r"\b(?:leather|suede|cotton|linen|silk|polyester|nylon|viscose|elastane|wool|"
-    r"cashmere|velvet|satin|denim|breathable|lightweight|stretchy|waterproof)\b",
+    r"\b(?:(?:faux|genuine|real|imitation)[ -]+)?"
+    r"(?:leather|suede|cotton|linen|silk|polyester|nylon|viscose|elastane|wool|woollen|woolen|fur|pearl|"
+    r"cashmere|velvet|satin|denim|breathable|lightweight|stretchy|waterproof)(?:[ -]look)?\b",
     re.IGNORECASE,
 )
 
