@@ -77,3 +77,5 @@ Successful Cloud Builds `b20455e9-0417-47d3-b268-101cff0ca2ed` (backend source `
 The final provenance/title validation patch (source `3cd1f26`) passed all **194 backend tests** in successful build `0869776f-de54-4ce5-b644-197bc4289d51`. API `flairify-api-00033-lf8` and worker `flairify-worker-00066-gcx` were verified at 100% traffic on that exact build image. Frontend remains `flairify-web-00027-fr8`.
 
 The final caption-normalization build `dc80de48-3be1-4f0d-9a89-a3a9a2068d5c` (source `03ceee9`) passed **197 backend tests**. The previous image-query build `92cc783b-6812-44c5-8422-48d329565c45` (source `d2aff3a`) deployed successfully; the real customer/owner access and health checks were repeated on that release and passed.
+
+Final deployment completed successfully. API `flairify-api-00035-l4x` and worker `flairify-worker-00070-rf5` receive 100% traffic on build `dc80de48-3be1-4f0d-9a89-a3a9a2068d5c` (source `03ceee9`). Both repositories were pushed and their worktrees were clean after saving this verification.
