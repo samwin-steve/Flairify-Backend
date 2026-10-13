@@ -1,6 +1,12 @@
 # Verification — 13 October 2026
 
-## Latest release: account-entry preferences and new chats
+## Latest release: voice availability after sign-in
+
+Reproduced the reported unavailable error on the deployed frontend by delaying actual capability responses during Firebase restoration: the signed-in server reported voice enabled, but the client blocked Talk using guest/pending configuration without making a voice request. The frontend now waits for authentication, separates guest/account capability caches and uses the authenticated voice-ticket endpoint as authority. Demo Talk also opens sign-in correctly.
+
+**25 frontend logic tests, 38 desktop/mobile browser journeys, TypeScript and the production build passed.** New cases cover slow initialization, stale false flags, actual server refusals and demo sign-in without microphone capture. Source `8f90a2e`, successful Cloud Build `cf8c8570-9b56-4276-b8e0-9451e83c6852`, serves all traffic as `flairify-web-00019-d4x`. The deployed delayed-capability retest connected through the real authenticated backend to Google and received 34,562 native audio bytes, transcript and turn events. End worked. Physical microphones were not retested; no backend code, model settings or quotas changed. See [voice connection evidence](live-voice-config-results.json).
+
+## Previous release: account-entry preferences and new chats
 
 **25 frontend logic tests, 34 desktop/mobile Playwright journeys, TypeScript and the production Next.js build passed.** Shopping preferences now gate account entry, including restored Firebase/demo sessions and legacy profiles missing a required size. Returning customers with complete settings skip setup. Photos remain optional, and preferences remain editable in Profile. The setup form has readable step-label contrast and mobile columns that stay within the viewport.
 

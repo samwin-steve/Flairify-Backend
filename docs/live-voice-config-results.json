@@ -1,0 +1,71 @@
+{
+  "cause": "Guest or pending capabilities incorrectly blocked Talk before a voice request; authenticated server voice was enabled.",
+  "reproduction": {
+    "phase": "before",
+    "configRequests": [
+      {
+        "signedIn": false,
+        "voice": false
+      }
+    ],
+    "voiceStarts": 0,
+    "events": [],
+    "audioBytes": 0,
+    "signedInServerVoice": true,
+    "reproduced": true,
+    "completedAt": "2026-10-13T14:25:07.653Z"
+  },
+  "deployedCheck": {
+    "phase": "after",
+    "configRequests": [
+      {
+        "signedIn": true,
+        "voice": true
+      }
+    ],
+    "voiceStarts": 1,
+    "events": [
+      {
+        "type": "ready"
+      },
+      {
+        "type": "transcript"
+      },
+      {
+        "type": "turn"
+      }
+    ],
+    "audioBytes": 34562,
+    "signedInServerVoice": true,
+    "connected": true,
+    "ended": true,
+    "completedAt": "2026-10-13T14:31:20.607Z"
+  },
+  "deployment": {
+    "source": "8f90a2e",
+    "build": "cf8c8570-9b56-4276-b8e0-9451e83c6852",
+    "revision": "flairify-web-00019-d4x"
+  },
+  "localChecks": {
+    "vitest": 25,
+    "playwright": 38,
+    "typecheck": "passed",
+    "build": "passed"
+  },
+  "limits": [
+    "Browser used a simulated microphone; Google audio and the authenticated backend/WebSocket were real.",
+    "Real capability responses were deliberately delayed to exercise initialization.",
+    "This checks connection and native audio output; physical microphone acoustics were not retested.",
+    "No quota or provider model settings were changed."
+  ],
+  "cleanup": {
+    "temporary_firebase_account_removed": true,
+    "owner_records_removed": 5,
+    "remaining_owner_records": 0,
+    "qa_media_removed": 0
+  },
+  "health": {
+    "web": 200,
+    "api": 200
+  }
+}
