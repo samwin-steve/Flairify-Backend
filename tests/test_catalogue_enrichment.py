@@ -347,3 +347,21 @@ def test_saved_looks_keep_compact_styling_context_not_audit_records(client, onbo
             assert context.assessment_context(product) == product["styling_context"]
         saved = store().get("outfits", owner, look["id"])
         assert all("enrichment" not in p for p in saved["products"])
+
+
+def test_office_shirt_search_does_not_match_t_shirt_suffix(client):
+    from app.services import styling
+
+    t_shirt, shirt = listing(), listing()
+    t_shirt["name"] = "Little Miss Women Printed Grey T-shirt"
+    shirt["name"] = "Arrow Woman Blue Shirt"
+    intent = {
+        "query": "minimalist office shirt meetings",
+        **styling.brief("minimalist office shirt meetings", {}, {}),
+    }
+    assert not styling.suitable(t_shirt, intent)
+    assert styling.suitable(shirt, intent)
+    tee_intent = styling.brief("show casual T-shirts", {}, {})
+    assert tee_intent["required_type"] == "t_shirt"
+    assert styling.suitable(t_shirt, tee_intent)
+    assert not styling.suitable(shirt, tee_intent)

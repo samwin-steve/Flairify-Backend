@@ -122,6 +122,10 @@ def brief(message, previous, interpreted):
         result["required_type"] = explicit_type
     elif not followup or (category and category != previous.get("requested_category")):
         result["required_type"] = None
+    # A T-shirt is a distinct request, not a button-front shirt matched after a hyphen.
+    if re.search(r"\b(?:t[ -]?shirts?|tees?)\b", text) and "keep my" not in text:
+        result["required_type"] = "t_shirt"
+        result["requested_category"] = "top"
     result.setdefault("palette", [])
     result.setdefault("preferred_types", [])
     result.setdefault("avoid_types", [])
@@ -202,6 +206,12 @@ def suitable(row, intent):
     ):
         return False
     required = intent.get("required_type")
+    if row["category"] == intent.get("requested_category"):
+        is_t_shirt = bool(re.search(r"\b(?:t[ -]?shirts?|tees?)\b", text))
+        if required == "shirt" and is_t_shirt:
+            return False
+        if required == "t_shirt":
+            return is_t_shirt
     return not (
         required
         and row["category"] == intent.get("requested_category")
