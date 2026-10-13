@@ -41,6 +41,7 @@ from .services import (
     try_on,
 )
 from .store import store
+from .services.live_voice import router as voice_router
 
 
 @asynccontextmanager
@@ -61,6 +62,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["Authorization", "Content-Type", "X-Photos-Token"],
 )
+app.include_router(voice_router)
 
 
 @app.get("/health")
@@ -86,6 +88,7 @@ def config(credentials=Depends(bearer)):
         if c.enable_paid_ai and live
         else "demo-attribute-baseline",
         "chat_streaming": True,
+        "voice": c.voice_ready and live,
         "try_on": live and c.enable_paid_ai and bool(c.try_on_model or c.image_edit_model),
         "video": live and c.enable_paid_ai and bool(c.veo_model),
         "photos_client_id": c.google_photos_client_id,

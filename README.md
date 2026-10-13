@@ -82,6 +82,10 @@ Select one or more pieces using the initially empty checkboxes on a stylist look
 
 See [SEMANTIC_RAG.md](docs/SEMANTIC_RAG.md) for the Gemini Embedding 2 / Firestore implementation, Google ADK modules, SSE contract, indexes, migration and explicit demo limitations.
 
+## Voice stylist
+
+**Talk** starts a native Google Gemini Live conversation with spoken replies, live transcripts and the same grounded recommendation tools. Voice retains saved shopping preferences and conversation context, supports outfit refinements, and offers mute/end controls. Transcripts are saved; audio is not stored by Flairify. See [voice setup, security and limits](docs/VOICE_STYLIST.md). Voice requires a signed-in account and an explicitly configured Vertex Live model; credential-free demo chat remains available as text.
+
 ## Occasion-aware recommendations
 
 Saved shopping settings replace the repeated chat selectors. Catalogue-only recommendations work without photos; the chat switch opts into suitable confirmed wardrobe pieces. Ranking retains semantic similarity, interprets the occasion, assesses complete shortlisted outfits with Gemini and diversifies the main garment. Checkout preselects saved/recommended variants but still requires review and confirmation. See [recommendation quality and limits](docs/RECOMMENDATION_QUALITY.md).

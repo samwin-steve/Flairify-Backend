@@ -213,6 +213,8 @@ class Message(Model):
     content: str
     created_at: str = Field(default_factory=now)
     outfits: list[dict] = Field(default_factory=list)
+    source: Literal["text", "voice"] = "text"
+    interrupted: bool = False
 
 
 class Conversation(Model):

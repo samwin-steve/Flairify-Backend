@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -16,6 +17,13 @@ class Settings(BaseSettings):
     firestore_database: str = "(default)"
     media_bucket: str = ""
     gemini_model: str = ""
+    live_model: str = ""
+    live_location: str = "us-central1"
+    live_voice: str = "Aoede"
+    live_api_url: str = ""
+    max_live_seconds: int = Field(default=300, ge=30, le=600)
+    max_daily_voice_sessions: int = 6
+    max_global_daily_voice_sessions: int = 12
     embedding_model: str = "gemini-embedding-2"
     embedding_location: str = "global"
     embedding_dimensions: int = Field(default=768, ge=128, le=2048)
@@ -46,6 +54,10 @@ class Settings(BaseSettings):
     @property
     def ai_ready(self):
         return self.enable_paid_ai and bool(self.gemini_model)
+
+    @property
+    def voice_ready(self):
+        return self.ai_ready and bool(self.live_model)
 
 
 @lru_cache
