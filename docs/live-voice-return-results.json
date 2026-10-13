@@ -1,0 +1,97 @@
+{
+  "url": "https://flairify-web-7kxckvikva-uc.a.run.app",
+  "input": "Google-synthesized spoken WAVs through browser MediaStream and capture AudioWorklet, real Google Live transcription/tools/audio; no API or WebSocket simulation",
+  "checks": [
+    {
+      "audioInput": 0,
+      "transcript": "Can you open the fitting room, please?",
+      "destination": "fitting",
+      "visiblePage": "Fitting Room",
+      "passed": true
+    },
+    {
+      "audioInput": 1,
+      "transcript": "Can you take me back to styles?",
+      "destination": "stylist",
+      "visiblePage": "Stylist",
+      "passed": true
+    },
+    {
+      "audioInput": 2,
+      "transcript": "Open my closet, please.",
+      "destination": "wardrobe",
+      "visiblePage": "My wardrobe",
+      "passed": true
+    },
+    {
+      "audioInput": 3,
+      "transcript": "Take me back.",
+      "destination": "back",
+      "visiblePage": "Stylist",
+      "passed": true
+    },
+    {
+      "audioInput": 3,
+      "transcript": "Take me back.",
+      "destination": "back",
+      "visiblePage": "Shop clothes",
+      "passed": true
+    },
+    {
+      "audioInput": 4,
+      "transcript": "Take me back to where we started.",
+      "destination": "origin",
+      "visiblePage": "Stylist",
+      "passed": true
+    }
+  ],
+  "paidImageCalls": 0,
+  "voiceTicketStatus": 200,
+  "audioBytes": 1045464,
+  "connections": 1,
+  "microphoneStopped": true,
+  "savedMessages": 14,
+  "passed": true,
+  "completedAt": "2026-10-13T17:23:49.810Z",
+  "old_daily_counter_after_real_call": 12,
+  "daily_limit": {
+    "before_status": 429,
+    "before_message": "Daily limit reached. Please try again tomorrow.",
+    "after_status": 200,
+    "old_global_counter": 12,
+    "test_ticket_cancelled": true
+  },
+  "cleanup": {
+    "temporary_firebase_account_removed": true,
+    "owner_records_removed": 3,
+    "remaining_owner_records": 0,
+    "qa_media_removed": 0
+  },
+  "health": {
+    "web": 200,
+    "api": 200,
+    "worker": 403
+  },
+  "local_checks": {
+    "backend_tests": 166,
+    "frontend_logic_tests": 28,
+    "distinct_desktop_mobile_journeys": 20,
+    "production_build": "passed",
+    "focused_ruff": "passed"
+  },
+  "release": {
+    "backend_source": "3c82c08689f16b6de4f23e79450b1b790c5a3199",
+    "frontend_source": "7fe3bb51c0bc01d2108964704eee6a07b16591d6",
+    "backend_build": "5c146f29-2b4e-41c7-9d54-d1dbf2bf3000",
+    "frontend_build": "19040b1d-cc30-4036-86e1-2b2e2815d717",
+    "api_revision": "flairify-api-00027-7b4",
+    "worker_revision": "flairify-worker-00054-5x7",
+    "web_revision": "flairify-web-00023-27t",
+    "traffic_percent": 100
+  },
+  "limitations": [
+    "Synthesized Google speech, not human recordings or physical phone microphones.",
+    "Per-connection timeout and independent catalogue-search and generation quotas remain.",
+    "No new image or video was generated in this navigation check."
+  ]
+}

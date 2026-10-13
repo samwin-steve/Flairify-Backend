@@ -1,6 +1,18 @@
 # Verification — 13 October 2026
 
-## Latest release: spoken garment selection, previews and mobile navigation
+## Latest release: no daily voice-session cap and reliable return navigation
+
+Removed both daily voice-session checks and their configuration fields. Previously exhausted records are ignored without resetting counters. The deployed authenticated request returned **429 before** and **200 after**, while the old shared counter remained **12** even after a real voice call. Authentication, exclusive chat leases, single-use tickets, per-connection duration, and separate search/generation limits remain enforced.
+
+In-app menu navigation now preserves the voice call and updates the same history used by spoken back commands. Starting or switching chats still ends the old call. Completed, explicit page requests have a conservative fallback when the model only speaks an acknowledgement; named destinations override an imprecise model argument. Interim, interrupted, negative, quoted and compound requests cannot trigger the fallback.
+
+**166 backend tests, 28 frontend logic tests, production compilation and 20 distinct desktop/mobile browser journeys passed.** The updated voice journey was rerun on both viewports after adding an explicit new-chat termination assertion. The local voice transport is a fixture; it separately covers previews, selection retention, reconnect, invalid destinations and duplicate events.
+
+Both Cloud Builds succeeded and route 100% of traffic to web `flairify-web-00023-27t`, API `flairify-api-00027-7b4` and private worker `flairify-worker-00054-5x7`. Six Google-synthesized spoken requests passed through the real browser MediaStream, capture worklet, Google Live transcription and tools: open Fitting Room, back to styles, open closet, back to Stylist, back to Inventory after manual menu changes, and return to the original page. The call retained one connection throughout, returned 1,045,464 native audio bytes and saved 14 messages. End stopped the microphone. No image/video generation was requested. Mobile checks found no horizontal overflow. This does not measure physical phone microphones or arbitrary accents/noise.
+
+The temporary Firebase account and three owner records were removed; zero owner records or QA media remain. Web/API returned 200 and private worker returned the expected unauthenticated 403. See [collected before/after and spoken navigation evidence](live-voice-return-results.json).
+
+## Previous release: spoken garment selection, previews and mobile navigation
 
 **132 backend tests, 25 frontend logic tests, TypeScript and production builds pass.** Across the full browser run and focused reruns, all **42 distinct desktop/mobile journeys** pass. The first run exposed two tests that still clicked the removed mobile bottom bar; both now use the hamburger menu. The final 20 voice/navigation/onboarding checks passed together, including desktop hamburger visibility, mobile viewport use, selected checkboxes, manual selection updates, reconnecting with the same chat, keeping voice during Fitting Room generation, showing the completed preview/Buy action, and no recovery after End. Local voice transport and image responses are explicit fixtures.
 
