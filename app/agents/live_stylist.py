@@ -24,7 +24,7 @@ from ..auth import Principal, quota, require_record
 from ..config import settings
 from ..models import ChatRequest, Conversation, Message, now
 from ..prompts.live_stylist import LIVE_STYLIST
-from ..services import conversation_context, voice_actions
+from ..services import conversation_context, voice_actions, voice_navigation
 from ..store import store
 from ..utils.errors import chat_failure
 from .tools import StylistTools
@@ -67,6 +67,7 @@ class LiveStylist:
         self.waiting_result_speech = False
         self.preview_job_id = None
         self.selection_error = False
+        self.navigation_events = {}
 
     def tool_error(self, exc):
         logging.getLogger(__name__).warning("Voice tool failed (%s)", type(exc).__name__)
@@ -226,6 +227,29 @@ class LiveStylist:
             except Exception as exc:  # noqa: BLE001 - keep voice alive; expose safe messages only
                 return self.tool_error(exc)
 
+    async def navigate(self, destination: str) -> dict:
+        """On the customer's request, open stylist, wardrobe, inventory, saved, fitting, orders, profile or admin. Use back for the previous screen or origin for the voice starting screen. Never generates, buys, edits or deletes."""
+        async with self.tool_lock:
+            target = voice_navigation.destination(destination)
+            if target is None:
+                return {
+                    "error": "Choose a Flairify page or ask to go back.",
+                    "pages": voice_navigation.DESTINATIONS,
+                }
+            # A retried tool invocation must not pop the browser's history twice.
+            if target in self.navigation_events:
+                return self.navigation_events[target]
+            result = {
+                "request_id": f"{self.turn_id}:{target}",
+                "destination": target,
+                "label": voice_navigation.DESTINATIONS[target],
+                "status": "navigation_requested",
+                "instruction": "Briefly acknowledge navigation, then keep listening. Back/origin is resolved by the browser; do not invent which page it returns to. This opens a page only; no purchase, settings change or generation was performed.",
+            }
+            await self.emit("navigation", result)
+            self.navigation_events[target] = result
+            return result
+
     async def finish(self, interrupted=False, notify=True):
         if not (self.input_text.strip() or self.output_text.strip() or self.preview_job_id):
             return
@@ -272,6 +296,7 @@ class LiveStylist:
         self.waiting_result_speech = False
         self.preview_job_id = None
         self.selection_error = False
+        self.navigation_events = {}
         if result:
             self.options["reference_outfit_id"] = None
         self.turn_id = uuid.uuid4().hex
@@ -354,6 +379,7 @@ class LiveStylist:
                 BlockingTool(self.discuss_looks),
                 BlockingTool(self.select_garments),
                 BlockingTool(self.see_it_on_me),
+                BlockingTool(self.navigate),
             ],
         )
         self.runner = Runner(app_name="flairify_voice", agent=agent, session_service=sessions)
