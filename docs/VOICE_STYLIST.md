@@ -25,7 +25,7 @@ The session begins with a short greeting. Function calls are declared blocking s
 
 Mute stops audio forwarding and ends the current input stream; unmute resumes. End stops microphone tracks and playback immediately, then briefly allows transcript persistence. Leaving the page, signing out or hiding the tab stops microphone capture. Tap Talk again to open a new connection with saved context. Transport-level seamless session resumption is not implemented.
 
-The frontend allows microphone access only for itself with `Permissions-Policy: microphone=(self)`. Camera access remains disabled. The speaking orb respects reduced-motion preferences. Permission denial, unsupported audio APIs and connection failures leave text chat available. A network error never produces a fabricated spoken success or substitute outfit.
+The frontend allows microphone access only for itself with `Permissions-Policy: microphone=(self)`. The voice feature never requests the camera. The speaking orb respects reduced-motion preferences. Permission denial, unsupported audio APIs and connection failures leave text chat available. A network error never produces a fabricated spoken success or substitute outfit.
 
 ## Configuration and cost bounds
 
