@@ -1,0 +1,232 @@
+{
+  "url": "https://flairify-web-7kxckvikva-uc.a.run.app",
+  "input": "Google-generated WAV fixtures through a real browser MediaStream and AudioWorklet; no API or WebSocket mock",
+  "checks": [
+    {
+      "inputIndex": 0,
+      "seconds": 32.34,
+      "inputTranscript": "I have Independence Day at the office. Please suggest a subtle outfit under 5,000 rupees.",
+      "response": "Finding you the perfect subtle and celebratory look for the office right now.I've found a few great options for your office celebration. I really like the striped white kurta paired with grey formal trousers\u2014it's very professional yet festive. There's also an olive or a rust option if you want to bring in some more color.",
+      "historyMessages": 3,
+      "newAudioBytes": 800644,
+      "outfits": [
+        {
+          "id": "13623b719b944d219b73e4cbe1068be9",
+          "title": "Fabindia Men Striped White Kurta",
+          "total": 2897,
+          "products": [
+            {
+              "id": "sample-fashion-30784",
+              "name": "Fabindia Men Striped White Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26164",
+              "name": "John Miller Men Striped Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-10633",
+              "name": "Carlton London Men Formal Brown Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "e1e730b731b24bc1a6791812f352513a",
+          "title": "Fabindia Men Printed Olive Kurta",
+          "total": 3097,
+          "products": [
+            {
+              "id": "sample-fashion-32197",
+              "name": "Fabindia Men Printed Olive Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-59435",
+              "name": "Arrow Men Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "815728d428ee4bf581caedb078baec2d",
+          "title": "Fabindia Men Rust Khadi Kurta",
+          "total": 3097,
+          "products": [
+            {
+              "id": "sample-fashion-30779",
+              "name": "Fabindia Men Rust Khadi Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-27614",
+              "name": "Scullers Men Beige Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-9036",
+              "name": "Buckaroo Men Flores Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "inputIndex": 1,
+      "seconds": 30.134,
+      "inputTranscript": "I like the second look. Keep the top and trousers, but change the shoes.",
+      "response": "That olive kurta is a great choice! I'm finding some alternative shoes to complete that look for you right now.I've kept the olive kurta and grey trousers and found a few shoe alternatives. For a relaxed look, I'd go for these white casual, or you could stick with the black formal for a sharper edge.",
+      "historyMessages": 5,
+      "newAudioBytes": 738722,
+      "outfits": [
+        {
+          "id": "a7b79bd0a8e642b688b4d588ae8fbe44",
+          "title": "Gas Men Europa White Shoes",
+          "total": 3297,
+          "products": [
+            {
+              "id": "sample-fashion-32197",
+              "name": "Fabindia Men Printed Olive Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-39988",
+              "name": "Gas Men Europa White Shoes",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "d1147120b0624b30a8023ab5dc370d1d",
+          "title": "Arrow Men Formal Black Shoe",
+          "total": 2797,
+          "products": [
+            {
+              "id": "sample-fashion-32197",
+              "name": "Fabindia Men Printed Olive Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-23247",
+              "name": "Arrow Men Formal Black Shoe",
+              "category": "shoes"
+            }
+          ]
+        },
+        {
+          "id": "48b0c4dbc1bb4b348752b69c19fc0898",
+          "title": "Clarks Men Hang Work Leather Black Formal Shoes",
+          "total": 2697,
+          "products": [
+            {
+              "id": "sample-fashion-32197",
+              "name": "Fabindia Men Printed Olive Kurta",
+              "category": "top"
+            },
+            {
+              "id": "sample-fashion-26163",
+              "name": "John Miller Men Dark Grey Trousers",
+              "category": "bottom"
+            },
+            {
+              "id": "sample-fashion-10268",
+              "name": "Clarks Men Hang Work Leather Black Formal Shoes",
+              "category": "shoes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "inputIndex": 2,
+      "seconds": 13.239,
+      "inputTranscript": "Why do you like this look for me?",
+      "response": "It strikes the perfect balance between celebrating Independence Day and keeping things professional for work. The olive is a subtle nod to the theme, and the neutral grey trousers ground the look nicely.",
+      "historyMessages": 7,
+      "newAudioBytes": 480002,
+      "outfits": []
+    }
+  ],
+  "connectionSeconds": 6.283,
+  "exactKeptGarments": true,
+  "changedShoes": true,
+  "discussionWithoutRepeatedCards": true,
+  "audioBytes": 2203690,
+  "audioChunks": 290,
+  "inputFrames": 4167,
+  "playbackStarts": 293,
+  "muteStopsFrames": true,
+  "desktopAxe": [],
+  "mobileLayout": {
+    "viewport": 393,
+    "document": 393
+  },
+  "mobileAxe": [],
+  "reducedMotion": true,
+  "endStopsMicrophone": true,
+  "refreshRestoresConversation": true,
+  "browserErrors": [],
+  "completedAt": "2026-10-13T06:20:03.472Z",
+  "local_tests": {
+    "pytest": 126,
+    "vitest": 25,
+    "playwright": 28,
+    "typecheck": "passed",
+    "production_build": "passed",
+    "smallest_checked_viewport": 320
+  },
+  "deployment": {
+    "frontend_source": "0af6615",
+    "backend_source_tested": "9ddd57a",
+    "frontend_build": "1c4cd67a-4751-4d66-95e1-27cb88c5c3fd",
+    "backend_build_tested": "d5911dd7-07fe-44d5-950a-c02a61fe7e64",
+    "frontend_revision": "flairify-web-00017-qgf",
+    "api_revision_tested": "flairify-api-00022-8r2",
+    "worker_revision_tested": "flairify-worker-00044-4bq"
+  },
+  "limits": [
+    "Synthesized test utterances, not a human microphone or accent study",
+    "Physical iOS/Android microphone behavior unmeasured",
+    "No measured recommendation usefulness or billed-cost improvement",
+    "Native interruption was verified with simulated transport events; live three-turn probe did not interrupt a speaking turn",
+    "Retail inventory remains labeled sample data",
+    "No image or outfit video generation was requested"
+  ],
+  "cleanup": {
+    "temporary_firebase_account_removed": true,
+    "owner_records_removed": 74,
+    "remaining_owner_records": 0,
+    "qa_media_removed": 0
+  },
+  "final_deployment": {
+    "backend_source": "d083e38",
+    "backend_build": "48efa241-9976-4eb6-bf06-8dcf860c5f65",
+    "build_status": "SUCCESS",
+    "api_revision": "flairify-api-00023-f82",
+    "worker_revision": "flairify-worker-00046-hsj",
+    "change_after_live_conversation": "Transcript sentence-spacing normalization only; regression and 126 backend tests passed, including Cloud Build. The three-turn paid model journey was not repeated for a formatting-only patch.",
+    "health": {
+      "web": 200,
+      "permissions_policy": "camera=(self), microphone=(self), geolocation=(self)",
+      "api": 200,
+      "worker": 403
+    }
+  }
+}
