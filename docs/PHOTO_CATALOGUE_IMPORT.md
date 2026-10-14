@@ -62,7 +62,7 @@ in Drive does not establish retailer affiliation, current availability or a new 
 license. Brand names are not inferred from board titles, logos or watermarks. No claim
 is made that these are live retailer feeds.
 
-## Deployed access checks
+## Initial draft access checks
 
 A temporary signed-in customer could not retrieve a draft image (404) or its protected metadata (403), and no draft appeared in the customer catalogue. After receiving a temporary owner role, the same QA account retrieved the real image bytes and current image-analysis metadata through the deployed API. The temporary account and grant were removed. Web/API health returned 200 and the private worker returned the expected unauthenticated 403. See [collected access results](photo-import-access-results.json).
 
@@ -70,9 +70,9 @@ A temporary signed-in customer could not retrieve a draft image (404) or its pro
 
 Product image authorization uses bounded document-existence queries for the matching image and viewer access, instead of reading the entire catalogue per thumbnail. These equality filters use Firestore index merging ([Google documentation](https://firebase.google.com/docs/firestore/query-data/index-overview)). The live customer, site-owner and listing-owner query paths were checked against the project. Private order-history access remains available for purchased items that are later archived.
 
-## Completed import
+## Initial staging audit
 
-All 15 folders were scanned and all 367 images were downloaded and byte-length checked. **365 private draft listings** have current Gemini image metadata, **8,871 validated tags**, and **730 verified stored source/crop image objects**. Two ambiguous layered outfits were held for human review and did not create products. All 200 pre-existing seller records remain unchanged, bringing the stored catalogue to 565 records (200 existing active entries plus 365 private drafts). None of the new drafts is published or included in customer search/checkout. Direct unauthenticated Cloud Storage access returned 403.
+At the initial staging audit, all 15 folders had been scanned and all 367 images downloaded and byte-length checked. **365 private draft listings** have current Gemini image metadata, **8,871 validated tags**, and **730 verified stored source/crop image objects**. Two ambiguous layered outfits were held for human review and did not create products. All 200 pre-existing seller records remain unchanged, bringing the stored catalogue to 565 records (200 existing active entries plus 365 private drafts). At that audit, none of the new drafts was published or included in customer search/checkout. See the owner-authorized publication below for the subsequent activation. Direct unauthenticated Cloud Storage access returned 403.
 
 | Category | New drafts |
 | --- | ---: |
@@ -125,8 +125,8 @@ python -m scripts.publish_photo_catalogue \
 
 The operator must have Google Cloud data access and identify a configured website owner.
 The script only activates that owner's untouched, successfully analysed photo drafts.
-Price, stock, photo, title or other seller edits cause validation to stop rather than being
-replaced. A compare-before-write transaction rejects concurrent edits. Original records
+Existing price or stock edits, or semantic changes without current analysis, stop
+validation rather than being replaced. A compare-before-write transaction rejects concurrent edits. Original records
 are saved outside the repository before publication; published records are skipped on retry.
 
 The original image analysis is reused because adding prices, sizes and stock does not
@@ -139,3 +139,43 @@ colour, title, description or image still invalidate analysis normally.
 Publication clears the draft state and queues deterministic, resumable index jobs in
 batches of 100. Jobs generate Gemini Embedding 2 vectors and current price/stock facets
 using the normal worker. No AI quota counters or concurrency limits are increased.
+
+## Published result — 14 October 2026
+
+All **365 imported products are active and indexed**, with **3,175 variants**, all configured
+sizes, and stock at both existing stores. The catalogue contains 565 records and 565
+current Gemini Embedding 2 vectors. Customer browsing returns 555 products: all 365
+new listings plus 190 existing listings passing the pre-existing quality filters.
+The 200 original commercial records were not changed. Two ambiguous source photos
+remain excluded. See [publication audit](photo-publication-audit.json).
+
+Four Cloud Tasks indexing jobs succeeded without errors. They generated 365 normalized
+768-dimensional embeddings and reused all 365 image analyses, preserving 8,871 tags
+with their evidence, confidence and assessment dates. The audit checked every new
+product hash, vector hash, model space, metadata hash, price, size, stock and search facet.
+No additional image-analysis calls were made during publication.
+
+A temporary signed-in customer verified the deployed behavior:
+
+- Inventory returned all 365 new products; an imported photo was served successfully.
+- Semantic search found the requested imported evening gown and 16 new products among
+  18 results. This is a functional retrieval check, not a relevance benchmark.
+- A dress-and-shoes order totaling **₹4,298** was saved without payment and appeared
+  in the seller order projection. Repeating the same request reused the existing order.
+- The streamed stylist returned three evening wedding-guest outfits, each **₹4,298**,
+  using five distinct newly imported products. Every product ID, size, store, current
+  price and stock was checked. The response used Firestore vector search, Gemini
+  Embedding 2 and Gemini outfit assessment, with six text events in 23.02 seconds.
+- Direct unauthenticated Cloud Storage access remained 403; customer access to protected
+  admin metadata remained 403. Web/API health returned 200; the private worker returned 403.
+
+The temporary account, saved test order and seller projections were removed afterward.
+No stock was changed. See [live checks](photo-publication-live-results.json).
+
+**213 backend tests passed locally and in Cloud Build.** All changed Python files passed
+Ruff. A repository-wide Ruff scan still reports 118 findings in unchanged files; those
+were not included in this catalogue change. No frontend source changes were needed.
+
+Cloud Build `01d4e96d-2975-4ed6-b7ff-eb38629e4de0` succeeded for backend commit
+`8ae0815`. The API revision `flairify-api-00036-9pk` and private worker revision
+`flairify-worker-00072-22g` were verified on that image with 100% traffic.

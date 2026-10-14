@@ -1,0 +1,101 @@
+{
+  "browse": {
+    "new_products": 365,
+    "total_visible": 555,
+    "seconds": 4.99,
+    "categories": {
+      "top": 63,
+      "bottom": 53,
+      "bag": 50,
+      "shoes": 58,
+      "jacket": 90,
+      "dress": 51
+    }
+  },
+  "media": {
+    "authenticated_image_status": 200,
+    "bytes": 41427,
+    "unauthenticated_storage_status": 403,
+    "customer_admin_metadata_status": 403
+  },
+  "semantic_search": {
+    "query": "Black Embellished Strapless Evening Gown",
+    "expected_product_found": true,
+    "new_products_in_results": 16,
+    "result_count": 18
+  },
+  "purchase": {
+    "items": 2,
+    "total": 4298,
+    "persisted": true,
+    "duplicate_request_reused_order": true,
+    "seller_order_visible": true,
+    "payment_required": false
+  },
+  "stylist": {
+    "text": "I\u2019ve put together three contemporary evening wedding guest looks featuring black dresses paired with sleek sandals. \n\nI\u2019m drawn to the first option with the black and beige asymmetric gown\u2014the subtle contrast detailing feels artful and modern while remaining refined, and the strappy stiletto sandals keep the silhouette light. If you prefer an all-black moment, the off-the-shoulder lace layered maxi offers romantic texture without being over the top. \n\nDo any of these catch your eye, or would you like to explore different necklines?",
+    "retrieval": {
+      "method": "firestore-vector",
+      "model": "gemini-embedding-2",
+      "dimensions": 768,
+      "candidates": 70,
+      "category_queries": 4,
+      "query_version": "category-context-v3-enriched",
+      "semantic": true
+    },
+    "new_products_recommended": 5,
+    "text_events": 6,
+    "seconds": 23.02,
+    "outfits": [
+      {
+        "total": 4298,
+        "source": "gemini",
+        "products": [
+          {
+            "id": "drive-71d1d8764d95d2d011ce0c99",
+            "name": "Black and Beige Asymmetric Evening Gown",
+            "category": "dress"
+          },
+          {
+            "id": "drive-fcf1d493493d8b7bfd455d99",
+            "name": "Black Strappy Stiletto Heeled Sandals",
+            "category": "shoes"
+          }
+        ]
+      },
+      {
+        "total": 4298,
+        "source": "gemini",
+        "products": [
+          {
+            "id": "drive-659fb13ba0670515193e42b4",
+            "name": "Black and Blush Asymmetric Evening Dress",
+            "category": "dress"
+          },
+          {
+            "id": "drive-5e141a8cb0d843e0d8045171",
+            "name": "Black Strappy Heeled Mules",
+            "category": "shoes"
+          }
+        ]
+      },
+      {
+        "total": 4298,
+        "source": "gemini",
+        "products": [
+          {
+            "id": "drive-416f3963b8337d2ef8d236a1",
+            "name": "Black Off-the-Shoulder Lace Layered Maxi Dress",
+            "category": "dress"
+          },
+          {
+            "id": "drive-fcf1d493493d8b7bfd455d99",
+            "name": "Black Strappy Stiletto Heeled Sandals",
+            "category": "shoes"
+          }
+        ]
+      }
+    ]
+  },
+  "cleanup": "Temporary account, saved test order and seller projections removed; no stock changed"
+}

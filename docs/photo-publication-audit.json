@@ -1,0 +1,66 @@
+{
+  "new_active_indexed_products": 365,
+  "total_stored_products": 565,
+  "total_current_search_vectors": 565,
+  "original_commerce_records_unchanged": 200,
+  "reused_image_analyses": 365,
+  "new_image_analyses": 0,
+  "new_embeddings": 365,
+  "metadata_tags_preserved": 8871,
+  "category_counts": {
+    "top": 63,
+    "jacket": 90,
+    "bag": 50,
+    "dress": 51,
+    "shoes": 58,
+    "bottom": 53
+  },
+  "policy": {
+    "version": "drive-payment-free-v1",
+    "currency": "INR",
+    "prices": {
+      "top": 999,
+      "bottom": 1299,
+      "dress": 2499,
+      "jacket": 2299,
+      "shoes": 1799,
+      "bag": 1499
+    },
+    "clothing_sizes": [
+      "XXS",
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "3XL",
+      "4XL"
+    ],
+    "shoe_sizes": [
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47",
+      "48"
+    ],
+    "store_ids": [
+      "bandra",
+      "lower-parel"
+    ],
+    "quantity_per_variant_per_store": 20
+  },
+  "successful_index_jobs": 4,
+  "failed_index_jobs": 0,
+  "validated_variant_count": 3175,
+  "verified_at": "2026-10-14T02:44:08.253011+00:00"
+}
