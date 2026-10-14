@@ -1,0 +1,9 @@
+{
+  "version": "drive-payment-free-v1",
+  "currency": "INR",
+  "prices": {"top": 999, "bottom": 1299, "dress": 2499, "jacket": 2299, "shoes": 1799, "bag": 1499},
+  "clothing_sizes": ["XXS", "XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL"],
+  "shoe_sizes": ["35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48"],
+  "store_ids": ["bandra", "lower-parel"],
+  "quantity_per_variant_per_store": 20
+}

@@ -86,3 +86,56 @@ All 15 folders were scanned and all 367 images were downloaded and byte-length c
 There are no failed or stale draft enrichment records at audit time. Physical metadata tags remain unknown because the image collection supplied no material/performance specifications. Photo-derived observations are labelled visual; suitability and pairing tags remain styling hypotheses. One transient analysis failure succeeded on retry. A sheet of 24 garment crops was visually inspected; no detection accuracy, calibrated confidence or duplicate-recall score is claimed. See [the final data audit](photo-import-audit.json).
 
 The full access/health check was repeated successfully after deploying the bounded image lookup. Temporary QA identities were removed after each run.
+
+## Owner-configured publication
+
+After reviewing the missing commercial fields, the owner explicitly selected configurable
+catalogue prices and all sizes for the existing payment-free shopping flow. The defaults
+in [`config/photo-catalogue-pricing.json`](../config/photo-catalogue-pricing.json) are:
+
+| Category | Price (INR) | Sizes |
+| --- | ---: | --- |
+| Top | 999 | XXS through 4XL |
+| Bottom | 1,299 | XXS through 4XL |
+| Dress | 2,499 | XXS through 4XL |
+| Jacket | 2,299 | XXS through 4XL |
+| Shoes | 1,799 | 35 through 48 |
+| Bag | 1,499 | One size |
+
+Each variant is configured with quantity 20 at the existing Bandra and Lower Parel stores.
+These are owner-configured commerce settings, not availability, size ranges or prices
+recovered from photographs or a retailer feed. No aisle, delivery promise or material is
+invented. Payment-free orders retain the existing behavior: saved order, no payment,
+shipment or stock reservation. Individual prices and stock can be changed in Seller Studio.
+The configuration file supplies defaults for future batches; it does not overwrite existing
+seller changes when rerun.
+
+Publish an explicit JSON list of imported product IDs using the approved policy:
+
+```sh
+python -m scripts.publish_photo_catalogue \
+  --product-ids /private/imported-product-ids.json \
+  --requester OWNER_UID
+# Review the dry-run counts and policy, then apply with a private backup:
+python -m scripts.publish_photo_catalogue \
+  --product-ids /private/imported-product-ids.json \
+  --requester OWNER_UID \
+  --backup /private/before-publication.json --write
+```
+
+The operator must have Google Cloud data access and identify a configured website owner.
+The script only activates that owner's untouched, successfully analysed photo drafts.
+Price, stock, photo, title or other seller edits cause validation to stop rather than being
+replaced. A compare-before-write transaction rejects concurrent edits. Original records
+are saved outside the repository before publication; published records are skipped on retry.
+
+The original image analysis is reused because adding prices, sizes and stock does not
+change visual evidence. Variant colour repeats the exact colour already analysed in the
+listing. A guarded semantic comparison verifies that all remaining facts and the image
+are unchanged. Cache audit records preserve the previous fingerprint and reuse reason;
+assessment dates, evidence, confidence and usage remain unchanged. Later changes to
+colour, title, description or image still invalidate analysis normally.
+
+Publication clears the draft state and queues deterministic, resumable index jobs in
+batches of 100. Jobs generate Gemini Embedding 2 vectors and current price/stock facets
+using the normal worker. No AI quota counters or concurrency limits are increased.
