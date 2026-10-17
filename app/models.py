@@ -284,6 +284,8 @@ class TryOnSelection(Model):
 
 
 class GenerationRequest(Model):
+    conversation_id: str | None = Field(default=None, max_length=100)
+    message_id: str | None = Field(default=None, max_length=100)
     selections: list[TryOnSelection] = Field(default_factory=list, max_length=20)
     outfit_id: str | None = None
     reference_id: str | None = None

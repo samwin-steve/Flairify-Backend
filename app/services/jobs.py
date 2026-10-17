@@ -13,7 +13,11 @@ pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="flairify-local")
 
 
 def public(job):
-    return {k: v for k, v in job.items() if k not in ("payload", "operation", "lease_until")}
+    result = {k: v for k, v in job.items() if k not in ("payload", "operation", "lease_until")}
+    for field in ("conversation_id", "message_id"):
+        if job.get("payload", {}).get(field):
+            result[field] = job["payload"][field]
+    return result
 
 
 def enqueue(owner, job_id, delay=0):

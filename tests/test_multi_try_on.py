@@ -235,3 +235,49 @@ def test_daily_image_limit_fails_before_queue_and_is_clear_if_reached_while_wait
     new = c.post("/api/generate/try_on", json={"product_id": "p-shirt", "request_key": "after-limit-used"})
     assert new.status_code == 429 and "05:30 India time" in new.json()["detail"]
     assert len(c.get("/api/jobs").json()["jobs"]) == 1
+
+
+def test_chat_preview_context_persists_and_regenerates(signed):
+    from app.models import Conversation, Message
+
+    c, owner, calls = signed
+    reference(owner)
+    conversation = Conversation(messages=[Message(id="answer", role="assistant", content="Your look")])
+    store().put("conversations", owner, conversation.id, conversation.model_dump(mode="json"))
+    request = {
+        "selections": [selection(product("top"))],
+        "conversation_id": conversation.id,
+        "message_id": "answer",
+        "request_key": "chat-preview-request",
+    }
+    result = job(c, c.post("/api/generate/try_on", json=request))
+    assert result["status"] == "succeeded"
+    assert result["conversation_id"] == conversation.id
+    assert result["message_id"] == "answer"
+    assert "payload" not in result
+    assert c.post("/api/generate/try_on", json=request).json()["id"] == result["id"]
+    assert len(calls) == 1
+    regenerated = job(c, c.post(f"/api/jobs/{result['id']}/regenerate"))
+    assert regenerated["conversation_id"] == conversation.id
+    assert regenerated["message_id"] == "answer"
+    assert regenerated["id"] != result["id"]
+
+
+def test_chat_preview_rejects_foreign_or_missing_messages_before_generation(signed):
+    from app.models import Conversation, Message
+
+    c, owner, calls = signed
+    conversation = Conversation(messages=[Message(id="answer", role="assistant", content="Look")])
+    store().put("conversations", "another-owner", conversation.id, conversation.model_dump(mode="json"))
+    request = {
+        "conversation_id": conversation.id,
+        "message_id": "answer",
+        "request_key": "foreign-chat-preview",
+    }
+    assert c.post("/api/generate/try_on", json=request).status_code == 404
+    store().put("conversations", owner, conversation.id, conversation.model_dump(mode="json"))
+    request["message_id"] = "missing"
+    assert c.post("/api/generate/try_on", json=request).status_code == 404
+    request.pop("message_id")
+    assert c.post("/api/generate/try_on", json=request).status_code == 422
+    assert not calls

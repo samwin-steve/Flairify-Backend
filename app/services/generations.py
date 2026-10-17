@@ -13,6 +13,14 @@ from . import jobs, try_on
 def submit(kind, data, p):
     if kind not in ("try_on", "video", "avatar"):
         raise HTTPException(404, "Unknown generation type")
+    if data.conversation_id or data.message_id:
+        if kind != "try_on" or not (data.conversation_id and data.message_id):
+            raise HTTPException(422, "A chat preview needs a conversation and message.")
+        conversation = require_record("conversations", p.uid, data.conversation_id)
+        if not any(
+            m["id"] == data.message_id and m["role"] == "assistant" for m in conversation.get("messages", [])
+        ):
+            raise HTTPException(404, "This chat message is no longer available.")
     # Check idempotency before charging the quota.
     key = hashlib.sha256(f"{kind}:{data.request_key}".encode()).hexdigest()[:32]
     existing = store().get("jobs", p.uid, key)
