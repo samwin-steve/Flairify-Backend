@@ -137,9 +137,13 @@ def get_profile(p: Principal = Depends(principal)):
 
 
 @app.put("/api/profile")
-def put_profile(profile: UserProfile, p: Principal = Depends(principal)):
+def put_profile(
+    profile: UserProfile, p: Principal = Depends(principal), complete_onboarding: bool = False
+):
     existing = store().get("profiles", p.uid, "me") or {}
-    profile.onboarding_complete = existing.get("onboarding_complete", False)
+    if complete_onboarding and (not profile.clothing_size.strip() or not profile.shoe_size.strip()):
+        raise HTTPException(409, "Save your clothing and shoe sizes in Profile first")
+    profile.onboarding_complete = complete_onboarding or existing.get("onboarding_complete", False)
     if profile.preferred_store_id and not store().get("stores", p.catalog_owner, profile.preferred_store_id):
         raise HTTPException(422, "Choose an available store or all stores")
     if not profile.consent.remember_preferences:
@@ -149,7 +153,9 @@ def put_profile(profile: UserProfile, p: Principal = Depends(principal)):
         # Optional long-term style/colour memory has separate consent.
     from .services.graph import clear
 
-    clear(p.uid)
+    # Outfit graphs are only created after setup. New accounts have no graph to clear.
+    if existing.get("onboarding_complete"):
+        clear(p.uid)
     return store().put("profiles", p.uid, "me", profile.model_dump())
 
 
