@@ -13,6 +13,7 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setenv("APP_MODE", "demo")
     monkeypatch.setenv("STORE_BACKEND", "sqlite")
     monkeypatch.setenv("ENABLE_PAID_AI", "false")
+    monkeypatch.setenv("ENABLE_MODEL_ARMOR", "false")
     monkeypatch.setenv("DEMO_ADMIN_KEY", "test-admin-key")
     monkeypatch.setenv("MEDIA_BUCKET", "")
     monkeypatch.setenv("WORKER_URL", "")

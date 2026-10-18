@@ -1,0 +1,24 @@
+{
+  "labels": {"application": "flairify"},
+  "filterConfig": {
+    "raiSettings": {
+      "raiFilters": [
+        {"filterType": "DANGEROUS", "confidenceLevel": "MEDIUM_AND_ABOVE"},
+        {"filterType": "HATE_SPEECH", "confidenceLevel": "MEDIUM_AND_ABOVE"},
+        {"filterType": "HARASSMENT", "confidenceLevel": "MEDIUM_AND_ABOVE"},
+        {"filterType": "SEXUALLY_EXPLICIT", "confidenceLevel": "MEDIUM_AND_ABOVE"}
+      ]
+    },
+    "piAndJailbreakFilterSettings": {
+      "filterEnforcement": "ENABLED", "confidenceLevel": "MEDIUM_AND_ABOVE"
+    },
+    "maliciousUriFilterSettings": {"filterEnforcement": "ENABLED"}
+  },
+  "templateMetadata": {
+    "logSanitizeOperations": false,
+    "logTemplateOperations": true,
+    "ignorePartialInvocationFailures": false,
+    "enforcementType": "INSPECT_AND_BLOCK",
+    "filterVersionSelector": {"alias": "FILTER_VERSION_ALIAS_STABLE"}
+  }
+}

@@ -16,7 +16,7 @@ from ..models import Conversation, Message, now
 from ..store import store
 from ..utils.errors import chat_failure
 from ..utils.events import sse
-from . import conversation_context, recommendations
+from . import conversation_context, recommendations, request_safety
 
 
 def re_search_request(message):
@@ -74,6 +74,7 @@ def prepare(principal, request):
             raise HTTPException(409, "Your previous message is still being answered. Please wait a moment.")
         return {"key": key, "until": time.time() + 150}
 
+    request_safety.check(request.message)
     store().mutate("chat_locks", owner, "active", acquire)
     try:
         quota(owner, "chat", 50)

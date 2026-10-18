@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     max_daily_garment_images: int = 12
     veo_model: str = ""
     enable_paid_ai: bool = False
+    enable_model_armor: bool = False
+    model_armor_template: str = ""
     google_photos_client_id: str = ""
     worker_url: str = ""
     task_service_account: str = ""
