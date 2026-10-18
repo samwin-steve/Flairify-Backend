@@ -1,0 +1,97 @@
+{
+  "catalogue": {
+    "seconds": 11.117,
+    "json_bytes": 1902059,
+    "products": 555
+  },
+  "images": [
+    {
+      "product_id": "drive-04b108a27d35dd2bbdb248af",
+      "seconds": 0.926,
+      "bytes": 34272,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-09a7bf33b49bd7fdaa4513d8",
+      "seconds": 1.114,
+      "bytes": 37990,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-0a172e05b89099d3d64152b8",
+      "seconds": 1.315,
+      "bytes": 97357,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-0ab9a191c9a5b224e133bee3",
+      "seconds": 1.312,
+      "bytes": 89920,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-12e65abc08f0f914d4a16ee0",
+      "seconds": 0.623,
+      "bytes": 33956,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-1d842dd98cd5b4f991f6044b",
+      "seconds": 0.859,
+      "bytes": 42653,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-26d6f8d1fbaffb731319bc53",
+      "seconds": 0.828,
+      "bytes": 93764,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-2ea2584ff50990ae8e74d880",
+      "seconds": 1.019,
+      "bytes": 113922,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-3373971572f6b39157285e73",
+      "seconds": 0.868,
+      "bytes": 121284,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-3b9db7d000eadf5c894241e1",
+      "seconds": 0.577,
+      "bytes": 20582,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-3c34748012d74e52fb2a2580",
+      "seconds": 0.816,
+      "bytes": 75661,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    },
+    {
+      "product_id": "drive-411f1ffdd9a7cc4499af354f",
+      "seconds": 0.668,
+      "bytes": 47712,
+      "cache_control": "no-store, no-transform",
+      "type": "image/jpeg"
+    }
+  ],
+  "batch_seconds": 3.006,
+  "median_image_seconds": 0.863,
+  "image_bytes": 809073,
+  "cleanup": "Temporary Firebase account removed; no profile or other owner records created"
+}

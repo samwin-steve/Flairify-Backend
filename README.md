@@ -101,3 +101,10 @@ Customer-facing actions say **Buy** and **Order placed**. Orders remain saved wi
 New and edited listings now run through evidence-checked Gemini photo enrichment before semantic indexing. Seller Studio exposes the resulting styling details, confidence, unknown fields and validation notes. See [catalogue enrichment](docs/CATALOGUE_ENRICHMENT.md) for the schema, automatic updates, safe bulk backfill and version migrations.
 
 The supplied Drive photo collection is imported through a private draft workflow with source references and Gemini garment crops. See [photo catalogue imports](docs/PHOTO_CATALOGUE_IMPORT.md) and [collected enrichment results](docs/CATALOGUE_ENRICHMENT_RESULTS.md).
+
+## Image performance
+
+Inventory supports bounded 24-product cursor pages and selected-ID checkout reads.
+Private WebP derivatives, viewport-aware downloads and browser caching reduce image
+transfer without Redis. See [delivery design](docs/IMAGE_DELIVERY.md) and
+[collected verification](docs/IMAGE_DELIVERY_RESULTS.md).

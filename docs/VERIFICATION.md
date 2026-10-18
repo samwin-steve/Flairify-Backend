@@ -1,3 +1,11 @@
+# Image performance update — 18 October 2026
+
+See [image delivery results](IMAGE_DELIVERY_RESULTS.md): both latest repositories were
+pulled, 365 thumbnails prepared, the initial Inventory payload reduced by 95.63%,
+and authenticated browser cache hits verified with zero transferred bytes. Backend
+and frontend Cloud Builds succeeded; 235 backend tests, 48 frontend logic tests and
+28 distinct targeted desktop/mobile browser cases passed across reruns.
+
 # Latest catalogue update — 14 October 2026
 
 See [catalogue enrichment verification](CATALOGUE_ENRICHMENT_RESULTS.md) for the completed 200-product backfill, live incremental indexing and four real streamed conversation checks. See [photo import and publication](PHOTO_CATALOGUE_IMPORT.md) for 365 newly published Drive products with configurable prices, all supported sizes, verified semantic retrieval and a saved payment-free order. All 213 backend tests passed.
