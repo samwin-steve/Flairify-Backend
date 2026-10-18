@@ -6,3 +6,18 @@
 **/__pycache__
 infra
 scripts
+
+# Local credentials and signing keys must never be committed or uploaded.
+secrets/
+credentials/
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*-service-account.json
+service-account*.json
+service_account*.json
+credentials*.json
+client_secret*.json
+application_default_credentials.json

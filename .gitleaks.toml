@@ -1,0 +1,15 @@
+title = "Flairify secret scanning"
+
+[extend]
+useDefault = true
+
+# These three historical documentation findings are Cloud Run revision names.
+# Keep every default detector enabled; only exempt this exact non-secret format.
+[[rules]]
+id = "generic-api-key"
+[[rules.allowlists]]
+description = "Verified Cloud Run revision identifiers in deployment evidence"
+condition = "AND"
+regexTarget = "secret"
+regexes = ['''^flairify-api-[0-9]{5}-[a-z0-9]{3}$''']
+paths = ['''(^|/)docs/live-(voice-return|voice-actions|multi-preview)-results\.json$''']
