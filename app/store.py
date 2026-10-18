@@ -43,21 +43,30 @@ class Store:
             ).fetchone()
         return json.loads(r[0]) if r else None
 
-    def list(self, kind, owner):
+    def list(self, kind, owner, *, fields=None):
         if self.cloud:
             from google.cloud.firestore_v1.base_query import FieldFilter
 
-            return [
-                s.to_dict()["data"]
-                for s in self.db.collection("flairify_" + kind)
-                .where(filter=FieldFilter("owner", "==", owner))
-                .stream()
-            ]
+            query = self.db.collection("flairify_" + kind).where(filter=FieldFilter("owner", "==", owner))
+            if fields:
+                query = query.select(["data." + name for name in fields])
+            return [s.to_dict()["data"] for s in query.stream()]
         with self.lock:
             rows = self.db.execute(
                 "SELECT data FROM records WHERE kind=? AND owner=? ORDER BY rowid", (kind, owner)
             ).fetchall()
-        return [json.loads(r[0]) for r in rows]
+        values = [json.loads(r[0]) for r in rows]
+        return [{k: v for k, v in row.items() if k in fields} for row in values] if fields else values
+
+    def get_many(self, kind, owner, keys, *, fields=None):
+        if self.cloud:
+            refs = [self.ref(kind, owner, key) for key in dict.fromkeys(keys)]
+            if not refs:
+                return []
+            mask = ["data." + name for name in fields] if fields else None
+            return [snap.to_dict()["data"] for snap in self.db.get_all(refs, field_paths=mask) if snap.exists]
+        values = [self.get(kind, owner, key) for key in dict.fromkeys(keys)]
+        return [{k: v for k, v in row.items() if not fields or k in fields} for row in values if row]
 
     def put(self, kind, owner, key, data):
         if self.cloud:
