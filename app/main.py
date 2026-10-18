@@ -5,7 +5,7 @@ import secrets
 import time
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Response, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
@@ -32,6 +32,7 @@ from .services import (
     avatars,
     garment_images,
     inventory,
+    image_delivery,
     jobs,
     media,
     orders,
@@ -377,17 +378,22 @@ def delete_photo(key: str, p: Principal = Depends(principal)):
 
 
 @app.get("/api/media/{key}")
-def get_media(key: str, p: Principal = Depends(principal)):
-    raw, mime = media.read(p.uid, key)
-    return Response(
-        raw,
-        media_type=mime,
-        headers={"Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff"},
-    )
+def get_media(
+    key: str,
+    width: int | None = None,
+    if_none_match: str | None = Header(None),
+    p: Principal = Depends(principal),
+):
+    return image_delivery.response(p.uid, key, width, if_none_match)
 
 
 @app.get("/api/catalog/media/{key}")
-def product_media(key: str, p: Principal = Depends(principal)):
+def product_media(
+    key: str,
+    width: int | None = None,
+    if_none_match: str | None = Header(None),
+    p: Principal = Depends(principal),
+):
     uploaded = store().get("media", p.catalog_owner, key) or {}
     own_upload = (p.admin or p.seller) and uploaded.get("uploader_id") == p.uid
     listed = own_upload or inventory.image_visible(p, key)
@@ -399,8 +405,7 @@ def product_media(key: str, p: Principal = Depends(principal)):
             history += store().list("seller_orders", p.uid)
         if not any(line.get("image") == "media:" + key for order in history for line in order["items"]):
             raise HTTPException(404, "Product image not found")
-    raw, mime = media.read(p.catalog_owner, key)
-    return Response(raw, media_type=mime, headers={"Cache-Control": "private, no-store"})
+    return image_delivery.response(p.catalog_owner, key, width, if_none_match, catalog=True, record=uploaded)
 
 
 @app.post("/api/wardrobe/import")
@@ -439,17 +444,29 @@ def complete(p: Principal = Depends(principal)):
 
 @app.get("/api/catalog")
 def catalog(
-    q: str = "", category: str | None = None, budget: int = 1000000, p: Principal = Depends(principal)
+    q: str = "", category: str | None = None, budget: int = 1000000, p: Principal = Depends(principal),
+    page_size: int | None = Query(None, ge=1, le=48), cursor: str | None = None,
+    department: str | None = None, available_only: bool = True, ids: str | None = None,
 ):
     if p.demo or settings().seed_sample_catalog:
         inventory.seed_catalog(p.catalog_owner)
+    from .services import catalogue_browse
+
+    if ids is not None:
+        result = {"products": catalogue_browse.selected(p.catalog_owner, ids)}
+    elif page_size is not None:
+        result = catalogue_browse.page(p.catalog_owner, q=q, budget=budget, category=category,
+            department=department, available_only=available_only, page_size=page_size, cursor=cursor)
+    else:
+        result = {"products": inventory.search(p.catalog_owner, q, budget, category)}
     return {
+        **result,
         "products": [
             {
                 **{k: v for k, v in product.items() if k != "enrichment"},
                 "try_on_supported": try_on.supports(product),
             }
-            for product in inventory.search(p.catalog_owner, q, budget, category)
+            for product in result["products"]
         ]
     }
 

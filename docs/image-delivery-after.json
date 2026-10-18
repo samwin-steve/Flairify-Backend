@@ -1,0 +1,135 @@
+{
+  "first_page": {
+    "seconds": 3.584,
+    "json_bytes": 83061,
+    "products": 24
+  },
+  "selected_checkout_read": {
+    "products": 12,
+    "seconds": 0.66,
+    "bytes": 45812
+  },
+  "images": [
+    {
+      "product_id": "drive-04b108a27d35dd2bbdb248af",
+      "seconds": 0.91,
+      "bytes": 13530,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-2ea2584ff50990ae8e74d880",
+      "seconds": 1.051,
+      "bytes": 28090,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-411f1ffdd9a7cc4499af354f",
+      "seconds": 0.932,
+      "bytes": 10376,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-1d842dd98cd5b4f991f6044b",
+      "seconds": 0.987,
+      "bytes": 12178,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-26d6f8d1fbaffb731319bc53",
+      "seconds": 0.57,
+      "bytes": 16026,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-12e65abc08f0f914d4a16ee0",
+      "seconds": 0.512,
+      "bytes": 11110,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-0ab9a191c9a5b224e133bee3",
+      "seconds": 0.487,
+      "bytes": 29552,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-3373971572f6b39157285e73",
+      "seconds": 0.512,
+      "bytes": 6018,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-3b9db7d000eadf5c894241e1",
+      "seconds": 0.522,
+      "bytes": 5260,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-09a7bf33b49bd7fdaa4513d8",
+      "seconds": 0.492,
+      "bytes": 10188,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-3c34748012d74e52fb2a2580",
+      "seconds": 0.585,
+      "bytes": 15242,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    },
+    {
+      "product_id": "drive-0a172e05b89099d3d64152b8",
+      "seconds": 0.514,
+      "bytes": 17286,
+      "cache_control": "private, max-age=300, must-revalidate",
+      "type": "image/webp"
+    }
+  ],
+  "batch_seconds": 2.078,
+  "median_image_seconds": 0.546,
+  "image_bytes": 174856,
+  "checks": {
+    "next_page_disjoint": true,
+    "department_category_filters": true,
+    "conditional_revalidation_status": 304,
+    "original_download_status": 200,
+    "unauthenticated_image_status": 401
+  },
+  "browser": {
+    "first": {
+      "status": 200,
+      "milliseconds": 433.2,
+      "bytes": 13530,
+      "cacheControl": "private, max-age=300, must-revalidate",
+      "transferSize": 13830,
+      "decodedBodySize": 13530
+    },
+    "second": {
+      "status": 200,
+      "milliseconds": 1.5,
+      "bytes": 13530,
+      "cacheControl": "private, max-age=300, must-revalidate",
+      "transferSize": 0,
+      "decodedBodySize": 13530
+    },
+    "unauthenticatedStatus": 401,
+    "staticImage": {
+      "status": 200,
+      "type": "image/webp",
+      "bytes": 33704
+    }
+  },
+  "initial_json_reduction_percent": 95.63,
+  "same_12_images_reduction_percent": 78.39,
+  "cleanup": "Temporary Firebase account removed; no profile, generation or order was created"
+}

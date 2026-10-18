@@ -86,6 +86,8 @@ See [SEMANTIC_RAG.md](docs/SEMANTIC_RAG.md) for the Gemini Embedding 2 / Firesto
 
 **Talk** starts a native Google Gemini Live conversation with spoken replies, live transcripts and the same grounded recommendation tools. Voice retains saved shopping preferences and conversation context, supports outfit refinements, garment selection by name and explicit spoken “See it on me” requests, and offers mute/end controls. Selected pieces are checked against retrieved records and current stock, then queued through the shared Google try-on service. Previews open in Fitting Room while voice remains connected. Repeated voice requests return the same job; transient browser connection loss gets one bounded recovery attempt. Transcripts are saved; audio is not stored by Flairify. See [voice setup, security and limits](docs/VOICE_STYLIST.md). Voice requires a signed-in account and an explicitly configured Vertex Live model; credential-free demo chat remains available as text.
 
+**Request safety:** Google Cloud Model Armor screens incoming chat text and guards voice tool actions when configured. Matches are refused before shopping actions; unavailable checks fail closed with a retry message. Raw live audio continues to use Gemini's provider safety. See [policy, setup, scope and collected validation](docs/MODEL_ARMOR.md).
+
 ## Occasion-aware recommendations
 
 Saved shopping settings replace the repeated chat selectors. Catalogue-only recommendations work without photos; the chat switch opts into suitable confirmed wardrobe pieces. Ranking retains semantic similarity, interprets the occasion, assesses complete shortlisted outfits with Gemini and diversifies the main garment. Checkout preselects saved/recommended variants but still requires review and confirmation. See [recommendation quality and limits](docs/RECOMMENDATION_QUALITY.md).
@@ -101,3 +103,10 @@ Customer-facing actions say **Buy** and **Order placed**. Orders remain saved wi
 New and edited listings now run through evidence-checked Gemini photo enrichment before semantic indexing. Seller Studio exposes the resulting styling details, confidence, unknown fields and validation notes. See [catalogue enrichment](docs/CATALOGUE_ENRICHMENT.md) for the schema, automatic updates, safe bulk backfill and version migrations.
 
 The supplied Drive photo collection is imported through a private draft workflow with source references and Gemini garment crops. See [photo catalogue imports](docs/PHOTO_CATALOGUE_IMPORT.md) and [collected enrichment results](docs/CATALOGUE_ENRICHMENT_RESULTS.md).
+
+## Image performance
+
+Inventory supports bounded 24-product cursor pages and selected-ID checkout reads.
+Private WebP derivatives, viewport-aware downloads and browser caching reduce image
+transfer without Redis. See [delivery design](docs/IMAGE_DELIVERY.md) and
+[collected verification](docs/IMAGE_DELIVERY_RESULTS.md).

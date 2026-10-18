@@ -1,0 +1,11 @@
+{
+  "catalogue_photos": 365,
+  "width": 384,
+  "format": "image/webp",
+  "original_bytes": 26407072,
+  "thumbnail_bytes": 4273444,
+  "bytes_reduction_percent": 83.82,
+  "errors": 0,
+  "source_files_preserved": true,
+  "ai_model_calls": 0
+}

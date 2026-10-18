@@ -20,6 +20,10 @@ def index_product(owner, key):
     product = store().get("products", owner, key)
     if not product:
         return counts
+    if product.get("active", True) and product.get("image", "").startswith("media:"):
+        from . import image_delivery
+
+        image_delivery.warm_product(owner, product)
     product, analyzed = enrichment.ensure(owner, product)
     counts["enriched"] = int(analyzed)
     counts["enrichment_reused"] = int(not analyzed and enrichment.current(product))

@@ -1,5 +1,6 @@
 import hashlib
 import io
+from functools import lru_cache
 from pathlib import Path
 from PIL import Image, ImageOps, UnidentifiedImageError
 from fastapi import HTTPException
@@ -8,6 +9,14 @@ from ..models import uid, now
 from ..store import store
 
 Image.MAX_IMAGE_PIXELS = 30_000_000
+
+
+@lru_cache(maxsize=4)
+def storage_client(project):
+    # Reuse HTTP connections across image requests on a warm Cloud Run instance.
+    from google.cloud import storage
+
+    return storage.Client(project=project)
 
 
 def normalize(raw: bytes):
@@ -42,11 +51,9 @@ def save(owner, raw, mime="image/jpeg", source_id=None):
     key = f"{owner}/{media_id}.{ext}"
     cfg = settings()
     if cfg.media_bucket:
-        from google.cloud import storage
-
-        storage.Client(project=cfg.google_cloud_project).bucket(cfg.media_bucket).blob(
-            key
-        ).upload_from_string(raw, content_type=mime)
+        storage_client(cfg.google_cloud_project).bucket(cfg.media_bucket).blob(key).upload_from_string(
+            raw, content_type=mime
+        )
     else:
         path = Path(cfg.data_dir) / "media" / key
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -64,16 +71,14 @@ def save(owner, raw, mime="image/jpeg", source_id=None):
     return media_id
 
 
-def read(owner, media_id):
-    record = store().get("media", owner, media_id)
-    if not record:
+def read(owner, media_id, *, record=None):
+    record = record or store().get("media", owner, media_id)
+    if not record or record.get("deleting"):
         raise HTTPException(404, "Photo or preview not found")
     cfg = settings()
     if cfg.media_bucket:
-        from google.cloud import storage
-
         data = (
-            storage.Client(project=cfg.google_cloud_project)
+            storage_client(cfg.google_cloud_project)
             .bucket(cfg.media_bucket)
             .blob(record["key"])
             .download_as_bytes()
@@ -87,11 +92,14 @@ def delete(owner, media_id):
     record = store().get("media", owner, media_id)
     if not record:
         return
+    # A concurrent thumbnail transform can see this marker before writing a derivative.
+    store().put("media", owner, media_id, {**record, "deleting": True})
+    from .image_delivery import delete_variants
+
+    delete_variants(owner, record)
     cfg = settings()
     if cfg.media_bucket:
-        from google.cloud import storage
-
-        blob = storage.Client(project=cfg.google_cloud_project).bucket(cfg.media_bucket).blob(record["key"])
+        blob = storage_client(cfg.google_cloud_project).bucket(cfg.media_bucket).blob(record["key"])
         blob.delete() if blob.exists() else None
     else:
         (Path(cfg.data_dir) / "media" / record["key"]).unlink(missing_ok=True)
