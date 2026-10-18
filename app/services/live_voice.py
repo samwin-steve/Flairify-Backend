@@ -145,10 +145,18 @@ async def voice_socket(ws: WebSocket):
     key = record = state = None
     terminal = ("ended", {"message": "Your voice chat is saved. Tap Talk whenever you want to continue."})
     sender_lock = asyncio.Lock()
+    detached = False
 
     async def emit(kind, data):
+        nonlocal detached
+        if detached:
+            return
         async with sender_lock:
-            await ws.send_json({"type": kind, **data})
+            try:
+                await ws.send_json({"type": kind, **data})
+            except (RuntimeError, WebSocketDisconnect, OSError):
+                # Losing the UI must not fail an already accepted tool action.
+                detached = True
 
     async def audio(data):
         async with sender_lock:
@@ -214,6 +222,8 @@ async def voice_socket(ws: WebSocket):
                 for task in done:
                     task.result()
             finally:
+                # Pending tools must be able to persist even after the browser leaves.
+                detached = True
                 for task in tasks:
                     task.cancel()
                 await asyncio.gather(*tasks, return_exceptions=True)
@@ -243,7 +253,7 @@ async def voice_socket(ws: WebSocket):
                         await asyncio.to_thread(store().delete, "voice_tickets", "system", key)
             finally:
                 try:
-                    await emit(*terminal)
+                    await ws.send_json({"type": terminal[0], **terminal[1]})
                 except (RuntimeError, WebSocketDisconnect):
                     pass
                 try:

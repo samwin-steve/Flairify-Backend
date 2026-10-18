@@ -7,6 +7,7 @@ import re
 import time
 import uuid
 from contextlib import asynccontextmanager
+from functools import wraps
 
 from fastapi import HTTPException
 from google import genai
@@ -48,6 +49,26 @@ class BlockingTool(FunctionTool):
         return declaration
 
 
+def complete_tool(message):
+    """Finish accepted work even when the Live transport is cancelled."""
+    def decorate(fn):
+        @wraps(fn)
+        async def wrapped(self, *args, **kwargs):
+            async def execute():
+                await self.emit("activity", {"message": message})
+                try:
+                    return await fn(self, *args, **kwargs)
+                finally:
+                    await self.emit("activity", {"message": ""})
+
+            task = asyncio.create_task(execute())
+            self.pending_tools.add(task)
+            task.add_done_callback(self.pending_tools.discard)
+            return await asyncio.shield(task)
+        return wrapped
+    return decorate
+
+
 class LiveStylist:
     def __init__(self, record, conversation, profile, emit, send_audio):
         self.principal = Principal(record["uid"])
@@ -63,6 +84,7 @@ class LiveStylist:
         self.last_text = 0
         self.provider = self.runner = None
         self.tool_lock = asyncio.Lock()
+        self.pending_tools = set()
         self.closed = False
         self.waiting_result_speech = False
         self.preview_job_id = None
@@ -120,6 +142,7 @@ class LiveStylist:
             )
         return self.bound
 
+    @complete_tool("Finding outfits…")
     async def suggest_outfits(
         self,
         customer_request: str,
@@ -177,6 +200,7 @@ class LiveStylist:
             except Exception as exc:  # noqa: BLE001 - keep voice alive; expose safe messages only
                 return self.tool_error(exc)
 
+    @complete_tool("Selecting garments…")
     async def select_garments(
         self, garment_names: list[str], replace_selection: bool = False, remove: bool = False
     ) -> dict:
@@ -202,6 +226,7 @@ class LiveStylist:
             except Exception as exc:  # noqa: BLE001 - keep voice alive; expose safe messages only
                 return self.tool_error(exc)
 
+    @complete_tool("Starting your preview…")
     async def see_it_on_me(self) -> dict:
         """ONLY when the customer explicitly asks to see/try the selected clothes on themselves, queue one Google AI preview. Select named garments first. Repeated calls return the same job."""
         async with self.tool_lock:
@@ -491,7 +516,11 @@ class LiveStylist:
         self.closed = True
         self.queue.close()
         try:
-            await self.finish(interrupted=True)
+            # The socket owns audio, not accepted tool work. Drain before saving
+            # the final turn and releasing the chat lease. Search has an 85s limit.
+            if self.pending_tools:
+                await asyncio.gather(*self.pending_tools, return_exceptions=True)
+            await self.finish(interrupted=True, notify=False)
         finally:
             if self.runner:
                 await self.runner.close()

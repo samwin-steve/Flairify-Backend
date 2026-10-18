@@ -300,3 +300,42 @@ def test_live_events_keep_tool_acknowledgement_and_recommendation_in_one_turn(cl
         assert sum(k == "turn" for k, _ in emitted) == 1
 
     asyncio.run(check())
+
+
+def test_ending_call_finishes_preview_submission_and_saves_chat_link(client, onboarded, monkeypatch):
+    import threading
+
+    from app.agents.live_stylist import LiveStylist
+    from app.services import voice_actions
+
+    started, proceed = threading.Event(), threading.Event()
+    emitted = []
+
+    def submit(*args):
+        started.set()
+        assert proceed.wait(3)
+        return {"id": "pending-preview", "status": "queued"}
+
+    async def emit(kind, data):
+        emitted.append((kind, data))
+
+    async def check():
+        state = LiveStylist({"uid": onboarded[0]["user_id"], "request": {}}, Conversation(), {}, emit, emit)
+        state.input_text = "Try these clothes on me"
+        task = asyncio.create_task(state.see_it_on_me())
+        assert await asyncio.to_thread(started.wait, 3)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+        closing = asyncio.create_task(state.close())
+        await asyncio.sleep(0)
+        assert not closing.done()
+        proceed.set()
+        await closing
+        saved = store().get("conversations", state.principal.uid, state.conversation.id)
+        assert saved["messages"][-1]["preview_job_id"] == "pending-preview"
+        assert emitted[0] == ("activity", {"message": "Starting your preview…"})
+        assert ("activity", {"message": ""}) in emitted
+
+    monkeypatch.setattr(voice_actions, "preview", submit)
+    asyncio.run(check())
