@@ -21,7 +21,7 @@ _RESOURCE = re.compile(
 def _session():
     if not getattr(_local, "session", None):
         credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-        _local.session = AuthorizedSession(credentials)
+        _local.session = AuthorizedSession(credentials, refresh_timeout=8, max_refresh_attempts=1)
     return _local.session
 
 
