@@ -46,20 +46,31 @@ def page(
     page_size=24,
     cursor=None,
 ):
+    db = store()
     if q.strip():
         if cursor and not re.fullmatch(r"search:[0-9]{1,3}", cursor):
             raise HTTPException(422, "Invalid search cursor")
         offset = int(cursor.split(":")[1]) if cursor else 0
-        rows = [
-            r
-            for r in inventory.search(owner, q, budget, category)
-            if matches(r, budget, category, department, available_only)
-        ]
+        exact = []
+        if db.cloud:
+            from google.cloud.firestore_v1.base_query import FieldFilter
+
+            request = (
+                db.db.collection("flairify_products")
+                .where(filter=FieldFilter("owner", "==", owner))
+                .where(filter=FieldFilter("data.name", "==", q.strip()))
+            )
+            exact = [
+                snap.to_dict()["data"]
+                for snap in request.select(["data." + key for key in FIELDS]).limit(48).stream()
+            ]
+        rows = exact or inventory.search(owner, q, budget, category)
         literal = [
             row for row in rows if q.casefold() in (row["name"] + " " + row.get("description", "")).casefold()
         ]
         if literal:
             rows = literal
+        rows = [row for row in rows if matches(row, budget, category, department, available_only)]
         end = offset + page_size
         return {
             "products": rows[offset:end],
@@ -68,7 +79,6 @@ def page(
         }
     if cursor and not re.fullmatch(r"[0-9a-f]{64}", cursor):
         raise HTTPException(422, "Invalid catalogue cursor")
-    db = store()
     if db.cloud:
         from google.cloud.firestore_v1.base_query import FieldFilter
 

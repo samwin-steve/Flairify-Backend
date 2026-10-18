@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from app.services import catalogue_browse, inventory
 from app.store import store
 
@@ -85,7 +87,7 @@ def test_availability_filter_and_projection_preserve_full_stored_data(client, se
 
 def test_literal_listing_search_does_not_fill_page_with_unrelated_candidates(client, session):
     account, headers = session
-    product = next(iter(inventory.fixture_products().values())).copy()
+    product = deepcopy(next(iter(inventory.fixture_products().values())))
     product.update(
         id="unique-listing", name="Unique QA white shirt", category="top", active=True, indexed=True
     )
@@ -95,3 +97,11 @@ def test_literal_listing_search_does_not_fill_page_with_unrelated_candidates(cli
     ).json()
     assert [row["id"] for row in result["products"]] == [product["id"]]
     assert result["next_cursor"] is None
+    for variant in product["variants"]:
+        for stock in variant["stock"]:
+            stock["quantity"] = 0
+    store().put("products", account["user_id"], product["id"], product)
+    result = client.get(
+        "/api/catalog", headers=headers, params={"page_size": 24, "q": product["name"]}
+    ).json()
+    assert result["products"] == []
