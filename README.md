@@ -1,22 +1,103 @@
 # Flairify backend
 
-[Open the deployed Flairify app](https://flairify-web-7kxckvikva-uc.a.run.app) · [API documentation](https://flairify-api-7kxckvikva-uc.a.run.app/docs)
-Personalized retail shopping API with optional wardrobe pairing and asynchronous worker. Paid integration adapters target Google Cloud only. This repository is intended for a public hackathon submission; it contains no credentials.
+**The web app is in [Flairify-Frontend](https://github.com/samwin-steve/Flairify-Frontend), the repository linked in the submission. This repository contains its API, background worker, and technical documentation. Both repositories make up Flairify.**
+
+[Live app](https://flairify-web-7kxckvikva-uc.a.run.app) · [API docs](https://flairify-api-7kxckvikva-uc.a.run.app/docs) · [Frontend setup](https://github.com/samwin-steve/Flairify-Frontend#run-locally)
+
+Flairify recommends clothing outfits using an occasion, budget, saved sizes, and available inventory. Shoppers can optionally pair new products with confirmed wardrobe pieces, refine looks through text or voice, and generate 2D previews. Sellers can publish listings and manage stock. Checkout saves reviewed order records without payment or fulfillment.
+
+This Python service owns authentication, catalogue retrieval, outfit validation, conversations, private media, seller access, and orders. A separate worker handles photo analysis, image generation, catalogue enrichment/indexing, and wardrobe graph updates.
+
+## Architecture
+
+```mermaid
+flowchart TD
+  Web[Next.js frontend] -->|Authenticated HTTP / SSE| API[FastAPI: app.main]
+  Browser[Browser] -->|Voice WebSocket and single-use ticket| API
+  API --> Auth[Firebase token verification]
+  API --> Agent[Google ADK stylist / Vertex AI Gemini]
+  Agent --> Tools[Customer-scoped retrieval tools]
+  Tools --> Embed[Vertex AI embeddings]
+  Tools --> DB[(Firestore: records and catalogue vectors)]
+  Tools --> Validate[Outfit construction and validation]
+  Validate -->|Optional prior outfit evidence| Graph[(BigQuery WardrobeGraph)]
+  API --> DB
+  API --> Storage[(Private Cloud Storage)]
+  API --> Tasks[Cloud Tasks with OIDC]
+  Tasks --> Worker[Private Cloud Run worker: app.worker]
+  Worker --> DB
+  Worker --> Storage
+  Worker --> Graph
+  Worker --> Models[Vertex AI: analysis, enrichment, image generation]
+```
+
+Adapted from [Architecture and data flow](docs/ARCHITECTURE.md); [semantic retrieval](docs/SEMANTIC_RAG.md) documents the recommendation path in more detail.
+
+### Main flows
+
+1. **Recommendations:** the API loads the customer's saved shopping settings and conversation. The ADK stylist calls scoped tools to retrieve catalogue candidates using Vertex AI embeddings and Firestore vector search. The service builds and assesses complete outfits, then rechecks sizes, stock, ownership, and the total cost of all new pieces. Explanations stream over SSE; outfit cards come from validated records.
+2. **Wardrobe pairing:** only confirmed garments enter recommendations. When enabled, BigQuery WardrobeGraph adds evidence from previously checked whole outfits. It does not determine current stock or authorize access.
+3. **Photos and previews:** consented uploads become private media. Extraction produces draft garments for ownership review. Explicit preview requests create persisted jobs; Cloud Tasks invokes the private worker, which saves generated results for the frontend to retrieve.
+4. **Seller listings:** approved sellers supply images, prices, variants, and stock. Background enrichment validates descriptive metadata and creates embeddings. Active, successfully indexed listings become eligible for shopping.
+5. **Orders:** quote and placement endpoints re-read inventory and validate selected sizes, quantities, and totals. A request key prevents duplicate placement; customers and sellers receive appropriately scoped order views.
+
+Firebase tokens and owner-scoped records protect private data. The worker accepts the configured task identity. Google Photos uses separate consent and authorization. Configured Model Armor checks screen text and voice tool actions; see [request safety](docs/MODEL_ARMOR.md).
 
 ## Run locally
 
-Python 3.12–3.14 and [uv](https://docs.astral.sh/uv/) are supported. The lockfile pins the complete environment.
+Requires **Python 3.12–3.14** and **uv**. From a new working directory:
 
 ```sh
+git clone https://github.com/samwin-steve/Flairify-Backend.git
+cd Flairify-Backend
 cp .env.example .env
 uv sync --locked
-# Optional: set your own DEMO_ADMIN_KEY in .env for the protected demo inventory UI.
 uv run uvicorn app.main:app --reload --port 8000
 ```
 
-Open [API docs](http://localhost:8000/docs). Run the [frontend repository](https://github.com/samwin-steve/Flairify-Frontend) on port 3000 with `BACKEND_URL=http://127.0.0.1:8000`.
+Open [localhost:8000/docs](http://localhost:8000/docs) for the API reference or [localhost:8000/health](http://localhost:8000/health) for a health check. Run the [frontend](https://github.com/samwin-steve/Flairify-Frontend#run-locally) on port 3000 with `BACKEND_URL=http://127.0.0.1:8000`.
 
-Demo mode needs no credentials. Save your shopping department, clothing/shoe sizes, preferred store and budget, then start shopping without photos. These settings persist independently of optional style-memory consent and can be changed in Profile. Wardrobe pairing defaults off; turn it on in chat to consider suitable confirmed pieces. Uploaded photos require manual review when Gemini is not configured. Review and correct unknown details before confirming ownership.
+The supplied environment starts a credential-free demo: SQLite state and local media under `.data`, plus an in-process job executor. No separate worker process or Google Cloud resources are required. Choose **Browse as guest** in the frontend, save shopping preferences, and browse or ask for outfits. Optional sample wardrobe pieces must be confirmed before pairing.
+
+### Demo and cloud configuration
+
+| Setting | Purpose |
+| --- | --- |
+| `APP_MODE=demo`, `STORE_BACKEND=sqlite`, `DATA_DIR=.data` | Local persistence and isolated guest sessions. |
+| `CORS_ORIGINS` | Allowed frontend origins; localhost ports are supplied in `.env.example`. |
+| `ENABLE_PAID_AI=false` | Keeps the local demo free of paid model calls. |
+| `DEMO_ADMIN_KEY` | Optional local secret for protected demo inventory access; set your own value. |
+| `GOOGLE_CLOUD_PROJECT`, `FIRESTORE_DATABASE`, `MEDIA_BUCKET` | Cloud project, state database, and private media bucket. |
+| `GEMINI_MODEL`, `IMAGE_EDIT_MODEL`, `LIVE_MODEL` | Explicit model IDs for chat/analysis, previews, and voice. |
+| `WORKER_URL`, `TASK_SERVICE_ACCOUNT`, `TASKS_QUEUE` | Private worker and authenticated task delivery. |
+
+See [`.env.example`](.env.example) for the complete configuration. Production requires Firestore, a private media bucket, Firebase authentication, runtime IAM, and approved model access. Models are enabled explicitly; setting a model name alone is not sufficient. The [integration guide](docs/INTEGRATIONS.md), [retrieval setup](docs/SEMANTIC_RAG.md#setup-and-migration), and [voice guide](docs/VOICE_STYLIST.md) cover these dependencies. `ALLOW_FIREBASE_IN_DEMO` supports signed-in users alongside guests in a configured cloud deployment; anonymous guests still do not consume paid models.
+
+## Where the code lives
+
+| Path | Responsibility |
+| --- | --- |
+| [`app/main.py`](app/main.py) | Public FastAPI routes and request orchestration. |
+| [`app/worker.py`](app/worker.py) | Private task endpoint and caller verification. |
+| [`app/auth.py`](app/auth.py) | Firebase/demo identity, role checks, owner scope, and quotas. |
+| [`app/models.py`](app/models.py), [`app/config.py`](app/config.py) | Request/data schemas and environment settings. |
+| [`app/store.py`](app/store.py) | SQLite and Firestore persistence. |
+| [`app/agents/`](app/agents/) | Text and live voice agents, with customer-scoped tools. |
+| [`app/prompts/`](app/prompts/) | Model instructions for styling and catalogue analysis. |
+| [`app/rag/`](app/rag/) | Embeddings, vector retrieval, query planning, and wardrobe graph queries. |
+| [`app/catalogue/`](app/catalogue/) | Metadata enrichment, taxonomy, image imports, and publication. |
+| [`app/services/chat.py`](app/services/chat.py), [`conversation_context.py`](app/services/conversation_context.py) | Persisted conversations, streaming, deduplication, and look references. |
+| [`app/services/recommendations.py`](app/services/recommendations.py), [`styling.py`](app/services/styling.py) | Outfit construction, assessment, and shopping constraints. |
+| [`app/services/jobs.py`](app/services/jobs.py), [`try_on.py`](app/services/try_on.py), [`wardrobe.py`](app/services/wardrobe.py) | Job lifecycle, previews, and garment extraction. |
+| [`app/services/inventory.py`](app/services/inventory.py), [`orders.py`](app/services/orders.py), [`sellers.py`](app/services/sellers.py) | Catalogue, checkout, and seller permissions. |
+| [`app/services/media.py`](app/services/media.py), [`image_delivery.py`](app/services/image_delivery.py) | Private media storage and image derivatives. |
+| [`fixtures/`](fixtures/) | Demo catalogue, source references, and image credits. |
+| [`tests/`](tests/) | Pytest coverage for API flows, isolation, validation, and provider contracts. |
+| [`scripts/`](scripts/) | Provisioning, indexing, catalogue imports, evaluation, and owner bootstrap. |
+| [`infra/`](infra/) | Firestore indexes/rules, storage rules, Terraform, and BigQuery SQL. |
+| [`docs/`](docs/) | Design notes, setup guides, limitations, and recorded verification. |
+
+For a first code review, follow `app/main.py` → `app/services/chat.py` → `app/agents/stylist.py` → `app/agents/tools.py` → `app/services/recommendations.py`. For background work, start with `app/services/jobs.py` and `app/worker.py`.
 
 ## Tests
 
@@ -25,88 +106,37 @@ uv run pytest -q
 uv run python scripts/evaluate_demo.py
 ```
 
-Tests verify shopping-preference setup, optional confirmed-wardrobe use, isolation, media access/deletion, budget/stock/size validation, follow-up context, import/indexing, safe image sources, consent, generation failures/idempotency and Photos Picker contracts. Provider mocks are not live integration results.
+Tests cover identity isolation, preferences, retrieval, conversation refinement, stock/size/budget checks, jobs, media, sellers, and order idempotency. Provider mocks test contracts; they are not live integration evidence. Recorded Google-service and deployed-browser checks are documented in [VERIFICATION.md](docs/VERIFICATION.md). Frontend browser tests live in the [frontend repository](https://github.com/samwin-steve/Flairify-Frontend/tree/main/tests).
 
-## Deploy
+## Deployment
 
-Project: `data-workshops`, region: `us-central1`. Separate Cloud Run services: `flairify-api`, `flairify-worker`, frontend `flairify-web`.
+The backend Docker image serves two Cloud Run services: public `flairify-api` and private `flairify-worker`. Cloud Tasks dispatches work using an OIDC service identity. Firestore stores application state; Cloud Storage holds private media. `cloudbuild.yaml` runs tests, builds the image, and deploys both services. The frontend has its own build and deployment pipeline.
 
-```sh
-scripts/bootstrap_gcp.sh
-# First build (requires Flairify build source bucket access; see docs/DEPLOYMENT.md)
-gcloud builds submit --config cloudbuild.yaml --project data-workshops --region us-central1 \
-  --service-account projects/data-workshops/serviceAccounts/flairify-build@data-workshops.iam.gserviceaccount.com \
-  --gcs-source-staging-dir gs://data-workshops-flairify-build/source
-```
+The checked-in deployment targets project `data-workshops`, region `us-central1`, and the named Firestore database `flairify`. Follow [DEPLOYMENT.md](docs/DEPLOYMENT.md) to provision or adapt resources, identities, secrets, and build triggers. The documented triggers ignore README-only changes.
 
-Both repositories have `cloudbuild.yaml`. `main` push triggers build, test and deploy their own service. Backend builds deploy the API and private worker together. Anonymous demo sessions keep paid AI off and public admin unlocking disabled. The deployed trigger enables bounded Gemini analysis, conversation and 2D image editing for verified Firebase accounts, alongside fixture catalogue records. Production mode requires Firebase configuration, runtime IAM and approved model access.
+Seller access requires owner approval. To establish the first owner, a trusted operator can use [`scripts/grant_seller_access.py`](scripts/grant_seller_access.py) with the intended account's verified email after that account has signed in. The application runtime does not need identity-administration privileges.
 
-- [Architecture and data flow](docs/ARCHITECTURE.md)
-- [Integration configuration](docs/INTEGRATIONS.md)
-- [Deployment and operations](docs/DEPLOYMENT.md)
-- [Limitations and experimental boundaries](docs/LIMITATIONS.md)
-- [3D/AR license evaluation](docs/AVATAR_RESEARCH.md)
-- [Tests and deployment verification](docs/VERIFICATION.md)
-- [Costs and evaluation](docs/COSTS_AND_EVALUATION.md)
-- [Three-minute demo](docs/DEMO_SCRIPT.md)
-- [Submission explanation](docs/SUBMISSION.md)
+## Capability boundaries
 
-The sample catalogue contains **200 options** (90 men’s, 91 women’s, 19 unisex): 48 tops, 43 bottoms, 25 jackets, 16 dresses, 42 shoes, 15 bags and 11 accessories. Ten contradictory or children’s listings are excluded from adult shopping results without deleting the source records. This leaves 190 shopper-visible records, 189 in simulated stock; one deliberately sold-out fixture exercises unavailable-item handling. Sample clothing offers XXS–4XL, shoes EU 35–48, and bags/accessories one size, at two sample stores. These variants are demonstration data, not manufacturer size availability. Seller-supplied stock and sizes remain unchanged.
+- Guest recommendations use deterministic rules. Uploaded photos require manual review without configured Gemini analysis; no detections or generated outputs are invented.
+- Sample catalogue prices, sizes, and stock are simulated. Seller-supplied listings retain their facts. See [catalogue provenance](docs/CATALOGUE.md).
+- Generated 2D previews illustrate styling; exact fit, product detail preservation, and extraction accuracy are not guaranteed.
+- Checkout saves orders but does not charge, ship, reserve, or decrement stock.
+- Voice requires a signed-in account and configured Gemini Live access. Transcripts persist; Flairify does not store voice audio.
+- The AR mannequin is a sample asset. Google VTO and Veo adapters are experimental and do not have the same verification coverage as the Gemini 2D preview path. Google Photos still requires separate OAuth setup and end-to-end verification.
 
-190 new archive photographs include eight image references from the requested Myntra fashion CSV and 182 from Param Aggarwal’s fashion image dataset. Provenance and publisher-declared licenses are recorded in `fixtures/catalogue-sources.json`, `fixtures/image-credits.json`, and [catalogue documentation](docs/CATALOGUE.md). Photographed clothing, footwear, bags and accessories support illustrative Google Gemini previews; items without supported original photographs stay disabled. No sample listing is a current retailer offer.
+## Technical documentation
 
-With photo-processing consent, a full-body upload automatically queues Gemini garment extraction and becomes a usable private preview reference. Wardrobe uploads start extraction after explicit person selection. Detections remain drafts until ownership is confirmed. Each detected garment also queues a private Gemini shop-style image, with the original evidence crop retained, AI labeling, retry and an original-only option. Image failure does not block wardrobe review. Try-on can start directly from Inventory using a reference or existing wardrobe photo; completed previews show the generated image, and support download, regeneration and deletion.
+| Topic | Guide |
+| --- | --- |
+| System design and trust boundaries | [Architecture](docs/ARCHITECTURE.md) |
+| Retrieval, ADK, streaming, and graph | [Semantic retrieval](docs/SEMANTIC_RAG.md) |
+| Ranking and occasion handling | [Recommendation quality](docs/RECOMMENDATION_QUALITY.md) |
+| Google services and runtime setup | [Integrations](docs/INTEGRATIONS.md), [deployment](docs/DEPLOYMENT.md) |
+| Speech and request screening | [Voice stylist](docs/VOICE_STYLIST.md), [Model Armor](docs/MODEL_ARMOR.md) |
+| Catalogue ingestion and metadata | [Enrichment](docs/CATALOGUE_ENRICHMENT.md), [photo imports](docs/PHOTO_CATALOGUE_IMPORT.md) |
+| Image loading and caching | [Image delivery](docs/IMAGE_DELIVERY.md) |
+| Evidence and remaining limits | [Verification](docs/VERIFICATION.md), [limitations](docs/LIMITATIONS.md), [costs and evaluation](docs/COSTS_AND_EVALUATION.md) |
+| Judging walkthrough | [Demo script](docs/DEMO_SCRIPT.md), [submission notes](docs/SUBMISSION.md) |
 
-## Seller Studio and orders
-
-Owners and approved sellers can add clothes with a product photo, SKU, INR price, sizes, store quantities, and optional aisle/rack. Each save queues indexing; successfully indexed active products appear in Inventory and are eligible for size-, stock-, and budget-checked recommendations. Sellers manage only their own products and stores. Owners manage the shared catalogue and approve seller requests. Existing Firebase `admin` and `seller` claims remain supported.
-
-A signed-in customer opens **Seller Studio → Request seller access**. An owner reviews requests in Seller Studio. Bootstrap the first owner from a trusted operator terminal after that person has signed in to Flairify:
-
-```bash
-.venv/bin/python scripts/grant_seller_access.py --project data-workshops --email OWNER_EMAIL --role owner
-```
-
-The operator needs Identity Platform account-read and Firestore write permissions and an active `gcloud auth login`. No identity-admin permission is added to the running app. Roles live in the server-only `flairify_seller_access` collection; browser Firestore access remains denied. App-managed revocations take effect on the next request. Firebase custom claims are managed separately; a preexisting custom claim must be removed separately to revoke its grant. Never bootstrap an account based only on a name or client-supplied UID.
-
-Customers can choose **Inventory → Buy** without wardrobe onboarding, or **Buy** on a stylist recommendation. Checkout requires explicit item confirmation, selected sizes/stores/quantities, and a server-validated total. Orders are persisted privately and reappear in **My Orders**. Seller Studio shows only the seller's item lines; the owner sees the catalogue-wide order inbox. No payment, shipment, reservation, stock decrement, or wardrobe-ownership confirmation occurs.
-
-The backend rechecks serving inventory at quote and placement, rejects changed totals, unavailable sizes and excessive quantities, and merges repeated product/variant/store cart lines. A stable request key prevents duplicate placement; replay returns the original price snapshot. Order persistence is atomic per customer/order key. Inbox projections are separate idempotent writes and are repaired on retry; there is no cross-document transaction or background repair sweep. These are mock records, not a production fulfillment system. Anonymous demo history lasts only while its isolated session is valid; sign in for account-based history.
-
-API additions: `GET/POST /api/orders`, `POST /api/orders/quote`, `GET /api/orders/{id}`, `GET /api/admin/orders`, `POST /api/admin/products`, `GET /api/seller-access`, `POST /api/seller-access/request`, `GET /api/admin/seller-requests`, and owner-only approval/revocation actions. The protected image upload accepts validated files rather than fetching arbitrary URLs. Index publication checks the product hash to avoid overwriting stock edited during indexing.
-
-
-Select one or more pieces using the initially empty checkboxes on a stylist look, then click **See it on me** to generate directly. Conflicting slots resolve to the latest selection. Set **Keep my generated outfits in the same background** during onboarding or in Profile; unchecked requests a plain white background. See [integration details](docs/INTEGRATIONS.md#direct-multi-piece-previews-and-backgrounds) for selection validation, deletion and provider limits.
-
-## Semantic catalogue RAG and streamed ADK stylist
-
-See [SEMANTIC_RAG.md](docs/SEMANTIC_RAG.md) for the Gemini Embedding 2 / Firestore implementation, Google ADK modules, SSE contract, indexes, migration and explicit demo limitations.
-
-## Voice stylist
-
-**Talk** starts a native Google Gemini Live conversation with spoken replies, live transcripts and the same grounded recommendation tools. Voice retains saved shopping preferences and conversation context, supports outfit refinements, garment selection by name and explicit spoken “See it on me” requests, and offers mute/end controls. Selected pieces are checked against retrieved records and current stock, then queued through the shared Google try-on service. Previews open in Fitting Room while voice remains connected. Repeated voice requests return the same job; transient browser connection loss gets one bounded recovery attempt. Transcripts are saved; audio is not stored by Flairify. See [voice setup, security and limits](docs/VOICE_STYLIST.md). Voice requires a signed-in account and an explicitly configured Vertex Live model; credential-free demo chat remains available as text.
-
-**Request safety:** Google Cloud Model Armor screens incoming chat text and guards voice tool actions when configured. Matches are refused before shopping actions; unavailable checks fail closed with a retry message. Raw live audio continues to use Gemini's provider safety. See [policy, setup, scope and collected validation](docs/MODEL_ARMOR.md).
-
-## Occasion-aware recommendations
-
-Saved shopping settings replace the repeated chat selectors. Catalogue-only recommendations work without photos; the chat switch opts into suitable confirmed wardrobe pieces. Ranking retains semantic similarity, interprets the occasion, assesses complete shortlisted outfits with Gemini and diversifies the main garment. Checkout preselects saved/recommended variants but still requires review and confirmation. See [recommendation quality and limits](docs/RECOMMENDATION_QUALITY.md).
-
-## Fitting Room shopping
-
-`GET /api/jobs/{id}/shopping` resolves the authenticated customer’s completed try-on to current inventory. Recommendation previews offer every new product in their stored look; owned garments are excluded. Standalone previews resolve their selected products, with support for older single-product previews. Unavailable listings are reported separately. `source=fitting_room` orders require `preview_job_id`; quote and placement validate the customer, job completion, allowed product IDs, current variants, stock and prices. Orders retain the preview reference and remain idempotent.
-
-Customer-facing actions say **Buy** and **Order placed**. Orders remain saved without payment or fulfillment. Legacy API fields (`mock`, `mock_placed`, `acknowledge_mock`) remain for compatibility and are not displayed as interface labels.
-
-## Automated catalogue metadata
-
-New and edited listings now run through evidence-checked Gemini photo enrichment before semantic indexing. Seller Studio exposes the resulting styling details, confidence, unknown fields and validation notes. See [catalogue enrichment](docs/CATALOGUE_ENRICHMENT.md) for the schema, automatic updates, safe bulk backfill and version migrations.
-
-The supplied Drive photo collection is imported through a private draft workflow with source references and Gemini garment crops. See [photo catalogue imports](docs/PHOTO_CATALOGUE_IMPORT.md) and [collected enrichment results](docs/CATALOGUE_ENRICHMENT_RESULTS.md).
-
-## Image performance
-
-Inventory supports bounded 24-product cursor pages and selected-ID checkout reads.
-Private WebP derivatives, viewport-aware downloads and browser caching reduce image
-transfer without Redis. See [delivery design](docs/IMAGE_DELIVERY.md) and
-[collected verification](docs/IMAGE_DELIVERY_RESULTS.md).
+See [LICENSE](LICENSE), [third-party notices](THIRD_PARTY.md), and [catalogue sources](fixtures/catalogue-sources.json) for licensing and attribution.
